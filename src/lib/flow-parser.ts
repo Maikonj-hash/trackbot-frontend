@@ -104,6 +104,14 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     type: "HTTP_REQUEST",
                     method: node.data.webhookMethod || "POST",
                     url: node.data.content || "https://api.exemplo.com",
+                    timeout: node.data.timeout || 10000,
+                    headers: node.data.headers,
+                    bodyPayload: node.data.bodyPayload,
+                    saveStatusToVariable: node.data.saveStatusToVariable,
+                    saveResponseToVariable: node.data.saveResponseToVariable,
+                    responseMapping: node.data.responseMapping,
+                    successStepId: getNextStepId("success"),
+                    failureStepId: getNextStepId("failure"),
                     nextStepId: defaultNextStep
                 };
                 break;
@@ -191,6 +199,12 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
                 );
                 if (!allConnected) {
                     errors.push(`O bloco de Opções "${node.data.label}" tem alternativas sem conexão.`);
+                }
+            } else if (node.type === "webhookBlock") {
+                const hasSuccess = edges.some(e => e.source === node.id && e.sourceHandle === 'success');
+                const hasFailure = edges.some(e => e.source === node.id && e.sourceHandle === 'failure');
+                if (!hasSuccess || !hasFailure) {
+                    errors.push(`O bloco de Webhook "${node.data.label}" precisa ter as saídas SUCCESS e FAILURE conectadas.`);
                 }
             } else {
                 warnings.push(`O bloco "${node.data.label || node.id}" não tem saída conectada.`);

@@ -42,6 +42,15 @@ export type TrackerNodeData = {
 
     // Webhook
     webhookMethod?: WebhookMethod;
+    timeout?: number;
+    saveStatusToVariable?: string;
+    saveResponseToVariable?: string;
+    responseMapping?: Array<{
+        jsonPath: string;
+        variableName: string;
+    }>;
+    headers?: Record<string, string>;
+    bodyPayload?: any;
 };
 
 // Cérebro Global (Armazena tudo o que acontece no Studio na Memória RAM limpa)
