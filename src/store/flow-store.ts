@@ -27,6 +27,13 @@ export type TrackerNodeData = {
     options?: string[];
     delayMs?: number;
 
+    // Interactive Options
+    useNativeButtons?: boolean;
+    listButtonLabel?: string;
+    listTitle?: string;
+    listFooter?: string;
+    dynamicOptionsVariable?: string; // Futuro: carregar opções de uma var
+
     // Condition
     conditionVariable?: string;
     conditionOperator?: ConditionOperator;

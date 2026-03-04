@@ -65,8 +65,13 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     type: "OPTIONS",
                     content: node.data.content || "Escolha uma opção:",
                     options: optionsMap,
+                    useNativeButtons: node.data.useNativeButtons,
+                    listButtonLabel: node.data.listButtonLabel,
+                    listTitle: node.data.listTitle,
+                    listFooter: node.data.listFooter,
+                    dynamicOptionsVariable: node.data.dynamicOptionsVariable,
                     fallbackStepId: getNextStepId("fallback"),
-                    nextStepId: null // Options node uses specific routing, generic next is null in our backend logic usually or doesn't matter
+                    nextStepId: null
                 };
                 break;
             case "conditionBlock":

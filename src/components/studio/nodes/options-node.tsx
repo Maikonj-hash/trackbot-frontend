@@ -14,7 +14,12 @@ export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
         <NodeContainer selected={selected} color="blue">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={ListOrdered} label="OPTIONS MENU" color="blue" />
+            <NodeHeader
+                icon={ListOrdered}
+                label="OPTIONS MENU"
+                color="blue"
+                badge={data.useNativeButtons ? "ELITE" : undefined}
+            />
 
             <div className="p-3 bg-card pb-1">
                 <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
