@@ -198,6 +198,28 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
         }
     });
 
+    // 4. Validação de Nomes de Variáveis (Sanitização)
+    const varRegex = /^[a-zA-Z0-9_.]+$/;
+    nodes.forEach(node => {
+        let varName: string = "";
+        if (node.type === "inputBlock") varName = String((node.data as any).variableName || "");
+        if (node.type === "variableBlock") varName = String((node.data as any).variableName || "");
+
+        if (varName && !varRegex.test(varName)) {
+            errors.push(`A variável "${varName}" no bloco "${node.data.label}" contém caracteres inválidos. Use apenas letras, números e underline.`);
+        }
+    });
+
+    // 5. Validação de URLs de Webhook
+    nodes.forEach(node => {
+        if (node.type === "webhookBlock") {
+            const url = String(node.data.content || "");
+            if (!url || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+                errors.push(`O bloco de Webhook "${node.data.label}" precisa de uma URL válida (http/https).`);
+            }
+        }
+    });
+
     return {
         isValid: errors.length === 0,
         errors,
