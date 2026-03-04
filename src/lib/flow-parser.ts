@@ -145,3 +145,62 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
         steps
     };
 }
+
+export function validateFlow(nodes: Node[], edges: Edge[]) {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // 1. Verificar Bloco Início
+    const startNode = nodes.find(n => n.id === "start-1" || n.type === "startBlock");
+    if (!startNode) {
+        errors.push("Bloco de Início não encontrado.");
+    } else {
+        const hasConnection = edges.some(e => e.source === startNode.id);
+        if (!hasConnection) {
+            errors.push("O bloco de Início não está conectado a nenhum outro bloco.");
+        }
+    }
+
+    // 2. Verificar Blocos Órfãos (sem entrada, exceto Start)
+    nodes.forEach(node => {
+        if (node.id === "start-1" || node.type === "startBlock") return;
+
+        const hasInput = edges.some(e => e.target === node.id);
+        if (!hasInput) {
+            warnings.push(`O bloco "${node.data.label || node.id}" está isolado e nunca será alcançado.`);
+        }
+    });
+
+    // 3. Verificar Saídas não conectadas (exceto End)
+    nodes.forEach(node => {
+        if (node.type === "endBlock" || node.type === "handoverBlock") return;
+
+        // Simplificação: apenas checa se tem pelo menos uma saída
+        const hasOutput = edges.some(e => e.source === node.id);
+        if (!hasOutput) {
+            if (node.type === "conditionBlock") {
+                const hasTrue = edges.some(e => e.source === node.id && e.sourceHandle === 'true');
+                const hasFalse = edges.some(e => e.source === node.id && e.sourceHandle === 'false');
+                if (!hasTrue || !hasFalse) {
+                    errors.push(`O bloco de Condição "${node.data.label}" precisa ter as saídas TRUE e FALSE conectadas.`);
+                }
+            } else if (node.type === "optionsBlock") {
+                const options = (node.data as any).options || [];
+                const allConnected = Array.isArray(options) && options.every((_: any, idx: number) =>
+                    edges.some(e => e.source === node.id && e.sourceHandle === `option_${idx}`)
+                );
+                if (!allConnected) {
+                    errors.push(`O bloco de Opções "${node.data.label}" tem alternativas sem conexão.`);
+                }
+            } else {
+                warnings.push(`O bloco "${node.data.label || node.id}" não tem saída conectada.`);
+            }
+        }
+    });
+
+    return {
+        isValid: errors.length === 0,
+        errors,
+        warnings
+    };
+}

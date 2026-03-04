@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, MessageSquareShare, Loader2, Calendar } from "lucide-react";
+import { API_URL } from "@/lib/constants";
 
 interface FlowRecord {
     id: string;
@@ -21,7 +22,7 @@ export default function FlowsPage() {
     const fetchFlows = async () => {
         try {
             setIsLoading(true);
-            const res = await fetch("http://localhost:3000/flows");
+            const res = await fetch(`${API_URL}/flows`);
             if (res.ok) {
                 const data = await res.json();
                 setFlows(data);
@@ -40,7 +41,7 @@ export default function FlowsPage() {
     const handleCreateNew = async () => {
         try {
             setIsCreating(true);
-            const res = await fetch("http://localhost:3000/flows", {
+            const res = await fetch(`${API_URL}/flows`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -64,7 +65,7 @@ export default function FlowsPage() {
         if (!confirm("Tem certeza que deseja apagar este fluxo? Esta ação não pode ser desfeita.")) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/flows/${id}`, {
+            const res = await fetch(`${API_URL}/flows/${id}`, {
                 method: "DELETE"
             });
             if (res.ok) {

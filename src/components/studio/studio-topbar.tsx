@@ -1,27 +1,30 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Loader2, Play, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Save, Loader2, Play, CheckCircle2, ArrowLeft, CloudIcon, Rocket } from "lucide-react";
 import { useFlowStore } from "@/store/flow-store";
-import { parseReactFlowToBackend } from "@/lib/flow-parser";
-import { Input } from "@/components/ui/input";
+import { parseReactFlowToBackend, validateFlow } from "@/lib/flow-parser";
+import { API_URL } from "@/lib/constants";
+import { clsx } from "clsx";
 
 export function StudioTopbar() {
     const router = useRouter();
-    const { nodes, edges, flowId, flowName, setFlowMetadata, setFlowName } = useFlowStore();
+    const { nodes, edges, flowId, flowName, setFlowMetadata, setFlowName, isDirty, setSaved } = useFlowStore();
     const [isSaving, setIsSaving] = useState(false);
-    const [saved, setSaved] = useState(false);
+    const [isPublishing, setIsPublishing] = useState(false);
+    const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
+        if (!isDirty && flowId) return;
+
         try {
             setIsSaving(true);
-            setSaved(false);
 
             // 1. Traduz JSX XYFlow para Record JSON do Backend
             const backendPayload = parseReactFlowToBackend(nodes, edges, flowName);
 
             // 2. Dispara pra API do NestJS
             const isUpdate = !!flowId;
-            const url = isUpdate ? `http://localhost:3000/flows/${flowId}` : "http://localhost:3000/flows";
+            const url = isUpdate ? `${API_URL}/flows/${flowId}` : `${API_URL}/flows`;
 
             const response = await fetch(url, {
                 method: isUpdate ? "PUT" : "POST",
@@ -39,33 +42,74 @@ export function StudioTopbar() {
                 })
             });
 
-            if (!response.ok) {
-                console.error("Erro na API:", response.statusText);
-                throw new Error("Falha ao salvar no banco");
-            }
+            if (!response.ok) throw new Error("Falha ao salvar no banco");
 
             const data = await response.json();
 
             if (!isUpdate && data.id) {
-                // Se era POST, salvar o ID novo no Store
                 setFlowMetadata(data.id, data.name, data.description || "");
             }
 
-            console.log("Fluxo salvo com sucesso no PostgreSQL:", data);
-
-            setSaved(true);
-            setTimeout(() => setSaved(false), 3000); // Tira o check verde depois de 3 segundos
+            setSaved();
+            setLastSaved(new Date());
 
         } catch (error) {
             console.error(error);
-            alert("Erro ao gravar fluxo. Verifique o console.");
         } finally {
             setIsSaving(false);
         }
+    }, [nodes, edges, flowId, flowName, isDirty, setFlowMetadata, setSaved]);
+
+    const handlePublish = async () => {
+        if (!flowId) return;
+
+        // VALIDAÇÃO ELITE: Impedir deploy de fluxo quebrado
+        const validation = validateFlow(nodes, edges);
+
+        if (!validation.isValid) {
+            alert(`❌ Não é possível publicar:\n\n- ${validation.errors.join('\n- ')}`);
+            return;
+        }
+
+        if (validation.warnings.length > 0) {
+            const proceed = confirm(`⚠️ Existem avisos no seu fluxo:\n\n- ${validation.warnings.join('\n- ')}\n\nDeseja publicar mesmo assim?`);
+            if (!proceed) return;
+        }
+
+        try {
+            setIsPublishing(true);
+
+            // Primeiro salva o rascunho atual
+            await handleSave();
+
+            // Depois chama a publicação
+            const response = await fetch(`${API_URL}/flows/${flowId}/publish`, {
+                method: "POST",
+            });
+
+            if (!response.ok) throw new Error("Falha ao publicar fluxo");
+
+            alert("🚀 Fluxo publicado com sucesso! O bot já está usando a nova versão.");
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao publicar: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+        } finally {
+            setIsPublishing(false);
+        }
     };
 
+    // Auto-save logic (Debounce 5s)
+    useEffect(() => {
+        if (isDirty && flowId) {
+            const timer = setTimeout(() => {
+                handleSave();
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [isDirty, flowId, handleSave]);
+
     return (
-        <header className="h-14 bg-background border-b border-border/50 flex items-center justify-between px-6 z-20 shadow-sm relative">
+        <header className="h-14 bg-background border-b border-border/50 flex items-center justify-between px-6 z-20 shadow-sm relative font-sans">
             <div className="flex items-center gap-4">
                 <button
                     onClick={() => router.push('/studio')}
@@ -78,36 +122,63 @@ export function StudioTopbar() {
                     <Play className="w-4 h-4 text-emerald-500 fill-emerald-500" />
                 </div>
                 <div className="flex flex-col">
-                    <input
-                        type="text"
-                        value={flowName}
-                        onChange={(e) => setFlowName(e.target.value)}
-                        className="bg-transparent border-none text-sm font-semibold tracking-tight text-foreground focus:outline-none focus:ring-0 p-0 hover:bg-muted/50 rounded px-1 -mx-1 transition-colors w-64"
-                        placeholder="Nome do Fluxo..."
-                    />
-                    <p className="text-xs text-muted-foreground leading-none">
-                        {nodes.length} Blocos no canvas
-                    </p>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="text"
+                            value={flowName}
+                            onChange={(e) => setFlowName(e.target.value)}
+                            className="bg-transparent border-none text-sm font-semibold tracking-tight text-foreground focus:outline-none focus:ring-0 p-0 hover:bg-muted/50 rounded px-1 -mx-1 transition-colors w-64"
+                            placeholder="Nome do Fluxo..."
+                        />
+                        {isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" title="Alterações não salvas" />}
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground leading-none mt-1 uppercase font-mono tracking-tighter">
+                        <span>{nodes.length} BLOCKS</span>
+                        <span>•</span>
+                        <div className="flex items-center gap-1">
+                            <CloudIcon className={clsx("w-3 h-3", isSaving ? "animate-pulse text-blue-500" : "text-muted-foreground/40")} />
+                            {isSaving ? "SAVING..." : lastSaved ? `SAVED AT ${lastSaved.toLocaleTimeString()}` : "NOT SAVED YET"}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+                <div className="h-6 w-[1px] bg-border/60 mx-2" />
+
                 <button
                     onClick={handleSave}
-                    disabled={isSaving}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-md transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isSaving || !isDirty}
+                    className={clsx(
+                        "flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all border",
+                        isDirty
+                            ? "bg-muted hover:bg-muted/80 text-foreground border-border shadow-sm"
+                            : "bg-transparent text-muted-foreground border-transparent cursor-default"
+                    )}
                 >
                     {isSaving ? (
                         <>
-                            <Loader2 className="w-4 h-4 animate-spin" /> Salvando...
-                        </>
-                    ) : saved ? (
-                        <>
-                            <CheckCircle2 className="w-4 h-4" /> Salvo
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> SALVANDO...
                         </>
                     ) : (
                         <>
-                            <Save className="w-4 h-4" /> Salvar Alterações
+                            <Save className="w-3.5 h-3.5" /> {isDirty ? "SALVAR RASCUNHO" : "RASCUNHO ATUALIZADO"}
+                        </>
+                    )}
+                </button>
+
+                <button
+                    onClick={handlePublish}
+                    disabled={isPublishing || !flowId}
+                    className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-md transition-all shadow-[0_2px_10px_rgba(16,185,129,0.3)] hover:shadow-[0_4px_15px_rgba(16,185,129,0.4)] disabled:opacity-50 active:scale-95 uppercase tracking-wider"
+                >
+                    {isPublishing ? (
+                        <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> PUBLICANDO...
+                        </>
+                    ) : (
+                        <>
+                            <Rocket className="w-3.5 h-3.5" /> Publicar Fluxo
                         </>
                     )}
                 </button>

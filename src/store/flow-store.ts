@@ -53,6 +53,7 @@ type FlowState = {
     nodes: Node<TrackerNodeData>[];
     edges: Edge[];
     selectedNode: Node<TrackerNodeData> | null;
+    isDirty: boolean; // Rastreia mudanças não salvas
     onNodesChange: OnNodesChange<Node<TrackerNodeData>>;
     onEdgesChange: OnEdgesChange;
     onConnect: OnConnect;
@@ -64,6 +65,7 @@ type FlowState = {
     setFlowMetadata: (id: string, name: string, description: string) => void;
     setFlowName: (name: string) => void;
     setFlow: (nodes: Node<TrackerNodeData>[], edges: Edge[]) => void;
+    setSaved: () => void; // Reseta o estado Dirty
 };
 
 export const useFlowStore = create<FlowState>((set, get) => ({
@@ -81,6 +83,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     ],
     edges: [],
     selectedNode: null,
+    isDirty: false,
 
     // Eventos Nativos do React Flow para mover as caixas fluidamente
     onNodesChange: (changes: NodeChange<Node<TrackerNodeData>>[]) => {
@@ -88,6 +91,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         const safeChanges = changes.filter(c => !(c.type === 'remove' && c.id === 'start-1'));
         set({
             nodes: applyNodeChanges(safeChanges, get().nodes),
+            isDirty: changes.length > 0, // Qualquer mudança física marca como Dirty
         });
     },
 
@@ -95,6 +99,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     onEdgesChange: (changes: EdgeChange[]) => {
         set({
             edges: applyEdgeChanges(changes, get().edges),
+            isDirty: true,
         });
     },
 
@@ -102,6 +107,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     onConnect: (connection: Connection) => {
         set({
             edges: addEdge(connection, get().edges),
+            isDirty: true,
         });
     },
 
@@ -137,6 +143,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
                 }
                 return node;
             }),
+            isDirty: true,
         });
     },
 
@@ -147,6 +154,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
             nodes: get().nodes.filter((node) => node.id !== nodeId),
             edges: get().edges.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
             selectedNode: get().selectedNode?.id === nodeId ? null : get().selectedNode,
+            isDirty: true,
         });
     },
 
@@ -157,6 +165,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
         set({
             nodes: [...get().nodes, safeNode],
+            isDirty: true,
         });
     },
 
@@ -176,7 +185,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
                 ...nodes
             ];
         }
-        set({ nodes: hydratedNodes, edges, selectedNode: null });
+        set({ nodes: hydratedNodes, edges, selectedNode: null, isDirty: false });
     },
 
     // Salvar qual ID de fluxo o usuário abriu
@@ -185,6 +194,10 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     },
 
     setFlowName: (name: string) => {
-        set({ flowName: name });
+        set({ flowName: name, isDirty: true });
+    },
+
+    setSaved: () => {
+        set({ isDirty: false });
     }
 }));

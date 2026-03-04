@@ -6,15 +6,15 @@ interface NodeHandleProps extends HandleProps {
 }
 
 const handleColorMap: Record<string, string> = {
-    emerald: "border-emerald-500",
-    blue: "border-blue-500",
-    red: "border-red-500",
-    violet: "border-violet-500",
-    fuchsia: "border-fuchsia-500",
-    pink: "border-pink-500",
-    cyan: "border-cyan-500",
-    rose: "border-rose-500",
-    muted: "border-muted-foreground/30",
+    emerald: "bg-emerald-500 border-emerald-600",
+    blue: "bg-blue-500 border-blue-600",
+    red: "bg-red-500 border-red-600",
+    violet: "bg-violet-500 border-violet-600",
+    fuchsia: "bg-fuchsia-500 border-fuchsia-600",
+    pink: "bg-pink-500 border-pink-600",
+    cyan: "bg-cyan-500 border-cyan-600",
+    rose: "bg-rose-500 border-rose-600",
+    muted: "bg-muted-foreground/40 border-muted-foreground/50",
 };
 
 export function NodeHandle({ color = "muted", className, ...props }: NodeHandleProps) {
@@ -24,7 +24,7 @@ export function NodeHandle({ color = "muted", className, ...props }: NodeHandleP
         <Handle
             {...props}
             className={clsx(
-                "!w-2 !h-2 !bg-background !border-[1px] !rounded-[2px] transition-transform hover:scale-125 z-10",
+                "!w-1.5 !h-1.5 !border-[0.5px] !rounded-full transition-colors z-10",
                 colorClass,
                 className
             )}

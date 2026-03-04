@@ -29,6 +29,7 @@ import { StartNode } from "@/components/studio/nodes/start-node";
 import { PropertiesDrawer } from "@/components/studio/properties-drawer";
 import { SidebarNodes } from "@/components/studio/sidebar-nodes";
 import { StudioTopbar } from "@/components/studio/studio-topbar";
+import { API_URL } from "@/lib/constants";
 
 // O React flow exige que os Componentes das caixas sejam Passados estabilizados para fora do React
 const customNodeTypes = {
@@ -67,7 +68,7 @@ function StudioCanvas() {
     useEffect(() => {
         if (!flowId) return;
 
-        fetch(`http://localhost:3000/flows/${flowId}`)
+        fetch(`${API_URL}/flows/${flowId}`)
             .then(res => res.json())
             .then(data => {
                 setFlowMetadata(data.id, data.name, data.description || "");
