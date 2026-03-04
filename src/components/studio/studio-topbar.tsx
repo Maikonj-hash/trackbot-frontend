@@ -6,12 +6,43 @@ import { parseReactFlowToBackend, validateFlow } from "@/lib/flow-parser";
 import { API_URL } from "@/lib/constants";
 import { clsx } from "clsx";
 
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+
 export function StudioTopbar() {
     const router = useRouter();
     const { nodes, edges, flowId, flowName, setFlowMetadata, setFlowName, isDirty, setSaved } = useFlowStore();
     const [isSaving, setIsSaving] = useState(false);
     const [isPublishing, setIsPublishing] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+    // Modal States
+    const [modal, setModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        description: string;
+        variant: "info" | "warning" | "danger";
+        onConfirm: () => void;
+        confirmText?: string;
+        showCancel?: boolean;
+    }>({
+        isOpen: false,
+        title: "",
+        description: "",
+        variant: "info",
+        onConfirm: () => { },
+    });
+
+    const showAlert = (title: string, description: string, variant: "info" | "warning" | "danger" = "info") => {
+        setModal({
+            isOpen: true,
+            title,
+            description,
+            variant,
+            onConfirm: () => setModal(prev => ({ ...prev, isOpen: false })),
+            confirmText: "Entendido",
+            showCancel: false
+        });
+    };
 
     const handleSave = useCallback(async () => {
         if (!isDirty && flowId) return;
@@ -55,6 +86,7 @@ export function StudioTopbar() {
 
         } catch (error) {
             console.error(error);
+            showAlert("Erro ao Salvar", "Não foi possível sincronizar as alterações com o servidor.", "danger");
         } finally {
             setIsSaving(false);
         }
@@ -67,34 +99,44 @@ export function StudioTopbar() {
         const validation = validateFlow(nodes, edges);
 
         if (!validation.isValid) {
-            alert(`❌ Não é possível publicar:\n\n- ${validation.errors.join('\n- ')}`);
+            showAlert("Fluxo Inválido", `Existem erros que impedem a publicação:\n\n- ${validation.errors.join('\n- ')}`, "danger");
             return;
         }
 
+        const executePublish = async () => {
+            try {
+                setIsPublishing(true);
+                // Primeiro salva o rascunho atual
+                await handleSave();
+
+                // Depois chama a publicação
+                const response = await fetch(`${API_URL}/flows/${flowId}/publish`, {
+                    method: "POST",
+                });
+
+                if (!response.ok) throw new Error("Falha ao publicar fluxo");
+
+                showAlert("Sucesso!", "Fluxo publicado com sucesso! O bot já está usando a nova versão.", "info");
+            } catch (error) {
+                console.error(error);
+                showAlert("Erro ao Publicar", (error instanceof Error ? error.message : "Erro desconhecido"), "danger");
+            } finally {
+                setIsPublishing(false);
+            }
+        };
+
         if (validation.warnings.length > 0) {
-            const proceed = confirm(`⚠️ Existem avisos no seu fluxo:\n\n- ${validation.warnings.join('\n- ')}\n\nDeseja publicar mesmo assim?`);
-            if (!proceed) return;
-        }
-
-        try {
-            setIsPublishing(true);
-
-            // Primeiro salva o rascunho atual
-            await handleSave();
-
-            // Depois chama a publicação
-            const response = await fetch(`${API_URL}/flows/${flowId}/publish`, {
-                method: "POST",
+            setModal({
+                isOpen: true,
+                title: "Avisos de Publicação",
+                description: `Existem avisos no seu fluxo:\n\n- ${validation.warnings.join('\n- ')}\n\nDeseja publicar mesmo assim?`,
+                variant: "warning",
+                onConfirm: executePublish,
+                confirmText: "Publicar Mesmo Assim",
+                showCancel: true
             });
-
-            if (!response.ok) throw new Error("Falha ao publicar fluxo");
-
-            alert("🚀 Fluxo publicado com sucesso! O bot já está usando a nova versão.");
-        } catch (error) {
-            console.error(error);
-            alert("Erro ao publicar: " + (error instanceof Error ? error.message : "Erro desconhecido"));
-        } finally {
-            setIsPublishing(false);
+        } else {
+            executePublish();
         }
     };
 
@@ -183,6 +225,18 @@ export function StudioTopbar() {
                     )}
                 </button>
             </div>
+
+            <ConfirmationModal
+                isOpen={modal.isOpen}
+                onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={modal.onConfirm}
+                title={modal.title}
+                description={modal.description}
+                variant={modal.variant}
+                confirmText={modal.confirmText}
+                showCancel={modal.showCancel}
+                isLoading={isPublishing}
+            />
         </header>
     );
 }

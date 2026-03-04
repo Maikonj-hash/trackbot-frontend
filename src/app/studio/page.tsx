@@ -13,10 +13,19 @@ interface FlowRecord {
     updatedAt: string;
 }
 
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+import { InputModal } from "@/components/ui/input-modal";
+
 export default function FlowsPage() {
     const [flows, setFlows] = useState<FlowRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; id: string; name: string }>({
+        isOpen: false,
+        id: "",
+        name: ""
+    });
     const router = useRouter();
 
     const fetchFlows = async () => {
@@ -38,14 +47,14 @@ export default function FlowsPage() {
         fetchFlows();
     }, []);
 
-    const handleCreateNew = async () => {
+    const handleCreateNew = async (name: string) => {
         try {
             setIsCreating(true);
             const res = await fetch(`${API_URL}/flows`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name: "Meu Novo Fluxo",
+                    name,
                     description: "Criado pelo Flow Studio",
                     jsonContent: { nodes: [], edges: [] }
                 }),
@@ -56,20 +65,18 @@ export default function FlowsPage() {
             }
         } catch (error) {
             console.error("Erro ao criar fluxo:", error);
+        } finally {
             setIsCreating(false);
         }
     };
 
-    const handleDelete = async (id: string, e: React.MouseEvent) => {
-        e.stopPropagation(); // Evita o clique de entrar no fluxo
-        if (!confirm("Tem certeza que deseja apagar este fluxo? Esta ação não pode ser desfeita.")) return;
-
+    const handleDelete = async () => {
         try {
-            const res = await fetch(`${API_URL}/flows/${id}`, {
+            const res = await fetch(`${API_URL}/flows/${deleteModal.id}`, {
                 method: "DELETE"
             });
             if (res.ok) {
-                setFlows(flows.filter(f => f.id !== id));
+                setFlows(flows.filter(f => f.id !== deleteModal.id));
             }
         } catch (error) {
             console.error("Erro ao deletar:", error);
@@ -85,7 +92,7 @@ export default function FlowsPage() {
                 </div>
 
                 <button
-                    onClick={handleCreateNew}
+                    onClick={() => setIsCreateModalOpen(true)}
                     disabled={isCreating}
                     className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-md shadow-sm transition-colors disabled:opacity-50"
                 >
@@ -108,7 +115,7 @@ export default function FlowsPage() {
                         Você ainda não criou nenhuma automação. Clique no botão acima para construir seu primeiro chatbot.
                     </p>
                     <button
-                        onClick={handleCreateNew}
+                        onClick={() => setIsCreateModalOpen(true)}
                         disabled={isCreating}
                         className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md shadow-sm transition-colors"
                     >
@@ -129,7 +136,10 @@ export default function FlowsPage() {
                                         <MessageSquareShare className="w-5 h-5" />
                                     </div>
                                     <button
-                                        onClick={(e) => handleDelete(flow.id, e)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setDeleteModal({ isOpen: true, id: flow.id, name: flow.name });
+                                        }}
                                         className="text-muted-foreground hover:text-red-500 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-background rounded-md shadow-sm border border-border/50"
                                     >
                                         <Trash2 className="w-4 h-4" />
@@ -149,6 +159,29 @@ export default function FlowsPage() {
                     ))}
                 </div>
             )}
+
+            {/* Modais de Gerenciamento */}
+            <InputModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSubmit={handleCreateNew}
+                title="Novo Fluxo"
+                description="Dê um nome para sua nova automação."
+                label="Nome do Fluxo"
+                placeholder="Ex: Checkout de Vendas"
+                confirmText="Criar e Editar"
+                isLoading={isCreating}
+            />
+
+            <ConfirmationModal
+                isOpen={deleteModal.isOpen}
+                onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+                onConfirm={handleDelete}
+                variant="danger"
+                title="Apagar Fluxo"
+                description={`Você tem certeza que deseja excluir o fluxo "${deleteModal.name}"? Esta ação não pode ser desfeita.`}
+                confirmText="Excluir Fluxo"
+            />
         </div>
     );
 }
