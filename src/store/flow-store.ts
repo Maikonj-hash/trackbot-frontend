@@ -1,0 +1,155 @@
+import { create } from "zustand";
+import {
+    Connection,
+    Edge,
+    EdgeChange,
+    Node,
+    NodeChange,
+    addEdge,
+    OnNodesChange,
+    OnEdgesChange,
+    OnConnect,
+    applyNodeChanges,
+    applyEdgeChanges,
+} from "@xyflow/react";
+
+// Tipo Global do Bot (Para mesclarmos depois ao Flow Master do Backend)
+export type TrackerNodeData = {
+    label: string;
+    type: string;
+    content?: string;
+    options?: string[];
+    delayMs?: number;
+
+    // Condition
+    conditionVariable?: string;
+    conditionOperator?: 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'IS_EMPTY' | 'IS_NOT_EMPTY';
+    conditionValue?: string | boolean;
+
+    // Media
+    mediaType?: 'image' | 'video' | 'audio' | 'document';
+
+    // Variable
+    variableName?: string;
+    variableAction?: 'SET' | 'INCREMENT' | 'DECREMENT';
+    variableValue?: string;
+
+    // Webhook
+    webhookMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+};
+
+// Cérebro Global (Armazena tudo o que acontece no Studio na Memória RAM limpa)
+type FlowState = {
+    flowId: string | null;
+    flowName: string;
+    flowDescription: string;
+
+    nodes: Node<TrackerNodeData>[];
+    edges: Edge[];
+    selectedNode: Node<TrackerNodeData> | null;
+    onNodesChange: OnNodesChange<Node<TrackerNodeData>>;
+    onEdgesChange: OnEdgesChange;
+    onConnect: OnConnect;
+    setSelectedNode: (nodeId: string | null) => void;
+    updateNodeData: (nodeId: string, data: Partial<TrackerNodeData>) => void;
+    deleteNode: (nodeId: string) => void;
+    addNode: (node: Node<TrackerNodeData>) => void;
+
+    setFlowMetadata: (id: string, name: string, description: string) => void;
+    setFlow: (nodes: Node<TrackerNodeData>[], edges: Edge[]) => void;
+};
+
+export const useFlowStore = create<FlowState>((set, get) => ({
+    flowId: null,
+    flowName: "Fluxo Sem Título",
+    flowDescription: "",
+
+    nodes: [
+        {
+            id: "start-1",
+            type: "startBlock",
+            position: { x: 250, y: 150 },
+            data: { label: "Início", type: "start", content: "Ponto de Partida" },
+        },
+    ],
+    edges: [],
+    selectedNode: null,
+
+    // Eventos Nativos do React Flow para mover as caixas fluidamente
+    onNodesChange: (changes: NodeChange<Node<TrackerNodeData>>[]) => {
+        // Blindagem extra contra a Lixeira Nativa (tecla Delete/Backspace)
+        const safeChanges = changes.filter(c => !(c.type === 'remove' && c.id === 'start-1'));
+        set({
+            nodes: applyNodeChanges(safeChanges, get().nodes),
+        });
+    },
+
+    // Eventos Nativos do React Flow para apagar/mover Fios e Arestas
+    onEdgesChange: (changes: EdgeChange[]) => {
+        set({
+            edges: applyEdgeChanges(changes, get().edges),
+        });
+    },
+
+    // Conectar um Ponto A no Ponto B (Fio Redondo)
+    onConnect: (connection: Connection) => {
+        set({
+            edges: addEdge(connection, get().edges),
+        });
+    },
+
+    // Selecionar uma Caixa (Para abrir a Barra de configurações a direita)
+    setSelectedNode: (nodeId: string | null) => {
+        if (!nodeId) {
+            set({ selectedNode: null });
+            return;
+        }
+        const node = get().nodes.find((n) => n.id === nodeId);
+        set({ selectedNode: node || null });
+    },
+
+    // Quando o usuário digitar algo na 'Caixinha', atualiza o Grid em Tempo real
+    updateNodeData: (nodeId: string, data: Partial<TrackerNodeData>) => {
+        set({
+            nodes: get().nodes.map((node) => {
+                if (node.id === nodeId) {
+                    // Precisamos clonar o nó para o React perceber a alteração e pintar novamente
+                    const updatedNode = { ...node, data: { ...node.data, ...data } };
+                    // Atualiza o Painel Lateral também de brinde
+                    if (get().selectedNode?.id === nodeId) {
+                        set({ selectedNode: updatedNode });
+                    }
+                    return updatedNode;
+                }
+                return node;
+            }),
+        });
+    },
+
+    // Deletar a caixa e todos os fios conectados a ela
+    deleteNode: (nodeId: string) => {
+        if (nodeId === "start-1") return; // Mágica 2: Bloco Intocável
+        set({
+            nodes: get().nodes.filter((node) => node.id !== nodeId),
+            edges: get().edges.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
+            selectedNode: get().selectedNode?.id === nodeId ? null : get().selectedNode,
+        });
+    },
+
+    // Injetar uma caixa do Ponto Cego para o Mundo Virtual
+    addNode: (node: Node<TrackerNodeData>) => {
+        set({
+            nodes: [...get().nodes, node],
+        });
+    },
+
+    // Hydration (Carregar arquivo salvo de volta pra tela)
+    setFlow: (nodes, edges) => {
+        set({ nodes, edges, selectedNode: null });
+    },
+
+    // Salvar qual ID de fluxo o usuário abriu
+    setFlowMetadata: (id, name, description) => {
+        set({ flowId: id, flowName: name, flowDescription: description });
+    }
+}));
