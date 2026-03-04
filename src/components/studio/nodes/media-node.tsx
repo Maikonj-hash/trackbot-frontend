@@ -1,47 +1,29 @@
-import { Handle, Position, NodeProps, Node } from "@xyflow/react";
+import { Position, NodeProps, Node } from "@xyflow/react";
 import { Image as ImageIcon } from "lucide-react";
-import { clsx } from "clsx";
 import { TrackerNodeData } from "@/store/flow-store";
+import { NodeContainer } from "./base/node-container";
+import { NodeHeader } from "./base/node-header";
+import { NodeHandle } from "./base/node-handle";
 
 export function MediaNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
-    const typeLabels = {
-        image: "Imagem",
-        video: "Vídeo",
-        audio: "Áudio",
-        document: "Documento",
-    };
-    const mediaLabel = typeLabels[data?.mediaType as keyof typeof typeLabels] || "Imagem";
+    const typeLabel = data?.mediaType?.toUpperCase() || "IMAGE";
 
     return (
-        <div className={clsx(
-            "flex w-60 flex-col rounded-md border border-border/50 shadow-sm bg-card transition-all",
-            selected ? "border-pink-500 ring-1 ring-pink-500" : "hover:border-foreground/30"
-        )}>
-            {/* Entrada */}
-            <Handle type="target" position={Position.Top} className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground" />
+        <NodeContainer selected={selected} color="pink">
+            <NodeHandle type="target" position={Position.Top} />
 
-            <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md">
-                <ImageIcon className="w-3 h-3 text-pink-500" />
-                <span className="text-[10px] font-mono font-bold text-pink-500 tracking-widest uppercase">
-                    MEDIA ({mediaLabel.toUpperCase()})
-                </span>
-            </div>
+            <NodeHeader icon={ImageIcon} label={`SEND ${typeLabel}`} color="pink" />
 
-            <div className="p-3 bg-card pb-1">
-                <div className="text-[11px] font-medium leading-relaxed truncate px-1 text-foreground/80">
-                    {data?.content || "Nenhum arquivo anexado"}
+            <div className="p-3 bg-card space-y-3">
+                <div className="aspect-video w-full rounded border border-border/40 bg-muted/20 flex items-center justify-center overflow-hidden">
+                    <ImageIcon className="w-6 h-6 text-pink-500/20" />
+                </div>
+                <div className="text-[10px] truncate text-muted-foreground bg-muted/30 px-2 py-1 rounded font-mono">
+                    {data?.content || "No media URL"}
                 </div>
             </div>
 
-            <div className="px-3 pb-3 bg-card pt-1">
-                <div className="h-[80px] w-full rounded-md border border-dashed border-border/60 bg-muted/20 flex flex-col gap-1 items-center justify-center text-[10px] text-muted-foreground uppercase tracking-widest font-mono">
-                    <ImageIcon className="w-4 h-4 text-muted-foreground/50" />
-                    Preview
-                </div>
-            </div>
-
-            {/* Saída */}
-            <Handle type="source" position={Position.Bottom} className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-pink-500" />
-        </div>
+            <NodeHandle type="source" position={Position.Bottom} color="pink" />
+        </NodeContainer>
     );
 }

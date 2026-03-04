@@ -1,32 +1,20 @@
-import { Handle, Position, NodeProps, Node } from "@xyflow/react";
+import { Position, NodeProps, Node } from "@xyflow/react";
 import { ListOrdered } from "lucide-react";
-import { clsx } from "clsx";
 import { TrackerNodeData } from "@/store/flow-store";
+import { NodeContainer } from "./base/node-container";
+import { NodeHeader } from "./base/node-header";
+import { NodeHandle } from "./base/node-handle";
 
 export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
-    // Mock inicial caso a caixa seja arrastada e não tenha dados ainda
-    const menuOptions = data?.options && data.options.length > 0
-        ? data.options
-        : ["Sim", "Não"];
+    // Blindagem Cirúrgica: Garantir que sempre haja um array, mesmo que vazio
+    const rawOptions = Array.isArray(data?.options) ? data.options : [];
+    const menuOptions = rawOptions.length > 0 ? rawOptions : ["Sim", "Não"];
 
     return (
-        <div className={clsx(
-            "flex w-60 flex-col rounded-md border border-border/50 shadow-sm bg-card transition-all",
-            selected ? "border-blue-500 ring-1 ring-blue-500" : "hover:border-foreground/30"
-        )}>
-            {/* Entrada (Topo) */}
-            <Handle
-                type="target"
-                position={Position.Top}
-                className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground"
-            />
+        <NodeContainer selected={selected} color="blue">
+            <NodeHandle type="target" position={Position.Top} />
 
-            <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md">
-                <ListOrdered className="w-3 h-3 text-blue-500" />
-                <span className="text-[10px] font-mono font-bold text-blue-500 tracking-widest uppercase">
-                    OPTIONS MENU
-                </span>
-            </div>
+            <NodeHeader icon={ListOrdered} label="OPTIONS MENU" color="blue" />
 
             <div className="p-3 bg-card pb-1">
                 <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
@@ -34,39 +22,38 @@ export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
                 </div>
             </div>
 
-            {/* Renderizador de Saídas Múltiplas Dinâmicas */}
-            <div className="flex flex-col gap-1.5 p-3 bg-card pb-4 relative">
+            <div className="flex flex-col gap-1.5 p-3 bg-card pb-4 relative max-h-[300px] overflow-y-auto custom-scrollbar">
                 {menuOptions.map((opt, index) => (
-                    <div key={index} className="relative w-full">
+                    <div key={`${index}-${opt}`} className="relative w-full">
                         <div className="text-[11px] font-medium text-foreground py-1.5 px-3 bg-muted/20 border border-border/40 rounded-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] truncate flex items-center gap-2 group hover:border-blue-500/30 hover:bg-muted/40 transition-colors">
                             <span className="text-[9px] font-mono text-muted-foreground/50 pr-2 border-r border-border/50 flex-shrink-0">
                                 {String(index + 1).padStart(2, '0')}
                             </span>
-                            <span className="truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{opt}</span>
+                            <span className="truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{opt || "Nova Opção"}</span>
                         </div>
 
-                        {/* Aresta (Handle) Conectada Diretamente na Opção correspondente (Eixo Direito X) */}
-                        <Handle
+                        <NodeHandle
                             type="source"
                             position={Position.Right}
                             id={`option_${index}`}
                             style={{ top: '50%', right: '-4px' }}
-                            className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-blue-500"
+                            color="blue"
                         />
                     </div>
                 ))}
             </div>
 
-            {/* Saída de Fallback caso o cara digite uma Opção inválida no Whats */}
-            <div className="h-3 bg-muted/10 border-t border-border/50 relative w-full rounded-b-md">
-                <Handle
+            <div className="h-4 bg-muted/10 border-t border-border/50 relative w-full rounded-b-md flex items-center justify-center">
+                <span className="text-[8px] font-mono text-muted-foreground/40 uppercase tracking-tighter">Fallback Path</span>
+                <NodeHandle
                     type="source"
                     id="fallback"
                     position={Position.Bottom}
-                    className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground absolute left-1/2 -translate-x-1/2"
+                    className="absolute left-1/2 -translate-x-1/2"
                     style={{ bottom: '-4px' }}
+                    color="muted"
                 />
             </div>
-        </div>
+        </NodeContainer>
     );
 }

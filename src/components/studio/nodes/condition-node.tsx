@@ -1,77 +1,71 @@
-import { Handle, Position, NodeProps, Node } from "@xyflow/react";
-import { Split } from "lucide-react";
-import { clsx } from "clsx";
+import { Position, NodeProps, Node } from "@xyflow/react";
+import { GitBranch } from "lucide-react";
 import { TrackerNodeData } from "@/store/flow-store";
+import { NodeContainer } from "./base/node-container";
+import { NodeHeader } from "./base/node-header";
+import { NodeHandle } from "./base/node-handle";
 
 export function ConditionNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
-    const variable = data?.conditionVariable || "{{variável}}";
+    const operatorMap: Record<string, string> = {
+        EQUALS: "==",
+        NOT_EQUALS: "!=",
+        CONTAINS: "∋",
+        IS_EMPTY: "∅",
+        IS_NOT_EMPTY: "∃",
+    };
 
-    let operatorSymbol = "=";
-    switch (data?.conditionOperator) {
-        case "EQUALS": operatorSymbol = "="; break;
-        case "NOT_EQUALS": operatorSymbol = "!="; break;
-        case "CONTAINS": operatorSymbol = "contém"; break;
-        case "IS_EMPTY": operatorSymbol = "vazio"; break;
-        case "IS_NOT_EMPTY": operatorSymbol = "preenchido"; break;
-    }
-
-    const val = data?.conditionValue !== undefined && data?.conditionValue !== "" ? `'${data.conditionValue}'` : "'valor'";
-
-    const displayText = data?.conditionOperator === "IS_EMPTY" || data?.conditionOperator === "IS_NOT_EMPTY"
-        ? `Se ${variable} é ${operatorSymbol}`
-        : `Se ${variable} ${operatorSymbol} ${val}`;
+    const variable = data?.conditionVariable || "Not set";
+    const operator = operatorMap[data?.conditionOperator || ""] || data?.conditionOperator || "Operator";
+    const value = data?.conditionValue !== undefined ? String(data.conditionValue) : "Value";
 
     return (
-        <div className={clsx(
-            "flex w-60 flex-col rounded-md border border-border/50 shadow-sm bg-card transition-all",
-            selected ? "border-amber-500 ring-1 ring-amber-500" : "hover:border-foreground/30"
-        )}>
-            {/* Entrada (Apenas 1 por cima) */}
-            <Handle
-                type="target"
-                position={Position.Top}
-                className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground"
-            />
+        <NodeContainer selected={selected} color="violet">
+            <NodeHandle type="target" position={Position.Top} />
 
-            <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md">
-                <Split className="w-3 h-3 text-amber-500" />
-                <span className="text-[10px] font-mono font-bold text-amber-500 tracking-widest uppercase">
-                    CONDITION
-                </span>
-            </div>
+            <NodeHeader icon={GitBranch} label="LOGIC CONDITION" color="violet" />
 
-            <div className="p-3 bg-card space-y-2">
-                <div className="text-[11px] font-medium text-foreground/80 py-1.5 px-2 bg-muted/30 border border-border/50 rounded-md text-center truncate">
-                    {displayText}
+            <div className="p-3 flex flex-col gap-2 bg-card">
+                <div className="flex flex-col gap-1 bg-muted/20 p-2 rounded border border-border/40">
+                    <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-tight">IF VARIABLE</span>
+                    <div className="text-[11px] font-bold text-violet-500 truncate">
+                        {variable}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <div className="flex-1 h-[1px] bg-border/50" />
+                    <span className="text-[10px] font-mono font-bold text-violet-400 bg-muted/30 px-1.5 rounded">{operator}</span>
+                    <div className="flex-1 h-[1px] bg-border/50" />
+                </div>
+
+                <div className="text-[11px] font-medium text-center bg-muted/10 py-1.5 rounded border border-dashed border-border/60 text-foreground/70">
+                    {value}
                 </div>
             </div>
 
-            {/* Portas Lógicas de Referência Industrial */}
-            <div className="flex w-full border-t border-border/50 bg-muted/5 rounded-b-md">
-                {/* Porta True */}
-                <div className="flex-1 flex flex-col items-center justify-center py-2 border-r border-border/50 relative group hover:bg-emerald-500/5 transition-colors">
-                    <span className="text-[9px] font-mono tracking-widest text-emerald-600/80 dark:text-emerald-500/80 uppercase">True</span>
-                    <Handle
+            <div className="grid grid-cols-2 border-t border-border/50 bg-muted/5 rounded-b-md h-8">
+                <div className="flex items-center justify-center border-r border-border/50 relative group hover:bg-emerald-500/5 transition-colors">
+                    <span className="text-[9px] font-bold text-emerald-600 tracking-tighter uppercase opacity-70 group-hover:opacity-100">TRUE</span>
+                    <NodeHandle
                         type="source"
                         id="true"
                         position={Position.Bottom}
-                        className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-emerald-500"
+                        color="emerald"
                         style={{ bottom: '-4px' }}
                     />
                 </div>
 
-                {/* Porta False */}
-                <div className="flex-1 flex flex-col items-center justify-center py-2 relative group hover:bg-red-500/5 transition-colors">
-                    <span className="text-[9px] font-mono tracking-widest text-red-600/80 dark:text-red-500/80 uppercase">False</span>
-                    <Handle
+                <div className="flex items-center justify-center relative group hover:bg-red-500/5 transition-colors">
+                    <span className="text-[9px] font-bold text-red-600 tracking-tighter uppercase opacity-70 group-hover:opacity-100">FALSE</span>
+                    <NodeHandle
                         type="source"
                         id="false"
                         position={Position.Bottom}
-                        className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-red-500"
+                        color="red"
                         style={{ bottom: '-4px' }}
                     />
                 </div>
             </div>
-        </div>
+        </NodeContainer>
     );
 }

@@ -1,49 +1,41 @@
-import { Handle, Position, NodeProps, Node } from "@xyflow/react";
-import { Keyboard, Variable } from "lucide-react";
-import { clsx } from "clsx";
+import { Position, NodeProps, Node } from "@xyflow/react";
+import { UserRound } from "lucide-react";
 import { TrackerNodeData } from "@/store/flow-store";
+import { NodeContainer } from "./base/node-container";
+import { NodeHeader } from "./base/node-header";
+import { NodeHandle } from "./base/node-handle";
 
 export function InputNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     return (
-        <div className={clsx(
-            "flex w-60 flex-col rounded-md border border-border/50 shadow-sm bg-card transition-all",
-            selected ? "border-violet-500 ring-1 ring-violet-500" : "hover:border-foreground/30"
-        )}>
-            {/* Entrada (Apenas 1 por cima) */}
-            <Handle
-                type="target"
-                position={Position.Top}
-                className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground"
-            />
+        <NodeContainer selected={selected} color="violet">
+            <NodeHandle type="target" position={Position.Top} />
 
-            <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md">
-                <Keyboard className="w-3 h-3 text-violet-500" />
-                <span className="text-[10px] font-mono font-bold text-violet-500 tracking-widest uppercase">
-                    INPUT
-                </span>
-            </div>
+            <NodeHeader icon={UserRound} label="USER INPUT" color="violet" />
 
-            <div className="p-3 bg-card pb-2">
+            <div className="p-3 bg-card space-y-2">
+                <div className="text-[10px] font-mono text-muted-foreground uppercase opacity-70">
+                    Question to User:
+                </div>
                 <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
-                    {data?.content || "Escreva a pergunta..."}
+                    {data?.content || "Sua pergunta aqui..."}
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-border/30">
+                    <div className="text-[9px] font-mono text-violet-500 uppercase tracking-widest bg-violet-500/10 px-2 py-0.5 rounded-full inline-block">
+                        Save to Variable
+                    </div>
                 </div>
             </div>
 
-            {/* Fundo do Card com o local de Variavel Alvo */}
-            <div className="flex flex-col items-center p-3 bg-muted/10 border-t border-border/50 relative rounded-b-md">
-                <div className="flex w-full items-center gap-2 border border-border/50 bg-card px-2 py-1.5 rounded-md text-muted-foreground justify-center shadow-sm">
-                    <Variable className="w-3 h-3 text-violet-500/70" />
-                    <span className="text-[10px] font-mono tracking-wider">{data?.variableName || "{{ variavel }}"}</span>
-                </div>
-
-                <Handle
+            <div className="h-4 relative w-full rounded-b-md bg-muted/5">
+                <NodeHandle
                     type="source"
                     id="next"
                     position={Position.Bottom}
-                    className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-violet-500"
+                    color="violet"
                     style={{ bottom: '-4px' }}
                 />
             </div>
-        </div>
+        </NodeContainer>
     );
 }

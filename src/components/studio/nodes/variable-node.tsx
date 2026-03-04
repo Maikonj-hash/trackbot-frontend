@@ -1,38 +1,36 @@
-import { Handle, Position, NodeProps, Node } from "@xyflow/react";
+import { Position, NodeProps, Node } from "@xyflow/react";
 import { Variable } from "lucide-react";
-import { clsx } from "clsx";
 import { TrackerNodeData } from "@/store/flow-store";
+import { NodeContainer } from "./base/node-container";
+import { NodeHeader } from "./base/node-header";
+import { NodeHandle } from "./base/node-handle";
 
 export function VariableNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
-    let actionSymbol = "=";
-    if (data?.variableAction === "INCREMENT") actionSymbol = "+=";
-    if (data?.variableAction === "DECREMENT") actionSymbol = "-=";
+    const actionMap: Record<string, string> = {
+        SET: "=",
+        INCREMENT: "+=",
+        DECREMENT: "-=",
+    };
+
+    const variable = data?.variableName || "var_name";
+    const action = actionMap[data?.variableAction || "SET"] || "=";
+    const value = data?.variableValue || "value";
 
     return (
-        <div className={clsx(
-            "flex w-60 flex-col rounded-md border border-border/50 shadow-sm bg-card transition-all",
-            selected ? "border-fuchsia-500 ring-1 ring-fuchsia-500" : "hover:border-foreground/30"
-        )}>
-            {/* Entrada */}
-            <Handle type="target" position={Position.Top} className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground" />
+        <NodeContainer selected={selected} color="fuchsia">
+            <NodeHandle type="target" position={Position.Top} />
 
-            <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md">
-                <Variable className="w-3 h-3 text-fuchsia-500" />
-                <span className="text-[10px] font-mono font-bold text-fuchsia-500 tracking-widest uppercase">
-                    SET VARIABLE
-                </span>
-            </div>
+            <NodeHeader icon={Variable} label="SET VARIABLE" color="fuchsia" />
 
-            <div className="p-3 bg-card">
-                <div className="flex items-center gap-2 text-[11px] bg-muted/20 border border-border/50 rounded py-1.5 px-2">
-                    <span className="font-mono text-fuchsia-500 font-bold tracking-wider">{data?.variableName || "score"}</span>
-                    <span className="text-muted-foreground font-mono">{actionSymbol}</span>
-                    <span className="font-mono text-foreground tracking-wider">{data?.variableValue || "0"}</span>
+            <div className="p-3 bg-card flex flex-col gap-2">
+                <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-fuchsia-500 bg-fuchsia-500/5 px-2 py-2 rounded border border-fuchsia-500/10 shadow-inner">
+                    <span className="font-bold">{variable}</span>
+                    <span className="text-muted-foreground/50">{action}</span>
+                    <span className="text-foreground/80">{value}</span>
                 </div>
             </div>
 
-            {/* Saída */}
-            <Handle type="source" position={Position.Bottom} className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-fuchsia-500" />
-        </div>
+            <NodeHandle type="source" position={Position.Bottom} color="fuchsia" />
+        </NodeContainer>
     );
 }

@@ -14,6 +14,12 @@ import {
 } from "@xyflow/react";
 
 // Tipo Global do Bot (Para mesclarmos depois ao Flow Master do Backend)
+// Enumerações Estritas para Blindagem
+export type ConditionOperator = 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'IS_EMPTY' | 'IS_NOT_EMPTY';
+export type MediaType = 'image' | 'video' | 'audio' | 'document';
+export type VariableAction = 'SET' | 'INCREMENT' | 'DECREMENT';
+export type WebhookMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
 export type TrackerNodeData = {
     label: string;
     type: string;
@@ -23,19 +29,19 @@ export type TrackerNodeData = {
 
     // Condition
     conditionVariable?: string;
-    conditionOperator?: 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'IS_EMPTY' | 'IS_NOT_EMPTY';
+    conditionOperator?: ConditionOperator;
     conditionValue?: string | boolean;
 
     // Media
-    mediaType?: 'image' | 'video' | 'audio' | 'document';
+    mediaType?: MediaType;
 
     // Variable
     variableName?: string;
-    variableAction?: 'SET' | 'INCREMENT' | 'DECREMENT';
+    variableAction?: VariableAction;
     variableValue?: string;
 
     // Webhook
-    webhookMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    webhookMethod?: WebhookMethod;
 };
 
 // Cérebro Global (Armazena tudo o que acontece no Studio na Memória RAM limpa)
@@ -114,8 +120,15 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         set({
             nodes: get().nodes.map((node) => {
                 if (node.id === nodeId) {
+                    // Blindagem: Sanitização de dados numéricos
+                    const sanitizedData = { ...data };
+                    if (sanitizedData.delayMs !== undefined) {
+                        sanitizedData.delayMs = Math.max(0, sanitizedData.delayMs);
+                    }
+
                     // Precisamos clonar o nó para o React perceber a alteração e pintar novamente
-                    const updatedNode = { ...node, data: { ...node.data, ...data } };
+                    const updatedNode = { ...node, data: { ...node.data, ...sanitizedData } };
+
                     // Atualiza o Painel Lateral também de brinde
                     if (get().selectedNode?.id === nodeId) {
                         set({ selectedNode: updatedNode });
@@ -139,8 +152,11 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
     // Injetar uma caixa do Ponto Cego para o Mundo Virtual
     addNode: (node: Node<TrackerNodeData>) => {
+        const exists = get().nodes.some(n => n.id === node.id);
+        const safeNode = exists ? { ...node, id: `${node.id}-${Date.now()}` } : node;
+
         set({
-            nodes: [...get().nodes, node],
+            nodes: [...get().nodes, safeNode],
         });
     },
 
