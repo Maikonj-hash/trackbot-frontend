@@ -6,18 +6,16 @@ import { TrackerNodeData } from "@/store/flow-store";
 export function EndNode({ selected }: NodeProps<Node<TrackerNodeData>>) {
     return (
         <div className={clsx(
-            "flex w-[200px] flex-col rounded-md border shadow-sm overflow-hidden transition-all",
-            selected ? "border-red-500 ring-1 ring-red-500" : "border-border bg-card hover:border-border/80"
+            "flex items-center gap-2 px-4 py-2 rounded-md border border-border/50 shadow-sm transition-all bg-card min-w-[140px] justify-center",
+            selected ? "border-red-500 ring-1 ring-red-500" : "hover:border-foreground/30"
         )}>
             {/* Entrada */}
-            <Handle type="target" position={Position.Top} className="w-3 h-3 border-2 bg-muted-foreground" />
+            <Handle type="target" position={Position.Top} className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground" />
 
-            <div className="flex items-center justify-center gap-2 bg-red-500/10 px-3 py-3">
-                <CircleStop className="w-4 h-4 text-red-500" />
-                <span className="text-xs font-bold text-red-500 tracking-wider uppercase">
-                    Fim do Fluxo
-                </span>
-            </div>
+            <CircleStop className="w-3 h-3 text-red-500" />
+            <span className="text-[10px] font-mono font-bold text-red-500 tracking-widest uppercase mt-0.5">
+                END PROCESS
+            </span>
         </div>
     );
 }

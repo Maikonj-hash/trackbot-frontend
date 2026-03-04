@@ -120,7 +120,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Overrides para os Handles do React Flow assumirem as classes do Tailwind */
+.react-flow__handle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 8px !important;
+  min-height: 8px !important;
+  z-index: 50 !important;
 }

@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { Save, Loader2, Play, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Save, Loader2, Play, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useFlowStore } from "@/store/flow-store";
 import { parseReactFlowToBackend } from "@/lib/flow-parser";
+import { Input } from "@/components/ui/input";
 
 export function StudioTopbar() {
-    const { nodes, edges, flowId, flowName, setFlowMetadata } = useFlowStore();
+    const router = useRouter();
+    const { nodes, edges, flowId, flowName, setFlowMetadata, setFlowName } = useFlowStore();
     const [isSaving, setIsSaving] = useState(false);
     const [saved, setSaved] = useState(false);
 
@@ -26,9 +29,13 @@ export function StudioTopbar() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    name: backendPayload.name,
+                    name: flowName,
                     description: "Gerado pelo TrackBot Studio Web",
-                    jsonContent: backendPayload
+                    jsonContent: {
+                        nodes: nodes,
+                        edges: edges,
+                        backendFlow: backendPayload
+                    }
                 })
             });
 
@@ -60,12 +67,25 @@ export function StudioTopbar() {
     return (
         <header className="h-14 bg-background border-b border-border/50 flex items-center justify-between px-6 z-20 shadow-sm relative">
             <div className="flex items-center gap-4">
+                <button
+                    onClick={() => router.push('/studio')}
+                    className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-muted text-muted-foreground transition-colors mr-2 border border-transparent hover:border-border"
+                    title="Voltar para Meus Fluxos"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                </button>
                 <div className="w-8 h-8 rounded-md bg-emerald-500/20 flex items-center justify-center">
                     <Play className="w-4 h-4 text-emerald-500 fill-emerald-500" />
                 </div>
-                <div>
-                    <h2 className="text-sm font-semibold tracking-tight leading-none text-foreground">{flowName}</h2>
-                    <p className="text-xs text-muted-foreground mt-1 leading-none">
+                <div className="flex flex-col">
+                    <input
+                        type="text"
+                        value={flowName}
+                        onChange={(e) => setFlowName(e.target.value)}
+                        className="bg-transparent border-none text-sm font-semibold tracking-tight text-foreground focus:outline-none focus:ring-0 p-0 hover:bg-muted/50 rounded px-1 -mx-1 transition-colors w-64"
+                        placeholder="Nome do Fluxo..."
+                    />
+                    <p className="text-xs text-muted-foreground leading-none">
                         {nodes.length} Blocos no canvas
                     </p>
                 </div>

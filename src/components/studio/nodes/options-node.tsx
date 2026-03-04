@@ -11,35 +11,38 @@ export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
 
     return (
         <div className={clsx(
-            "flex w-64 flex-col rounded-md border shadow-sm overflow-hidden transition-all",
-            selected ? "border-blue-500 ring-1 ring-blue-500" : "border-border bg-card hover:border-border/80"
+            "flex w-60 flex-col rounded-md border border-border/50 shadow-sm bg-card transition-all",
+            selected ? "border-blue-500 ring-1 ring-blue-500" : "hover:border-foreground/30"
         )}>
             {/* Entrada (Topo) */}
             <Handle
                 type="target"
                 position={Position.Top}
-                className="w-3 h-3 border-2 bg-muted-foreground"
+                className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground"
             />
 
-            <div className="flex items-center gap-2 bg-blue-500/10 px-3 py-2 border-b border-border/50">
-                <ListOrdered className="w-4 h-4 text-blue-500" />
-                <span className="text-xs font-semibold text-blue-500 tracking-wider uppercase">
-                    Menu de Opções
+            <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md">
+                <ListOrdered className="w-3 h-3 text-blue-500" />
+                <span className="text-[10px] font-mono font-bold text-blue-500 tracking-widest uppercase">
+                    OPTIONS MENU
                 </span>
             </div>
 
-            <div className="p-3 bg-muted/20 pb-0">
-                <div className="text-sm font-medium leading-relaxed truncate px-1">
+            <div className="p-3 bg-card pb-1">
+                <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
                     {data?.content || "Escolha uma das opções:"}
                 </div>
             </div>
 
             {/* Renderizador de Saídas Múltiplas Dinâmicas */}
-            <div className="flex flex-col gap-1 p-3 bg-muted/20 pb-4 relative">
+            <div className="flex flex-col gap-1.5 p-3 bg-card pb-4 relative">
                 {menuOptions.map((opt, index) => (
                     <div key={index} className="relative w-full">
-                        <div className="text-xs font-medium text-foreground py-1.5 px-3 bg-background border border-border rounded-md shadow-sm truncate flex justify-between items-center group">
-                            <span className="truncate">{opt}</span>
+                        <div className="text-[11px] font-medium text-foreground py-1.5 px-3 bg-muted/20 border border-border/40 rounded-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] truncate flex items-center gap-2 group hover:border-blue-500/30 hover:bg-muted/40 transition-colors">
+                            <span className="text-[9px] font-mono text-muted-foreground/50 pr-2 border-r border-border/50 flex-shrink-0">
+                                {String(index + 1).padStart(2, '0')}
+                            </span>
+                            <span className="truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{opt}</span>
                         </div>
 
                         {/* Aresta (Handle) Conectada Diretamente na Opção correspondente (Eixo Direito X) */}
@@ -47,26 +50,23 @@ export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
                             type="source"
                             position={Position.Right}
                             id={`option_${index}`}
-                            style={{ top: '50%', right: '-5px' }}
-                            className="w-3 h-3 border-2 bg-blue-500 border-background"
+                            style={{ top: '50%', right: '-4px' }}
+                            className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-blue-500"
                         />
                     </div>
                 ))}
             </div>
 
             {/* Saída de Fallback caso o cara digite uma Opção inválida no Whats */}
-            <div className="flex justify-between items-center p-2 bg-card border-t border-border/50 relative px-4">
-                <div className="flex items-center gap-1.5 flex-col relative top-1 mx-auto">
-                    <span className="text-[10px] font-bold text-muted-foreground">Erro / Outra Opção</span>
-                    <Handle
-                        type="source"
-                        id="fallback"
-                        position={Position.Bottom}
-                        className="w-3 h-3 border-2 bg-muted-foreground border-background relative transform-none left-0 bottom-[-6px]"
-                    />
-                </div>
+            <div className="h-3 bg-muted/10 border-t border-border/50 relative w-full rounded-b-md">
+                <Handle
+                    type="source"
+                    id="fallback"
+                    position={Position.Bottom}
+                    className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground absolute left-1/2 -translate-x-1/2"
+                    style={{ bottom: '-4px' }}
+                />
             </div>
-
         </div>
     );
 }

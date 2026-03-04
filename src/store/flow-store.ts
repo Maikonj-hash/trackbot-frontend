@@ -56,6 +56,7 @@ type FlowState = {
     addNode: (node: Node<TrackerNodeData>) => void;
 
     setFlowMetadata: (id: string, name: string, description: string) => void;
+    setFlowName: (name: string) => void;
     setFlow: (nodes: Node<TrackerNodeData>[], edges: Edge[]) => void;
 };
 
@@ -145,11 +146,29 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
     // Hydration (Carregar arquivo salvo de volta pra tela)
     setFlow: (nodes, edges) => {
-        set({ nodes, edges, selectedNode: null });
+        let hydratedNodes = nodes;
+        // Mágica 6: Garantir que fluxos vazios/novos criados no banco não percam o Bloco Início do Frontend
+        const hasStart = nodes.some(n => n.id === "start-1" || n.type === "startBlock");
+        if (!hasStart) {
+            hydratedNodes = [
+                {
+                    id: "start-1",
+                    type: "startBlock",
+                    position: { x: 250, y: 150 },
+                    data: { label: "Início", type: "start", content: "Ponto de Partida" },
+                },
+                ...nodes
+            ];
+        }
+        set({ nodes: hydratedNodes, edges, selectedNode: null });
     },
 
     // Salvar qual ID de fluxo o usuário abriu
     setFlowMetadata: (id, name, description) => {
         set({ flowId: id, flowName: name, flowDescription: description });
+    },
+
+    setFlowName: (name: string) => {
+        set({ flowName: name });
     }
 }));

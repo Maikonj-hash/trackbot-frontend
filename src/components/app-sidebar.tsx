@@ -1,5 +1,7 @@
 "use client"
 
+import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { Bot, LayoutDashboard, MessageSquareText, Workflow, Phone, Settings } from "lucide-react"
 import {
     Sidebar,
@@ -11,71 +13,85 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarHeader,
-    SidebarFooter
+    SidebarFooter,
+    useSidebar
 } from "@/components/ui/sidebar"
 
-// Menu iterável da Sidebar Esquerda
-const items = [
+// Grupos lógicos de navegação para SaaS
+const navGroups = [
     {
-        title: "Dashboard",
-        url: "/",
-        icon: LayoutDashboard,
+        label: "OPERAÇÃO",
+        items: [
+            { title: "Live Chat", url: "/workspace", icon: MessageSquareText },
+            { title: "CRM e Leads", url: "/leads", icon: Bot },
+        ]
     },
     {
-        title: "Live Chat",
-        url: "/workspace",
-        icon: MessageSquareText,
+        label: "AUTOMAÇÃO",
+        items: [
+            { title: "Meus Fluxos", url: "/", icon: LayoutDashboard },
+            { title: "Flow Studio", url: "/studio", icon: Workflow },
+        ]
     },
     {
-        title: "Flow Studio",
-        url: "/studio",
-        icon: Workflow,
-    },
-    {
-        title: "Instâncias (Chips)",
-        url: "/instances",
-        icon: Phone,
-    },
-    {
-        title: "CRM e Leads",
-        url: "/leads",
-        icon: Bot,
-    },
+        label: "INFRAESTRUTURA",
+        items: [
+            { title: "Instâncias (Chips)", url: "/instances", icon: Phone },
+        ]
+    }
 ]
 
 export function AppSidebar() {
+    const pathname = usePathname();
+    const { state } = useSidebar();
+
     return (
         <Sidebar variant="sidebar" collapsible="icon">
-            <SidebarHeader className="border-b border-border/10 py-4">
-                <div className="flex items-center gap-2 px-2">
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <Bot className="size-5" />
-                    </div>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold text-lg tracking-tight">TrackBot</span>
-                        <span className="truncate text-xs text-muted-foreground">Workspace</span>
+            <SidebarHeader className="border-b border-border/10 py-5">
+                <div className="flex flex-col items-center justify-center gap-3 px-2">
+                    <div className="flex h-16 w-full max-w-[180px] items-center justify-center relative rounded-md group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 transition-all">
+                        <Image
+                            src={state === "collapsed" ? "/logo2.png" : "/logo1.png"}
+                            alt="TrackBot Logo"
+                            fill
+                            className="object-contain"
+                            priority
+                        />
                     </div>
                 </div>
             </SidebarHeader>
 
             <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild tooltip={item.title}>
-                                        <a href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+                {navGroups.map((group) => (
+                    <SidebarGroup key={group.label}>
+                        <SidebarGroupLabel className="text-xs font-semibold tracking-wider text-muted-foreground/70 uppercase">
+                            {group.label}
+                        </SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {group.items.map((item) => {
+                                    const isActive = pathname === item.url || (item.url !== "/" && pathname.startsWith(item.url));
+
+                                    return (
+                                        <SidebarMenuItem key={item.title}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                tooltip={item.title}
+                                                isActive={isActive}
+                                                className="transition-colors hover:bg-emerald-500/10 hover:text-emerald-500 data-[active=true]:bg-emerald-500/15 data-[active=true]:text-emerald-500"
+                                            >
+                                                <a href={item.url}>
+                                                    <item.icon />
+                                                    <span className="font-medium tracking-tight">{item.title}</span>
+                                                </a>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    )
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
 
             <SidebarFooter className="border-t border-border/10">

@@ -6,21 +6,21 @@ import { TrackerNodeData } from "@/store/flow-store";
 export function HandoverNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     return (
         <div className={clsx(
-            "flex w-64 flex-col rounded-md border shadow-sm overflow-hidden transition-all",
-            selected ? "border-rose-500 ring-1 ring-rose-500" : "border-border bg-card hover:border-border/80"
+            "flex w-60 flex-col rounded-md border border-border/50 shadow-sm bg-card transition-all",
+            selected ? "border-rose-500 ring-1 ring-rose-500" : "hover:border-foreground/30"
         )}>
             {/* Entrada */}
-            <Handle type="target" position={Position.Top} className="w-3 h-3 border-2 bg-muted-foreground" />
+            <Handle type="target" position={Position.Top} className="w-2 h-2 rounded-[2px] bg-background border-[1px] border-muted-foreground" />
 
-            <div className="flex items-center gap-2 bg-rose-500/10 px-3 py-2 border-b border-border/50">
-                <Headset className="w-4 h-4 text-rose-500" />
-                <span className="text-xs font-semibold text-rose-500 tracking-wider uppercase">
-                    Atendimento Humano
+            <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md">
+                <Headset className="w-3 h-3 text-rose-500" />
+                <span className="text-[10px] font-mono font-bold text-rose-500 tracking-widest uppercase">
+                    HUMAN HANDOVER
                 </span>
             </div>
 
-            <div className="p-3 bg-muted/20 text-center">
-                <div className="text-xs font-medium text-foreground py-1 px-2 border border-rose-500/20 bg-rose-500/5 rounded-md text-center">
+            <div className="p-3 bg-card text-center">
+                <div className="text-[10px] font-medium text-foreground py-1.5 px-2 border border-border/50 bg-muted/20 rounded-md text-center">
                     Transferir para: {data?.content || "Qualquer Atendente"}
                 </div>
             </div>

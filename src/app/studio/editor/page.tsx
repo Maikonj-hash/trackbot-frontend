@@ -77,9 +77,9 @@ function StudioCanvas() {
                     setFlow([], []);
                 }
 
-                // Mágica 5: Auto-Centralização no Reload
+                // Mágica 5: Auto-Centralização no Reload com MaxZoom travado (UX mais polida)
                 setTimeout(() => {
-                    fitView({ padding: 0.2, duration: 800 });
+                    fitView({ padding: 0.2, duration: 800, maxZoom: 1 });
                 }, 100);
             })
             .catch(err => console.error("Erro ao carregar fluxo", err));
@@ -153,15 +153,15 @@ function StudioCanvas() {
                             variant={BackgroundVariant.Dots}
                             gap={16}
                             size={1.5}
-                            color="rgba(255, 255, 255, 0.15)"
+                            color="rgba(0, 0, 0, 0.1)"
                         />
                         <Controls className="fill-foreground stroke-border bg-card shadow-lg" showInteractive={false} />
 
                         <Panel position="top-left" className="m-4">
-                            <h1 className="text-xl font-bold tracking-tight text-white/90 drop-shadow-md">
+                            <h1 className="text-xl font-bold tracking-tight text-foreground drop-shadow-md">
                                 Flow Builder MVP
                             </h1>
-                            <p className="text-sm text-white/50">Edite, araste e clique nas caixas.</p>
+                            <p className="text-sm text-muted-foreground">Edite, arraste e clique nas caixas.</p>
                         </Panel>
 
                         <MiniMap
@@ -171,7 +171,7 @@ function StudioCanvas() {
                                 if (n.type === "messageBlock") return "#10b981"; // Emerald-500
                                 return "#3b82f6";
                             }}
-                            maskColor="rgba(0, 0, 0, 0.5)"
+                            maskColor="rgba(255, 255, 255, 0.5)"
                             className="bg-card/50 border border-border rounded-md shadow-xl"
                         />
                     </ReactFlow>
