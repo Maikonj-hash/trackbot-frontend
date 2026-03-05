@@ -160,8 +160,8 @@ export function StudioTopbar() {
                 >
                     <ArrowLeft className="w-4 h-4" />
                 </button>
-                <div className="w-8 h-8 rounded-md bg-emerald-500/20 flex items-center justify-center">
-                    <Play className="w-4 h-4 text-emerald-500 fill-emerald-500" />
+                <div className="w-8 h-8 rounded-md bg-blue-600/20 flex items-center justify-center">
+                    <Play className="w-4 h-4 text-blue-600 fill-blue-600" />
                 </div>
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
@@ -212,7 +212,7 @@ export function StudioTopbar() {
                 <button
                     onClick={handlePublish}
                     disabled={isPublishing || !flowId}
-                    className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-md transition-all shadow-[0_2px_10px_rgba(16,185,129,0.3)] hover:shadow-[0_4px_15px_rgba(16,185,129,0.4)] disabled:opacity-50 active:scale-95 uppercase tracking-wider"
+                    className="flex items-center gap-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-md transition-all shadow-[0_2px_10px_rgba(37,99,235,0.3)] hover:shadow-[0_4px_15px_rgba(37,99,235,0.4)] disabled:opacity-50 active:scale-95 uppercase tracking-wider"
                 >
                     {isPublishing ? (
                         <>

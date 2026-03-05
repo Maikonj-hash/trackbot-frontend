@@ -5,10 +5,9 @@ import { Plus, Smartphone, RefreshCw, Loader2, Info } from "lucide-react";
 import { API_URL } from "@/lib/constants";
 import { InstanceCard } from "@/components/studio/instances/instance-card";
 import { QRModal } from "@/components/studio/instances/qr-modal";
-import { clsx } from "clsx";
-
-import { InputModal } from "@/components/ui/input-modal";
 import { InstanceModal } from "@/components/studio/instances/instance-modal";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function InstancesPage() {
     const [instances, setInstances] = useState<any[]>([]);
@@ -88,47 +87,45 @@ export default function InstancesPage() {
         <>
             <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 {/* Header Section */}
-                <div className="max-w-6xl mx-auto flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-8">
                     <div className="flex flex-col gap-1">
-                        <h1 className="text-2xl font-bold tracking-tight">Meus Aparelhos</h1>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Meus Aparelhos</h1>
                         <p className="text-sm text-muted-foreground flex items-center gap-2">
-                            <Info className="w-3.5 h-3.5" />
+                            <Info className="w-3.5 h-3.5 text-blue-600" />
                             Conecte seus números do WhatsApp e vincule-os aos fluxos automatizados.
                         </p>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button
+                        <Button
+                            variant="outline"
+                            size="icon"
                             onClick={fetchData}
-                            className="p-2 rounded-md border border-border/50 hover:bg-muted transition-colors text-muted-foreground"
+                            isLoading={isLoading && instances.length > 0}
                             title="Atualizar Lista"
                         >
-                            <RefreshCw className={clsx("w-4 h-4", isLoading && "animate-spin")} />
-                        </button>
-                        <button
+                            <RefreshCw className={cn("w-4 h-4", isLoading && instances.length > 0 && "animate-spin")} />
+                        </Button>
+                        <Button
                             onClick={() => setIsCreateModalOpen(true)}
-                            disabled={isCreating}
-                            className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-md text-sm font-bold shadow-sm hover:opacity-90 transition-all active:scale-95 uppercase tracking-wider disabled:opacity-50"
+                            isLoading={isCreating}
+                            className="font-bold uppercase tracking-wider"
                         >
-                            {isCreating ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <Plus className="w-4 h-4" />
-                            )}
+                            {!isCreating && <Plus className="w-4 h-4" />}
                             NOVO APARELHO
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
                 {/* Content Grid */}
-                <div className="max-w-6xl mx-auto">
+                <div className="w-full">
                     {isLoading && instances.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-32 gap-4">
                             <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/30" />
                             <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Carregando Instâncias...</span>
                         </div>
                     ) : instances.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
                             {instances.map(instance => (
                                 <InstanceCard
                                     key={instance.id}
@@ -148,12 +145,14 @@ export default function InstancesPage() {
                             <p className="text-muted-foreground text-sm max-w-sm text-center mb-8">
                                 Você ainda não adicionou nenhum número de WhatsApp. Clique no botão acima para começar.
                             </p>
-                            <button
+                            <Button
                                 onClick={() => setIsCreateModalOpen(true)}
-                                className="flex items-center gap-2 border border-border hover:bg-muted px-6 py-2 rounded-lg text-sm font-bold transition-all"
+                                variant="outline"
+                                className="font-bold"
                             >
+                                <Plus className="w-4 h-4 mr-2" />
                                 ADICIONAR PRIMEIRO CHIP
-                            </button>
+                            </Button>
                         </div>
                     )}
                 </div>

@@ -7,10 +7,10 @@ import { NodeHandle } from "./base/node-handle";
 
 export function MessageNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     return (
-        <NodeContainer selected={selected} color="emerald">
+        <NodeContainer selected={selected} color="blue">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={MessageSquareText} label="SEND MESSAGE" color="emerald" />
+            <NodeHeader icon={MessageSquareText} label="SEND MESSAGE" color="blue" />
 
             <div className="p-3 bg-card">
                 <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
@@ -18,7 +18,7 @@ export function MessageNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
                 </div>
             </div>
 
-            <NodeHandle type="source" position={Position.Bottom} color="emerald" />
+            <NodeHandle type="source" position={Position.Bottom} color="blue" />
         </NodeContainer>
     );
 }

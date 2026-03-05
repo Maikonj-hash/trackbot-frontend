@@ -17,9 +17,9 @@ export const FLOW_BLOCKS = [
         label: "Mensagem",
         description: "Envia um texto simples",
         icon: MessageSquareText,
-        color: "text-emerald-500",
-        bgColor: "bg-emerald-500/10",
-        borderColor: "border-emerald-500/20"
+        color: "text-blue-600",
+        bgColor: "bg-blue-600/10",
+        borderColor: "border-blue-600/20"
     },
     {
         type: "optionsBlock",

@@ -9,7 +9,7 @@ interface NodeHeaderProps {
 }
 
 const textColorMap: Record<string, string> = {
-    emerald: "text-emerald-500",
+    emerald: "text-blue-600",
     blue: "text-blue-500",
     red: "text-red-500",
     violet: "text-violet-500",
@@ -22,7 +22,7 @@ const textColorMap: Record<string, string> = {
 };
 
 const badgeColorMap: Record<string, string> = {
-    emerald: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+    emerald: "bg-blue-600/10 text-blue-600 border-blue-600/20",
     blue: "bg-blue-500/10 text-blue-500 border-blue-500/20",
     red: "bg-red-500/10 text-red-500 border-red-500/20",
     violet: "bg-violet-500/10 text-violet-500 border-violet-500/20",

@@ -16,6 +16,8 @@ interface FlowRecord {
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { InputModal } from "@/components/ui/input-modal";
 
+import { Button } from "@/components/ui/button";
+
 export default function FlowsPage() {
     const [flows, setFlows] = useState<FlowRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -84,21 +86,21 @@ export default function FlowsPage() {
     };
 
     return (
-        <div className="flex-1 p-2 space-y-8 bg-background max-w-7xl mx-auto w-full">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Flow Studio</h2>
-                    <p className="text-muted-foreground mt-1">Crie, gerencie e publique suas automações de WhatsApp.</p>
+        <div className="flex-1 p-8 space-y-8 bg-background w-full overflow-y-auto custom-scrollbar">
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col gap-1">
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Flow Studio</h1>
+                    <p className="text-sm text-muted-foreground mt-1">Crie, gerencie e publique suas automações de WhatsApp.</p>
                 </div>
 
-                <button
+                <Button
                     onClick={() => setIsCreateModalOpen(true)}
-                    disabled={isCreating}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-md shadow-sm transition-colors disabled:opacity-50"
+                    isLoading={isCreating}
+                    className="font-bold uppercase tracking-wider"
                 >
-                    {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                    Criar Novo Fluxo
-                </button>
+                    {!isCreating && <Plus className="w-4 h-4" />}
+                    CRIAR NOVO FLUXO
+                </Button>
             </div>
 
             {isLoading ? (
@@ -107,8 +109,8 @@ export default function FlowsPage() {
                 </div>
             ) : flows.length === 0 ? (
                 <div className="flex flex-col items-center justify-center p-16 text-center border border-dashed border-border/60 rounded-xl bg-card/30">
-                    <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
-                        <MessageSquareShare className="w-8 h-8 text-emerald-500" />
+                    <div className="w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center mb-4">
+                        <MessageSquareShare className="w-8 h-8 text-blue-600" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Nenhum fluxo encontrado</h3>
                     <p className="text-muted-foreground max-w-sm mb-6">
@@ -128,11 +130,11 @@ export default function FlowsPage() {
                         <div
                             key={flow.id}
                             onClick={() => router.push(`/studio/editor?id=${flow.id}`)}
-                            className="group flex flex-col justify-between bg-card text-card-foreground border border-border/50 rounded-xl shadow-sm hover:shadow-md hover:border-emerald-500/50 hover:ring-1 hover:ring-emerald-500/20 transition-all cursor-pointer overflow-hidden p-5 min-h-[160px]"
+                            className="group flex flex-col justify-between bg-card text-card-foreground border border-border/50 rounded-xl shadow-sm hover:shadow-md hover:border-blue-600/50 hover:ring-1 hover:ring-blue-600/20 transition-all cursor-pointer overflow-hidden p-5 min-h-[160px]"
                         >
                             <div>
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                    <div className="w-10 h-10 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600">
                                         <MessageSquareShare className="w-5 h-5" />
                                     </div>
                                     <button

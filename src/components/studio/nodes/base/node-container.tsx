@@ -9,7 +9,7 @@ interface NodeContainerProps {
 }
 
 const colorMap: Record<string, string> = {
-    emerald: "border-emerald-500 ring-emerald-500",
+    emerald: "border-blue-600 ring-blue-600",
     blue: "border-blue-500 ring-blue-500",
     red: "border-red-500 ring-red-500",
     violet: "border-violet-500 ring-violet-500",

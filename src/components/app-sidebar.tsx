@@ -22,6 +22,7 @@ const navGroups = [
     {
         label: "OPERAÇÃO",
         items: [
+            { title: "Dashboard", url: "/", icon: LayoutDashboard },
             { title: "Live Chat", url: "/workspace", icon: MessageSquareText },
             { title: "CRM e Leads", url: "/leads", icon: Bot },
         ]
@@ -29,14 +30,13 @@ const navGroups = [
     {
         label: "AUTOMAÇÃO",
         items: [
-            { title: "Meus Fluxos", url: "/", icon: LayoutDashboard },
-            { title: "Flow Studio", url: "/studio", icon: Workflow },
+            { title: "Meus Fluxos", url: "/studio", icon: Workflow },
         ]
     },
     {
         label: "INFRAESTRUTURA",
         items: [
-            { title: "Instâncias (Chips)", url: "/instances", icon: Phone },
+            { title: "Instâncias", url: "/instances", icon: Phone },
         ]
     }
 ]
@@ -78,7 +78,7 @@ export function AppSidebar() {
                                                 asChild
                                                 tooltip={item.title}
                                                 isActive={isActive}
-                                                className="transition-colors hover:bg-emerald-500/10 hover:text-emerald-500 data-[active=true]:bg-emerald-500/15 data-[active=true]:text-emerald-500"
+                                                className="transition-colors hover:bg-blue-600/10 hover:text-blue-600 data-[active=true]:bg-blue-600/15 data-[active=true]:text-blue-600"
                                             >
                                                 <a href={item.url}>
                                                     <item.icon />

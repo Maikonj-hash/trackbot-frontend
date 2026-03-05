@@ -169,7 +169,7 @@ function StudioCanvas() {
                             zoomable
                             pannable
                             nodeColor={(n) => {
-                                if (n.type === "messageBlock") return "#10b981"; // Emerald-500
+                                if (n.type === "messageBlock") return "#2563eb"; // Blue-600
                                 return "#3b82f6";
                             }}
                             maskColor="rgba(255, 255, 255, 0.5)"

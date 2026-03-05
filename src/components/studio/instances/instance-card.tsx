@@ -85,9 +85,9 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
     };
 
     const isConnected = instance.status === "CONNECTED";
-    const statusColor = isConnected ? "text-emerald-500" :
+    const statusColor = isConnected ? "text-blue-600" :
         instance.status === "CONNECTING" ? "text-amber-500" :
-            instance.status === "QR_READY" ? "text-blue-500" : "text-muted-foreground";
+            instance.status === "QR_READY" ? "text-blue-600" : "text-muted-foreground";
 
     const isMeta = instance.provider === "META_OFFICIAL";
 
@@ -98,9 +98,9 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                 <div className="flex items-center gap-3">
                     <div className={clsx(
                         "w-10 h-10 rounded-md flex items-center justify-center border border-border/50 transition-colors",
-                        isConnected ? "bg-emerald-500/10 border-emerald-500/20" : "bg-muted shadow-inner"
+                        isConnected ? "bg-blue-600/10 border-blue-600/20" : "bg-muted shadow-inner"
                     )}>
-                        <Smartphone className={clsx("w-5 h-5", isConnected ? "text-emerald-500" : "text-muted-foreground")} />
+                        <Smartphone className={clsx("w-5 h-5", isConnected ? "text-blue-600" : "text-muted-foreground")} />
                     </div>
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
