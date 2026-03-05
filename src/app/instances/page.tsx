@@ -8,6 +8,7 @@ import { QRModal } from "@/components/studio/instances/qr-modal";
 import { clsx } from "clsx";
 
 import { InputModal } from "@/components/ui/input-modal";
+import { InstanceModal } from "@/components/studio/instances/instance-modal";
 
 export default function InstancesPage() {
     const [instances, setInstances] = useState<any[]>([]);
@@ -58,20 +59,23 @@ export default function InstancesPage() {
         return () => clearInterval(interval);
     }, [fetchData]);
 
-    const handleCreateInstance = async (name: string) => {
+    const handleCreateInstance = async (payload: any) => {
         try {
             setIsCreating(true);
             const res = await fetch(`${API_URL}/instances`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name })
+                body: JSON.stringify(payload)
             });
 
             if (res.ok) {
                 const newInst = await res.json();
                 await fetchData();
-                // Abre o modal de pareamento automaticamente para a nova instância
-                setPairModal({ isOpen: true, id: newInst.id, name: newInst.name });
+
+                // Só abre o modal de pareamento se for Baileys
+                if (payload.provider === "BAILEYS") {
+                    setPairModal({ isOpen: true, id: newInst.id, name: newInst.name });
+                }
             }
         } catch (error) {
             console.error(error);
@@ -155,16 +159,11 @@ export default function InstancesPage() {
                 </div>
             </main>
 
-            {/* Modal de Criar Aparelho */}
-            <InputModal
+            {/* Modal de Criar Aparelho Híbrido */}
+            <InstanceModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
                 onSubmit={handleCreateInstance}
-                title="Novo Aparelho"
-                description="Dê um nome para identificar este chip no sistema."
-                label="Nome do Aparelho"
-                placeholder="Ex: Suporte Vendas"
-                confirmText="Criar Instância"
                 isLoading={isCreating}
             />
 

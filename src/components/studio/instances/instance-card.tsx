@@ -20,6 +20,7 @@ interface Instance {
     name: string;
     phone: string | null;
     status: string;
+    provider: "BAILEYS" | "META_OFFICIAL";
     flowId: string | null;
     updatedAt: string;
 }
@@ -88,6 +89,8 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
         instance.status === "CONNECTING" ? "text-amber-500" :
             instance.status === "QR_READY" ? "text-blue-500" : "text-muted-foreground";
 
+    const isMeta = instance.provider === "META_OFFICIAL";
+
     return (
         <div className="group relative bg-card border border-border/50 rounded-lg overflow-hidden transition-all hover:border-border hover:shadow-md font-sans">
             {/* Header / Identifier */}
@@ -100,13 +103,22 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                         <Smartphone className={clsx("w-5 h-5", isConnected ? "text-emerald-500" : "text-muted-foreground")} />
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-xs font-bold uppercase tracking-widest text-foreground truncate max-w-[140px]">
-                            {instance.name}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold uppercase tracking-widest text-foreground truncate max-w-[120px]">
+                                {instance.name}
+                            </span>
+                            {/* Provider Badge */}
+                            <span className={clsx(
+                                "text-[8px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-tighter",
+                                isMeta ? "bg-blue-500/10 border-blue-500/20 text-blue-500" : "bg-foreground/5 border-foreground/10 text-muted-foreground"
+                            )}>
+                                {isMeta ? "Meta" : "Baileys"}
+                            </span>
+                        </div>
                         <div className="flex items-center gap-1.5 mt-0.5">
                             <Circle className={clsx("w-1.5 h-1.5 fill-current animate-pulse", statusColor)} />
                             <span className="text-[9px] font-mono font-medium uppercase tracking-tighter text-muted-foreground">
-                                {instance.status.replace("_", " ")}
+                                {isMeta && isConnected ? "ACTIVE (WEBHOOK)" : instance.status.replace("_", " ")}
                             </span>
                         </div>
                     </div>
@@ -129,7 +141,7 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                 <div className="flex flex-col gap-1">
                     <span className="text-[9px] font-mono text-muted-foreground uppercase opacity-60">Número Conectado</span>
                     <div className="text-xs font-medium text-foreground py-1 border-b border-border/30">
-                        {instance.phone ? `+${instance.phone}` : "---"}
+                        {instance.phone ? `+${instance.phone}` : isMeta ? "Configurado via Meta" : "---"}
                     </div>
                 </div>
 
@@ -156,18 +168,24 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
             {/* Footer / Actions */}
             <div className="p-3 bg-muted/10 border-t border-border/40 flex items-center gap-2">
                 {!isConnected ? (
-                    <button
-                        onClick={() => onPair(instance.id, instance.name)}
-                        className="flex-1 flex items-center justify-center gap-2 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-[10px] font-bold rounded shadow-sm transition-all uppercase tracking-widest"
-                    >
-                        <QrCode className="w-3.5 h-3.5" /> Parear Aparelho
-                    </button>
+                    !isMeta ? (
+                        <button
+                            onClick={() => onPair(instance.id, instance.name)}
+                            className="flex-1 flex items-center justify-center gap-2 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-[10px] font-bold rounded shadow-sm transition-all uppercase tracking-widest"
+                        >
+                            <QrCode className="w-3.5 h-3.5" /> Parear Aparelho
+                        </button>
+                    ) : (
+                        <div className="flex-1 text-center py-1.5 px-3 bg-blue-500/5 text-blue-500 text-[10px] font-bold rounded border border-blue-500/10 uppercase tracking-widest">
+                            Aguardando Webhook
+                        </div>
+                    )
                 ) : (
                     <button
                         onClick={() => setConfirmDisconnect(true)}
                         className="flex-1 flex items-center justify-center gap-2 py-1.5 border border-border/50 hover:bg-muted text-muted-foreground text-[10px] font-bold rounded transition-all uppercase tracking-widest"
                     >
-                        <Unlink className="w-3.5 h-3.5" /> Desconectar
+                        <Unlink className="w-3.5 h-3.5" /> {isMeta ? "Remover Conexão" : "Desconectar"}
                     </button>
                 )}
             </div>
@@ -195,9 +213,12 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                 onClose={() => setConfirmDisconnect(false)}
                 onConfirm={handleDisconnect}
                 variant="warning"
-                title="Desconectar WhatsApp"
-                description={`Deseja realmente desconectar o número da instância "${instance.name}"? Você precisará escanear o QR Code novamente para reconectar.`}
-                confirmText="Desconectar"
+                title={isMeta ? "Remover Configuração Meta" : "Desconectar WhatsApp"}
+                description={isMeta
+                    ? `Deseja realmente remover a conexão com a Meta para "${instance.name}"? As mensagens via Cloud API pararão de chegar.`
+                    : `Deseja realmente desconectar o número da instância "${instance.name}"? Você precisará escanear o QR Code novamente para reconectar.`
+                }
+                confirmText={isMeta ? "Remover Conexão" : "Desconectar"}
             />
         </div>
     );
