@@ -23,20 +23,13 @@ const navGroups = [
         label: "OPERAÇÃO",
         items: [
             { title: "Dashboard", url: "/", icon: LayoutDashboard },
-            { title: "Live Chat", url: "/workspace", icon: MessageSquareText },
-            { title: "CRM e Leads", url: "/leads", icon: Bot },
-        ]
-    },
-    {
-        label: "AUTOMAÇÃO",
-        items: [
             { title: "Meus Fluxos", url: "/studio", icon: Workflow },
         ]
     },
     {
         label: "INFRAESTRUTURA",
         items: [
-            { title: "Instâncias", url: "/instances", icon: Phone },
+            { title: "Aparelhos", url: "/instances", icon: Phone },
         ]
     }
 ]

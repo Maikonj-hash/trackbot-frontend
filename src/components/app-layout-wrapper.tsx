@@ -20,7 +20,7 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
 
     // Default Dashboard mode
     return (
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={false}>
             <AppSidebar />
             <main className="relative flex flex-col flex-1 min-w-0 overflow-hidden h-screen">
                 <div className="flex h-12 items-center border-b border-border/10 px-4 bg-background">
