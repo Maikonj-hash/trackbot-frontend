@@ -58,6 +58,15 @@ export type TrackerNodeData = {
     }>;
     headers?: Record<string, string>;
     bodyPayload?: any;
+
+    // Lead Capture
+    leadCaptureFields?: Array<{
+        label: string;
+        type: 'TEXT' | 'EMAIL' | 'PHONE' | 'NUMBER' | 'CPF';
+        saveToVariable: string;
+    }>;
+    submitButtonText?: string;
+    skipIfAlreadyFilled?: boolean;
 };
 
 // Cérebro Global (Armazena tudo o que acontece no Studio na Memória RAM limpa)

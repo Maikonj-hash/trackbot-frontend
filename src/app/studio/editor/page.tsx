@@ -21,6 +21,7 @@ import { ConditionNode } from "@/components/studio/nodes/condition-node";
 import { InputNode } from "@/components/studio/nodes/input-node";
 import { DelayNode } from "@/components/studio/nodes/delay-node";
 import { MediaNode } from "@/components/studio/nodes/media-node";
+import { LeadCaptureNode } from "@/components/studio/nodes/lead-capture-node";
 import { WebhookNode } from "@/components/studio/nodes/webhook-node";
 import { VariableNode } from "@/components/studio/nodes/variable-node";
 import { HandoverNode } from "@/components/studio/nodes/handover-node";
@@ -39,6 +40,7 @@ const customNodeTypes = {
     conditionBlock: ConditionNode,
     delayBlock: DelayNode,
     mediaBlock: MediaNode,
+    leadCaptureBlock: LeadCaptureNode,
     webhookBlock: WebhookNode,
     variableBlock: VariableNode,
     handoverBlock: HandoverNode,

@@ -8,7 +8,8 @@ import {
     Keyboard,
     Image as ImageIcon,
     Variable,
-    CircleStop
+    CircleStop,
+    UserPlus
 } from "lucide-react";
 
 export const FLOW_BLOCKS = [
@@ -101,6 +102,15 @@ export const FLOW_BLOCKS = [
         color: "text-red-500",
         bgColor: "bg-red-500/10",
         borderColor: "border-red-500/20"
+    },
+    {
+        type: "leadCaptureBlock",
+        label: "Lead Capture",
+        description: "Formulário inteligente para capturar dados (Nome, CPF, etc)",
+        icon: UserPlus,
+        color: "text-blue-500",
+        bgColor: "bg-blue-500/10",
+        borderColor: "border-blue-500/20"
     }
 ];
 

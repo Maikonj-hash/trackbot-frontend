@@ -130,6 +130,17 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     nextStepId: defaultNextStep
                 };
                 break;
+            case "leadCaptureBlock":
+                steps[id] = {
+                    id,
+                    type: "LEAD_CAPTURE",
+                    content: node.data.content || "Preencha seus dados:",
+                    fields: node.data.leadCaptureFields || [],
+                    submitButtonText: node.data.submitButtonText,
+                    skipIfAlreadyFilled: node.data.skipIfAlreadyFilled,
+                    nextStepId: defaultNextStep
+                };
+                break;
             case "handoverBlock":
                 steps[id] = {
                     id,
