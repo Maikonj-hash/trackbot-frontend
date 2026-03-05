@@ -82,14 +82,14 @@ export default function DashboardPage() {
 
         <Card className="border-border/50 bg-card/50 hover:border-blue-600/30 transition-all group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Total de Leads</CardTitle>
+            <CardTitle className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Total de Clientes</CardTitle>
             <Bot className="h-4 w-4 text-blue-600 group-hover:scale-110 transition-transform" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold tracking-tighter">
               {isLoading ? <MetricLoader /> : metrics.totalUsers}
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1 uppercase font-mono opacity-60">Usuários capturados</p>
+            <p className="text-[10px] text-muted-foreground mt-1 uppercase font-mono opacity-60">Clientes Identificados</p>
           </CardContent>
         </Card>
       </div>

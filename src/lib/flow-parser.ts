@@ -130,12 +130,12 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     nextStepId: defaultNextStep
                 };
                 break;
-            case "leadCaptureBlock":
+            case "identificationBlock":
                 steps[id] = {
                     id,
-                    type: "LEAD_CAPTURE",
+                    type: "CUSTOMER_IDENTIFICATION",
                     content: node.data.content || "Preencha seus dados:",
-                    fields: node.data.leadCaptureFields || [],
+                    fields: node.data.identificationFields || [],
                     submitButtonText: node.data.submitButtonText,
                     skipIfAlreadyFilled: node.data.skipIfAlreadyFilled,
                     nextStepId: defaultNextStep

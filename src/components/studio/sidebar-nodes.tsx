@@ -104,9 +104,9 @@ export const FLOW_BLOCKS = [
         borderColor: "border-red-500/20"
     },
     {
-        type: "leadCaptureBlock",
-        label: "Lead Capture",
-        description: "Formulário inteligente para capturar dados (Nome, CPF, etc)",
+        type: "identificationBlock",
+        label: "Identificação",
+        description: "Formulário para identificar o cliente (Nome, CPF, etc)",
         icon: UserPlus,
         color: "text-blue-500",
         bgColor: "bg-blue-500/10",

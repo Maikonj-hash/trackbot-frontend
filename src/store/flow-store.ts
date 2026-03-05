@@ -59,8 +59,8 @@ export type TrackerNodeData = {
     headers?: Record<string, string>;
     bodyPayload?: any;
 
-    // Lead Capture
-    leadCaptureFields?: Array<{
+    // Customer Identification
+    identificationFields?: Array<{
         label: string;
         type: 'TEXT' | 'EMAIL' | 'PHONE' | 'NUMBER' | 'CPF';
         saveToVariable: string;

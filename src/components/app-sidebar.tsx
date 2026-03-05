@@ -24,6 +24,7 @@ const navGroups = [
         items: [
             { title: "Dashboard", url: "/", icon: LayoutDashboard },
             { title: "Meus Fluxos", url: "/studio", icon: Workflow },
+            { title: "Clientes", url: "/clientes", icon: MessageSquareText },
         ]
     },
     {
