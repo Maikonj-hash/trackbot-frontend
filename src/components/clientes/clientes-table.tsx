@@ -1,13 +1,14 @@
 "use client"
 
-import { Edit2, MoreHorizontal, Phone, Calendar, User, Database, ChevronRight } from "lucide-react"
+import { Edit2, Phone, Calendar, User, Database } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { Cliente } from "@/types/models"
 
 interface ClientesTableProps {
-    clientes: any[]
+    clientes: Cliente[]
     loading: boolean
-    onEdit: (cliente: any) => void
+    onEdit: (cliente: Cliente) => void
 }
 
 export function ClientesTable({ clientes, loading, onEdit }: ClientesTableProps) {

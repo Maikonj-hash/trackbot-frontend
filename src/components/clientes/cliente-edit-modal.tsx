@@ -1,10 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { X, Save, User, Phone, Brain, Tag, Trash2, PlusCircle } from "lucide-react"
+import { X, Save, User, Brain, Tag, Trash2 } from "lucide-react"
+import { API_URL } from "@/lib/constants"
+import { Cliente } from "@/types/models"
 
 interface ClienteEditModalProps {
-    cliente: any
+    cliente: Cliente
     onClose: () => void
     onUpdate: () => void
 }
@@ -19,7 +21,7 @@ export function ClienteEditModal({ cliente, onClose, onUpdate }: ClienteEditModa
     const handleSave = async () => {
         setSaving(true)
         try {
-            const res = await fetch(`http://localhost:3000/users/${cliente.id}`, {
+            const res = await fetch(`${API_URL}/users/${cliente.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, metadata })

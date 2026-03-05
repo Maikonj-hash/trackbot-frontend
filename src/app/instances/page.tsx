@@ -8,10 +8,11 @@ import { QRModal } from "@/components/studio/instances/qr-modal";
 import { InstanceModal } from "@/components/studio/instances/instance-modal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Instance, Flow } from "@/types/models";
 
 export default function InstancesPage() {
-    const [instances, setInstances] = useState<any[]>([]);
-    const [flows, setFlows] = useState<any[]>([]);
+    const [instances, setInstances] = useState<Instance[]>([]);
+    const [flows, setFlows] = useState<Flow[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -58,7 +59,7 @@ export default function InstancesPage() {
         return () => clearInterval(interval);
     }, [fetchData]);
 
-    const handleCreateInstance = async (payload: any) => {
+    const handleCreateInstance = async (payload: Partial<Instance>) => {
         try {
             setIsCreating(true);
             const res = await fetch(`${API_URL}/instances`, {
@@ -88,12 +89,15 @@ export default function InstancesPage() {
             <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 {/* Header Section */}
                 <div className="flex items-center justify-between mb-8">
-                    <div className="flex flex-col gap-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Meus Aparelhos</h1>
-                        <p className="text-sm text-muted-foreground flex items-center gap-2">
-                            <Info className="w-3.5 h-3.5 text-blue-600" />
-                            Conecte seus números do WhatsApp e vincule-os aos fluxos automatizados.
-                        </p>
+                    <div className="flex items-center">
+                        <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 flex-shrink-0" />
+                        <div className="flex flex-col gap-1">
+                            <h1 className="text-2xl font-bold tracking-tight text-foreground">Meus Aparelhos</h1>
+                            <p className="text-sm text-muted-foreground flex items-center gap-2">
+                                <Info className="w-3.5 h-3.5 text-blue-600" />
+                                Conecte seus números do WhatsApp e vincule-os aos fluxos automatizados.
+                            </p>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -109,10 +113,10 @@ export default function InstancesPage() {
                         <Button
                             onClick={() => setIsCreateModalOpen(true)}
                             isLoading={isCreating}
-                            className="font-bold uppercase tracking-wider"
+                            size="icon"
+                            title="Novo Aparelho"
                         >
                             {!isCreating && <Plus className="w-4 h-4" />}
-                            NOVO APARELHO
                         </Button>
                     </div>
                 </div>

@@ -4,14 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, MessageSquareShare, Loader2, Calendar } from "lucide-react";
 import { API_URL } from "@/lib/constants";
-
-interface FlowRecord {
-    id: string;
-    name: string;
-    description: string | null;
-    createdAt: string;
-    updatedAt: string;
-}
+import { Flow } from "@/types/models";
 
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { InputModal } from "@/components/ui/input-modal";
@@ -19,7 +12,7 @@ import { InputModal } from "@/components/ui/input-modal";
 import { Button } from "@/components/ui/button";
 
 export default function FlowsPage() {
-    const [flows, setFlows] = useState<FlowRecord[]>([]);
+    const [flows, setFlows] = useState<Flow[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -88,18 +81,21 @@ export default function FlowsPage() {
     return (
         <div className="flex-1 p-8 space-y-8 bg-background w-full overflow-y-auto custom-scrollbar">
             <div className="flex items-center justify-between mb-8">
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Flow Studio</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Crie, gerencie e publique suas automações de WhatsApp.</p>
+                <div className="flex items-center">
+                    <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 flex-shrink-0" />
+                    <div className="flex flex-col gap-1">
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Flow Studio</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Crie, gerencie e publique suas automações de WhatsApp.</p>
+                    </div>
                 </div>
 
                 <Button
                     onClick={() => setIsCreateModalOpen(true)}
                     isLoading={isCreating}
-                    className="font-bold uppercase tracking-wider"
+                    size="icon"
+                    title="Novo Fluxo"
                 >
                     {!isCreating && <Plus className="w-4 h-4" />}
-                    CRIAR NOVO FLUXO
                 </Button>
             </div>
 

@@ -1,27 +1,25 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, UserPlus, Filter, Download, MoreHorizontal, Edit2, Phone, Calendar, Tag } from "lucide-react"
-import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+import { Search, Download } from "lucide-react"
 import { ClientesTable } from "@/components/clientes/clientes-table"
 import { ClienteEditModal } from "@/components/clientes/cliente-edit-modal"
+import { API_URL } from "@/lib/constants"
+import { Cliente, Instance, PaginationMeta } from "@/types/models"
 
 export default function ClientesPage() {
     const [search, setSearch] = useState("")
     const [instanceId, setInstanceId] = useState("")
-    const [clientes, setClientes] = useState<any[]>([])
-    const [instances, setInstances] = useState<any[]>([])
-    const [meta, setMeta] = useState<any>({ total: 0, page: 1, totalPages: 1 })
+    const [clientes, setClientes] = useState<Cliente[]>([])
+    const [instances, setInstances] = useState<Instance[]>([])
+    const [meta, setMeta] = useState<PaginationMeta>({ total: 0, page: 1, totalPages: 1 })
     const [loading, setLoading] = useState(true)
-    const [selectedCliente, setSelectedCliente] = useState<any>(null)
+    const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
     const [page, setPage] = useState(1)
 
     const fetchInstances = async () => {
         try {
-            const res = await fetch(`http://localhost:3000/instances`)
+            const res = await fetch(`${API_URL}/instances`)
             const json = await res.json()
             setInstances(json)
         } catch (err) {
@@ -32,7 +30,7 @@ export default function ClientesPage() {
     const fetchClientes = async () => {
         setLoading(true)
         try {
-            const baseUrl = `http://localhost:3000/users?page=${page}&limit=10&search=${search}`
+            const baseUrl = `${API_URL}/users?page=${page}&limit=10&search=${search}`
             const url = instanceId ? `${baseUrl}&instanceId=${instanceId}` : baseUrl
             const res = await fetch(url)
             const json = await res.json()
@@ -54,47 +52,31 @@ export default function ClientesPage() {
     }, [page, search, instanceId])
 
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset className="bg-background">
-                <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b border-border/40 px-4">
-                    <div className="flex items-center gap-2">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>Clientes</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    </div>
-                </header>
-
-                <main className="flex flex-col gap-6 p-6">
-                    {/* Header da Página */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-500 to-blue-400 bg-clip-text text-transparent">
+        <>
+            <main className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-background">
+                {/* Header da Página */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
+                    <div className="flex items-center">
+                        <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 flex-shrink-0" />
+                        <div className="flex flex-col gap-1">
+                            <h1 className="text-2xl font-bold tracking-tight text-foreground">
                                 Central de Clientes
                             </h1>
                             <p className="text-sm text-muted-foreground mt-1">
                                 Gerencie todos os clientes capturados automaticamente pelo bot.
                             </p>
                         </div>
-
-                        <div className="flex items-center gap-2">
-                            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all shadow-lg shadow-blue-500/10">
-                                <Download className="w-4 h-4" />
-                                Exportar CSV
-                            </button>
-                        </div>
                     </div>
 
+                    <div className="flex items-center gap-2">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all shadow-lg shadow-blue-500/10">
+                            <Download className="w-4 h-4" />
+                            Exportar CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-6">
                     {/* Filtros e Busca */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div className="md:col-span-2 relative">
@@ -134,7 +116,7 @@ export default function ClientesPage() {
                         <ClientesTable
                             clientes={clientes}
                             loading={loading}
-                            onEdit={(cliente: any) => setSelectedCliente(cliente)}
+                            onEdit={(cliente: Cliente) => setSelectedCliente(cliente)}
                         />
 
                         {/* Paginação */}
@@ -160,16 +142,17 @@ export default function ClientesPage() {
                             </div>
                         </div>
                     </div>
-                </main>
+                </div>
+            </main>
 
-                {selectedCliente && (
-                    <ClienteEditModal
-                        cliente={selectedCliente}
-                        onClose={() => setSelectedCliente(null)}
-                        onUpdate={fetchClientes}
-                    />
-                )}
-            </SidebarInset>
-        </SidebarProvider>
+            {selectedCliente && (
+                <ClienteEditModal
+                    cliente={selectedCliente}
+                    onClose={() => setSelectedCliente(null)}
+                    onUpdate={fetchClientes}
+                />
+            )}
+        </>
     )
 }
+

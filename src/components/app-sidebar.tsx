@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Bot, LayoutDashboard, MessageSquareText, Workflow, Phone, Settings } from "lucide-react"
 import {
@@ -74,10 +75,10 @@ export function AppSidebar() {
                                                 isActive={isActive}
                                                 className="transition-colors hover:bg-blue-600/10 hover:text-blue-600 data-[active=true]:bg-blue-600/15 data-[active=true]:text-blue-600"
                                             >
-                                                <a href={item.url}>
+                                                <Link href={item.url}>
                                                     <item.icon />
                                                     <span className="font-medium tracking-tight">{item.title}</span>
-                                                </a>
+                                                </Link>
                                             </SidebarMenuButton>
                                         </SidebarMenuItem>
                                     )

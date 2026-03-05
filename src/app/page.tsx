@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, MessageSquare, Phone, Info, LayoutDashboard, History, Loader2 } from "lucide-react";
 import { API_URL } from "@/lib/constants";
+import { DashboardMetrics } from "@/types/models";
 
 export default function DashboardPage() {
-  const [metrics, setMetrics] = useState({
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
     totalUsers: 0,
     totalInstances: 0,
     totalMessages: 0
@@ -39,17 +40,15 @@ export default function DashboardPage() {
   return (
     <div className="flex-1 space-y-8 p-8 bg-background w-full overflow-y-auto custom-scrollbar font-sans">
       <div className="flex items-center justify-between mb-8">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600 border border-blue-600/20">
-              <LayoutDashboard className="w-5 h-5" />
-            </div>
-            Painel de Controle
-          </h1>
-          <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
-            <Info className="w-4 h-4 text-blue-600" />
-            Visão geral do desempenho e conexões do seu ecossistema.
-          </p>
+        <div className="flex items-center">
+          <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 flex-shrink-0" />
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Painel de Controle</h1>
+            <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2">
+              <Info className="w-4 h-4 text-blue-600" />
+              Visão geral do desempenho e conexões do seu ecossistema.
+            </p>
+          </div>
         </div>
       </div>
 
