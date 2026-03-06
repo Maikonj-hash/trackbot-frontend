@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Save, Loader2, Play, CheckCircle2, ArrowLeft, CloudIcon, Rocket } from "lucide-react";
 import { useFlowStore } from "@/store/flow-store";
+import { useSimulator } from "@/hooks/use-simulator";
 import { parseReactFlowToBackend, validateFlow } from "@/lib/flow-parser";
 import { API_URL } from "@/lib/constants";
 import { clsx } from "clsx";
@@ -160,9 +161,23 @@ export function StudioTopbar() {
                 >
                     <ArrowLeft className="w-4 h-4" />
                 </button>
-                <div className="w-8 h-8 rounded-md bg-blue-600/20 flex items-center justify-center">
-                    <Play className="w-4 h-4 text-blue-600 fill-blue-600" />
-                </div>
+                <button
+                    onClick={() => {
+                        const { toggleSimulator, isOpen, startSimulation } = useSimulator.getState();
+                        toggleSimulator();
+                        // Se estiver abrindo agora, auto-inicia
+                        if (!isOpen) {
+                            startSimulation(useFlowStore.getState().nodes, useFlowStore.getState().edges);
+                        }
+                    }}
+                    className={clsx(
+                        "w-8 h-8 rounded-md flex items-center justify-center transition-all hover:scale-105 active:scale-95",
+                        useSimulator().isOpen ? "bg-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]" : "bg-blue-600/20 hover:bg-blue-600/30"
+                    )}
+                    title={useSimulator().isOpen ? "Fechar Sandox" : "Testar no Simulador"}
+                >
+                    <Play className={clsx("w-4 h-4", useSimulator().isOpen ? "text-red-500 fill-red-500" : "text-blue-600 fill-blue-600")} />
+                </button>
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <input

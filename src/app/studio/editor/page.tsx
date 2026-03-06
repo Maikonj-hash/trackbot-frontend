@@ -32,6 +32,7 @@ import { SidebarNodes } from "@/components/studio/sidebar-nodes";
 import { StudioTopbar } from "@/components/studio/studio-topbar";
 import { API_URL } from "@/lib/constants";
 import { SwitchNode } from "@/components/studio/nodes/switch-node";
+import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer";
 
 // O React flow exige que os Componentes das caixas sejam Passados estabilizados para fora do React
 const customNodeTypes = {
@@ -184,6 +185,9 @@ function StudioCanvas() {
 
                 {/* PAINEL LATERAL DIREITO (Propriedades) */}
                 {selectedNode && <PropertiesDrawer />}
+
+                {/* SIMULADOR (Overlay Absoluto à Direita) */}
+                <SimulatorDrawer />
             </div>
         </div>
     );

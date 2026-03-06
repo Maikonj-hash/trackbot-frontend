@@ -116,6 +116,21 @@ export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) 
                 </div>
             </div>
 
+            <div className="space-y-2 pt-2 border-t border-border/10 mt-2">
+                <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={(node.data as any).simulateRealRequest || false}
+                        onChange={(e) => updateNodeData(node.id, { simulateRealRequest: e.target.checked } as any)}
+                        className="rounded border-input bg-background w-3.5 h-3.5 text-cyan-500 focus:ring-cyan-500"
+                    />
+                    Disparo REAL no Simulador
+                </label>
+                <p className="text-[10px] text-muted-foreground leading-relaxed pl-5">
+                    Se desmarcado, o Sandbox (Play) vai apenas fingir que a API retornou Sucesso sem estourar quotas.
+                </p>
+            </div>
+
             <div className="space-y-2 pt-2 border-t border-border/10">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">Salvar Status em</label>
                 <input
