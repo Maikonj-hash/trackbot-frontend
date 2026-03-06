@@ -149,6 +149,29 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     nextStepId: null // Encerra automação
                 };
                 break;
+            case "switchBlock":
+                const mappedBranches: Array<{ value: string; targetStepId: string }> = [];
+                const switchBranches = node.data.switchBranches || [];
+
+                switchBranches.forEach((branch) => {
+                    const target = edges.find(e => e.source === id && e.sourceHandle === branch.id)?.target;
+                    if (target) {
+                        mappedBranches.push({
+                            value: branch.value,
+                            targetStepId: target
+                        });
+                    }
+                });
+
+                steps[id] = {
+                    id,
+                    type: "SWITCH",
+                    variable: node.data.switchVariable || "",
+                    branches: mappedBranches,
+                    defaultStepId: getNextStepId("default"), // strict null resolvido (Wave 6)
+                    nextStepId: null // Routable
+                };
+                break;
             case "endBlock":
                 steps[id] = {
                     id,
@@ -221,6 +244,17 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
                 const hasFailure = edges.some(e => e.source === node.id && e.sourceHandle === 'failure');
                 if (!hasSuccess || !hasFailure) {
                     errors.push(`O bloco de Webhook "${node.data.label}" precisa ter as saídas SUCCESS e FAILURE conectadas.`);
+                }
+            } else if (node.type === "switchBlock") {
+                const sBranches = (node.data as any).switchBranches || [];
+                const allCasesConnected = Array.isArray(sBranches) && sBranches.every((branch: any) =>
+                    edges.some(e => e.source === node.id && e.sourceHandle === branch.id)
+                );
+
+                // Validação Estrita: Roteadores precisam de todas as suas rotas ativas com fio
+                const isDefaultConnected = edges.some(e => e.source === node.id && e.sourceHandle === 'default');
+                if (!allCasesConnected || !isDefaultConnected) {
+                    errors.push(`O bloco Roteador "${(node.data as any).switchVariable || 'Sem Nome'}" precisa de todas as Rotas e a Saída Padrão conectadas.`);
                 }
             } else {
                 warnings.push(`O bloco "${node.data.label || node.id}" não tem saída conectada.`);

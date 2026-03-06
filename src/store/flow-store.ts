@@ -67,6 +67,13 @@ export type TrackerNodeData = {
     }>;
     submitButtonText?: string;
     skipIfAlreadyFilled?: boolean;
+
+    // Switch/Router
+    switchVariable?: string; // Variável a ser avaliada (Ex: {{plano}})
+    switchBranches?: Array<{
+        id: string; // Gerado gerenciar a sourceHandle
+        value: string; // Valor que executa a rota (Ex: "VIP")
+    }>;
 };
 
 // Cérebro Global (Armazena tudo o que acontece no Studio na Memória RAM limpa)
@@ -130,6 +137,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
     // Conectar um Ponto A no Ponto B (Fio Redondo)
     onConnect: (connection: Connection) => {
+        // Validar e evitar loops, que está sendo feito lá na view também
         set({
             edges: addEdge(connection, get().edges),
             isDirty: true,

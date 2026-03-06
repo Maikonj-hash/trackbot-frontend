@@ -12,6 +12,7 @@ import { MediaProperties } from "./properties/media-properties";
 import { WebhookProperties } from "./properties/webhook-properties";
 import { VariableProperties } from "./properties/variable-properties";
 import { HandoverProperties } from "./properties/handover-properties";
+import { SwitchProperties } from "./properties/switch-properties";
 
 export function PropertiesDrawer() {
     const { selectedNode, setSelectedNode, updateNodeData, deleteNode } = useFlowStore();
@@ -43,6 +44,8 @@ export function PropertiesDrawer() {
                 return <VariableProperties {...props} />;
             case "handoverBlock":
                 return <HandoverProperties {...props} />;
+            case "switchBlock":
+                return <SwitchProperties {...props} />;
             case "endBlock":
                 return (
                     <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-md mt-4">

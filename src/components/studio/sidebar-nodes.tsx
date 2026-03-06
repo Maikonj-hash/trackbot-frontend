@@ -9,7 +9,8 @@ import {
     Image as ImageIcon,
     Variable,
     CircleStop,
-    UserPlus
+    UserPlus,
+    GitBranch
 } from "lucide-react";
 
 export const FLOW_BLOCKS = [
@@ -39,6 +40,15 @@ export const FLOW_BLOCKS = [
         color: "text-violet-500",
         bgColor: "bg-violet-500/10",
         borderColor: "border-violet-500/20"
+    },
+    {
+        type: "switchBlock",
+        label: "Roteador (Switch)",
+        description: "Rotas múltiplas por variável",
+        icon: GitBranch,
+        color: "text-purple-500",
+        bgColor: "bg-purple-500/10",
+        borderColor: "border-purple-500/20"
     },
     {
         type: "conditionBlock",
@@ -95,15 +105,6 @@ export const FLOW_BLOCKS = [
         borderColor: "border-rose-500/20"
     },
     {
-        type: "endBlock",
-        label: "Encerrar Chat",
-        description: "Finaliza o fluxo atual",
-        icon: CircleStop,
-        color: "text-red-500",
-        bgColor: "bg-red-500/10",
-        borderColor: "border-red-500/20"
-    },
-    {
         type: "identificationBlock",
         label: "Identificação",
         description: "Formulário para identificar o cliente (Nome, CPF, etc)",
@@ -111,6 +112,15 @@ export const FLOW_BLOCKS = [
         color: "text-blue-500",
         bgColor: "bg-blue-500/10",
         borderColor: "border-blue-500/20"
+    },
+    {
+        type: "endBlock",
+        label: "Encerrar Chat",
+        description: "Finaliza o fluxo atual",
+        icon: CircleStop,
+        color: "text-red-500",
+        bgColor: "bg-red-500/10",
+        borderColor: "border-red-500/20"
     }
 ];
 

@@ -31,6 +31,7 @@ import { PropertiesDrawer } from "@/components/studio/properties-drawer";
 import { SidebarNodes } from "@/components/studio/sidebar-nodes";
 import { StudioTopbar } from "@/components/studio/studio-topbar";
 import { API_URL } from "@/lib/constants";
+import { SwitchNode } from "@/components/studio/nodes/switch-node";
 
 // O React flow exige que os Componentes das caixas sejam Passados estabilizados para fora do React
 const customNodeTypes = {
@@ -44,6 +45,7 @@ const customNodeTypes = {
     webhookBlock: WebhookNode,
     variableBlock: VariableNode,
     handoverBlock: HandoverNode,
+    switchBlock: SwitchNode,
     endBlock: EndNode,
     startBlock: StartNode,
 };
