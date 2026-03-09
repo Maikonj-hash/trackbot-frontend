@@ -79,7 +79,7 @@ export function OptionsProperties({ node, updateNodeData }: PropertyPanelProps) 
                                 onChange={(e) => updateNodeData(node.id, { useNativeButtons: e.target.checked })}
                             />
                             <span
-                                className={`${node.data.useNativeButtons ? 'translate-x-4 bg-emerald-500' : 'translate-x-1 bg-muted-foreground'
+                                className={`${node.data.useNativeButtons ? 'translate-x-4 bg-foreground' : 'translate-x-1 bg-muted-foreground'
                                     } inline-block h-3 w-3 transform rounded-full transition-all duration-200 ease-in-out`}
                             />
                         </div>
@@ -91,17 +91,17 @@ export function OptionsProperties({ node, updateNodeData }: PropertyPanelProps) 
                     {node.data.useNativeButtons && (
                         <div className="space-y-3">
                             {(node.data.options?.length || 0) > 3 && (node.data.options?.length || 0) <= 10 && (
-                                <div className="px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded text-[9px] text-blue-400">
-                                    ℹ️ <strong>Modo Lista</strong> ativado (mais de 3 opções).
+                                <div className="px-2 py-1 border border-border bg-muted/30 rounded text-[9px] text-muted-foreground uppercase font-bold tracking-tight">
+                                    // MODO LISTA ATIVADO
                                 </div>
                             )}
                             {(node.data.options?.length || 0) > 10 && (
-                                <div className="px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded text-[9px] text-amber-400">
-                                    ⚠️ <strong>Limite excedido</strong>. O WhatsApp suporta no máximo 10 itens. O robô usará texto comum.
+                                <div className="px-2 py-1 border border-destructive/30 bg-destructive/5 rounded text-[9px] text-destructive uppercase font-bold tracking-tight">
+                                    // LIMITE EXCEDIDO (MÁX 10)
                                 </div>
                             )}
 
-                            <div className="space-y-3 p-3 bg-muted/20 rounded-lg border border-border/50 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div className="space-y-3 p-3 bg-muted/10 rounded border border-border/50">
                                 <div className="space-y-1.5">
                                     <div className="flex justify-between items-center">
                                         <label className="text-[10px] font-bold uppercase text-muted-foreground">Título do Menu</label>
@@ -143,7 +143,7 @@ export function OptionsProperties({ node, updateNodeData }: PropertyPanelProps) 
                                         type="text"
                                         value={node.data.listFooter || ""}
                                         onChange={(e) => updateNodeData(node.id, { listFooter: e.target.value })}
-                                        className={`w-full rounded-md border bg-background px-2 py-1 text-xs ${(node.data.listFooter?.length || 0) > 72 ? 'border-amber-500' : 'border-input'}`}
+                                        className={`w-full rounded border bg-background px-2 py-1 text-xs font-mono ${(node.data.listFooter?.length || 0) > 72 ? 'border-amber-500' : 'border-input'}`}
                                         placeholder="Ex: Selecione para continuar"
                                     />
                                 </div>

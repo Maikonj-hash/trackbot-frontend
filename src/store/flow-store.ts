@@ -74,6 +74,10 @@ export type TrackerNodeData = {
         id: string; // Gerado gerenciar a sourceHandle
         value: string; // Valor que executa a rota (Ex: "VIP")
     }>;
+
+    // End/Exit
+    endResetType?: 'IMMEDIATE' | 'TIMEOUT';
+    endTimeoutValue?: number;
 };
 
 // Cérebro Global (Armazena tudo o que acontece no Studio na Memória RAM limpa)

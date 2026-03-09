@@ -13,6 +13,7 @@ import { WebhookProperties } from "./properties/webhook-properties";
 import { VariableProperties } from "./properties/variable-properties";
 import { HandoverProperties } from "./properties/handover-properties";
 import { SwitchProperties } from "./properties/switch-properties";
+import { EndProperties } from "./properties/end-properties";
 
 export function PropertiesDrawer() {
     const { selectedNode, setSelectedNode, updateNodeData, deleteNode } = useFlowStore();
@@ -47,13 +48,7 @@ export function PropertiesDrawer() {
             case "switchBlock":
                 return <SwitchProperties {...props} />;
             case "endBlock":
-                return (
-                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-md mt-4">
-                        <p className="text-sm text-red-500 font-medium text-center">
-                            Ao chegar neste bloco o robô de auto-atendimento será encerrado e a conversa fechada.
-                        </p>
-                    </div>
-                );
+                return <EndProperties {...props} />;
             default:
                 return (
                     <p className="text-sm text-muted-foreground italic text-center py-8">

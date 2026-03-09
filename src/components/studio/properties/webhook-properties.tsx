@@ -15,7 +15,7 @@ export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) 
                                 headers: { ...currentHeaders, "": "" }
                             });
                         }}
-                        className="text-cyan-500 hover:text-cyan-400 p-1"
+                        className="text-foreground hover:text-muted-foreground p-1 transition-colors"
                     >
                         <PlusCircle className="w-4 h-4" />
                     </button>
@@ -122,7 +122,7 @@ export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) 
                         type="checkbox"
                         checked={(node.data as any).simulateRealRequest || false}
                         onChange={(e) => updateNodeData(node.id, { simulateRealRequest: e.target.checked } as any)}
-                        className="rounded border-input bg-background w-3.5 h-3.5 text-cyan-500 focus:ring-cyan-500"
+                        className="rounded border-input bg-background w-3.5 h-3.5 text-foreground focus:ring-ring"
                     />
                     Disparo REAL no Simulador
                 </label>
@@ -153,7 +153,7 @@ export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) 
                                 responseMapping: [...currentMapping, { jsonPath: "", variableName: "" }]
                             });
                         }}
-                        className="text-cyan-500 hover:text-cyan-400 p-1"
+                        className="text-foreground hover:text-muted-foreground p-1 transition-colors"
                     >
                         <PlusCircle className="w-4 h-4" />
                     </button>
@@ -193,7 +193,7 @@ export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) 
                                     newMapping[index].variableName = e.target.value;
                                     updateNodeData(node.id, { responseMapping: newMapping });
                                 }}
-                                className="w-full bg-transparent border-none text-[11px] font-mono focus:ring-0 p-0 text-cyan-500"
+                                className="w-full bg-transparent border-none text-[11px] font-mono focus:ring-0 p-0 text-foreground"
                             />
                         </div>
                     ))}

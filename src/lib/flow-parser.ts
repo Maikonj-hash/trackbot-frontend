@@ -176,6 +176,8 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                 steps[id] = {
                     id,
                     type: "END",
+                    resetType: node.data.endResetType || "IMMEDIATE",
+                    timeoutValue: node.data.endTimeoutValue || 60,
                     nextStepId: null
                 };
                 break;

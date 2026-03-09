@@ -57,20 +57,19 @@ export function StandardModal({
 
                 <div className="p-6 md:p-8 flex flex-col gap-6 relative">
                     {/* Header Section */}
-                    {(title || description) && (
-                        <DialogHeader className="text-center sm:text-left space-y-1 pt-2">
-                            {title && (
-                                <DialogTitle className="text-sm font-mono font-bold tracking-widest uppercase text-foreground flex items-center gap-2">
-                                    {title}
-                                </DialogTitle>
-                            )}
+                    <div className={cn("flex items-center gap-4", (!title && !description) && "sr-only")}>
+                        <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full flex-shrink-0" />
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                            <DialogTitle className="text-base font-bold tracking-tight text-foreground line-clamp-1 uppercase">
+                                {title || "MODAL_WINDOW"}
+                            </DialogTitle>
                             {description && (
-                                <DialogDescription className="text-[10px] font-mono text-muted-foreground uppercase opacity-60 leading-relaxed">
+                                <DialogDescription className="text-[10px] font-mono text-muted-foreground uppercase opacity-60 leading-relaxed truncate">
                                     {description}
                                 </DialogDescription>
                             )}
-                        </DialogHeader>
-                    )}
+                        </div>
+                    </div>
 
                     {/* Children Slot */}
                     <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">

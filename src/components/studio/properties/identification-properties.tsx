@@ -28,7 +28,7 @@ export function IdentificationProperties({ node, updateNodeData }: PropertyPanel
                                 identificationFields: [...currentFields, { label: "Novo Campo", type: "TEXT", saveToVariable: `campo_${Date.now()}` }]
                             });
                         }}
-                        className="text-blue-500 hover:text-blue-400 p-1"
+                        className="text-foreground hover:text-muted-foreground p-1 transition-colors"
                     >
                         <PlusCircle className="w-4 h-4" />
                     </button>
@@ -36,7 +36,7 @@ export function IdentificationProperties({ node, updateNodeData }: PropertyPanel
 
                 <div className="space-y-3">
                     {(node.data.identificationFields || []).map((field, index: number) => (
-                        <div key={index} className="p-3 bg-muted/20 rounded-lg border border-border/50 space-y-2 relative group">
+                        <div key={index} className="p-3 bg-muted/5 rounded-md border border-border space-y-2 relative group">
                             <button
                                 onClick={() => {
                                     const newFields = [...(node.data.identificationFields || [])];
@@ -115,7 +115,7 @@ export function IdentificationProperties({ node, updateNodeData }: PropertyPanel
                                 onChange={(e) => updateNodeData(node.id, { skipIfAlreadyFilled: e.target.checked })}
                             />
                             <span
-                                className={`${node.data.skipIfAlreadyFilled ? 'translate-x-4 bg-blue-600' : 'translate-x-1 bg-muted-foreground'
+                                className={`${node.data.skipIfAlreadyFilled ? 'translate-x-4 bg-foreground' : 'translate-x-1 bg-muted-foreground'
                                     } inline-block h-3 w-3 transform rounded-full transition-all duration-200 ease-in-out`}
                             />
                         </div>
