@@ -4,6 +4,7 @@ import { TrackerNodeData } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
+import { NodeBody } from "./base/node-body";
 
 export function MediaNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const typeLabel = data?.mediaType?.toUpperCase() || "IMAGE";
@@ -14,14 +15,14 @@ export function MediaNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) 
 
             <NodeHeader icon={ImageIcon} label={`SEND ${typeLabel}`} color="pink" />
 
-            <div className="p-3 bg-card space-y-3">
+            <NodeBody className="space-y-3" noTextWrapper>
                 <div className="aspect-video w-full rounded border border-border/40 bg-muted/20 flex items-center justify-center overflow-hidden">
                     <ImageIcon className="w-6 h-6 text-pink-500/20" />
                 </div>
                 <div className="text-[10px] break-all text-muted-foreground bg-muted/30 px-2 py-1 rounded font-mono">
                     {data?.content || "No media URL"}
                 </div>
-            </div>
+            </NodeBody>
 
             <NodeHandle type="source" position={Position.Bottom} color="pink" />
         </NodeContainer>

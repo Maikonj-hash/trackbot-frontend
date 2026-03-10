@@ -4,6 +4,8 @@ import { TrackerNodeData } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
+import { NodeBody } from "./base/node-body";
+import { VariableHighlighter } from "./base/variable-highlighter";
 
 export function ConditionNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const operatorMap: Record<string, string> = {
@@ -24,10 +26,10 @@ export function ConditionNode({ data, selected }: NodeProps<Node<TrackerNodeData
 
             <NodeHeader icon={GitBranch} label="LOGIC CONDITION" color="violet" />
 
-            <div className="p-3 flex flex-col gap-2 bg-card">
+            <NodeBody className="flex flex-col gap-2" noTextWrapper>
                 <div className="flex flex-col gap-1 bg-muted/20 p-2 rounded border border-border/40">
                     <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-tight">IF VARIABLE</span>
-                    <div className="text-[11px] font-bold text-violet-500 break-words">
+                    <div className="text-[11px] font-bold text-violet-500 break-all">
                         {variable}
                     </div>
                 </div>
@@ -38,10 +40,10 @@ export function ConditionNode({ data, selected }: NodeProps<Node<TrackerNodeData
                     <div className="flex-1 h-[1px] bg-border/50" />
                 </div>
 
-                <div className="text-[11px] font-medium text-center bg-muted/10 py-1.5 rounded border border-dashed border-border/60 text-foreground/70">
-                    {value}
+                <div className="text-[11px] font-medium text-center bg-muted/10 py-1.5 rounded border border-border/60 text-foreground/70 break-all">
+                    <VariableHighlighter text={String(value)} />
                 </div>
-            </div>
+            </NodeBody>
 
             <div className="grid grid-cols-2 border-t border-border/50 bg-muted/5 rounded-b-md h-8">
                 <div className="flex items-center justify-center border-r border-border/50 relative group hover:bg-emerald-500/5 transition-colors">

@@ -4,6 +4,7 @@ import { TrackerNodeData } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
+import { NodeBody } from "./base/node-body";
 
 export function SwitchNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const rawBranches = Array.isArray(data?.switchBranches) ? data.switchBranches : [];
@@ -18,11 +19,9 @@ export function SwitchNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
                 color="purple"
             />
 
-            <div className="p-3 bg-card pb-1">
-                <div className="text-xs font-medium leading-relaxed whitespace-pre-wrap break-words px-1 text-foreground/80">
-                    Eval: <span className="font-mono text-purple-600 dark:text-purple-400 font-bold">{data?.switchVariable || "???"}</span>
-                </div>
-            </div>
+            <NodeBody className="pb-1">
+                Eval: <span className="font-mono text-purple-600 dark:text-purple-400 font-bold">{data?.switchVariable || "???"}</span>
+            </NodeBody>
 
             <div className="flex flex-col gap-1.5 p-3 bg-card pb-4 relative custom-scrollbar">
                 {rawBranches.map((branch, index) => (

@@ -24,6 +24,7 @@ export type TrackerNodeData = {
     content?: string;
     options?: string[];
     delayMs?: number;
+    allowBack?: boolean;
 
     useNativeButtons?: boolean;
     listButtonLabel?: string;
@@ -90,6 +91,9 @@ type FlowState = {
     setFlowName: (name: string) => void;
     setFlow: (nodes: Node<TrackerNodeData>[], edges: Edge[]) => void;
     setSaved: () => void;
+    getVariables: () => string[];
+    isVariablesDrawerOpen: boolean;
+    setVariablesDrawerOpen: (open: boolean) => void;
 };
 
 export const useFlowStore = create<FlowState>((set, get) => ({
@@ -108,6 +112,12 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     edges: [],
     selectedNode: null,
     isDirty: false,
+    isVariablesDrawerOpen: false,
+
+    setVariablesDrawerOpen: (open: boolean) => {
+        set({ isVariablesDrawerOpen: open });
+        if (open) set({ selectedNode: null }); // Fecha o editor de blocos ao abrir variáveis
+    },
 
     onNodesChange: (changes: NodeChange<Node<TrackerNodeData>>[]) => {
         const safeChanges = changes.filter(c => !(c.type === 'remove' && c.id === 'start-1'));
@@ -199,5 +209,58 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
     setSaved: () => {
         set({ isDirty: false });
-    }
+    },
+
+    getVariables: () => {
+        const nodes = get().nodes;
+        const variables = new Set<string>();
+
+        const extractFromText = (text: string) => {
+            if (!text || typeof text !== "string") return;
+            const matches = text.matchAll(/\{\{([^}]+)\}\}/g);
+            for (const match of matches) {
+                variables.add(match[1].trim());
+            }
+        };
+
+        const scanDeep = (obj: any) => {
+            if (!obj) return;
+            if (typeof obj === "string") {
+                extractFromText(obj);
+            } else if (Array.isArray(obj)) {
+                obj.forEach(scanDeep);
+            } else if (typeof obj === "object") {
+                Object.values(obj).forEach(scanDeep);
+            }
+        };
+
+        nodes.forEach((node) => {
+            const data = node.data;
+
+            // 1. Variáveis de Atribuição Explícita (Escrita)
+            if (data.variableName) variables.add(data.variableName);
+            if (data.identificationFields) {
+                data.identificationFields.forEach(f => {
+                    if (f.saveToVariable) variables.add(f.saveToVariable);
+                });
+            }
+            if (data.saveStatusToVariable) variables.add(data.saveStatusToVariable);
+            if (data.saveResponseToVariable) variables.add(data.saveResponseToVariable);
+            if (data.responseMapping) {
+                data.responseMapping.forEach(m => {
+                    if (m.variableName) variables.add(m.variableName);
+                });
+            }
+
+            // 2. Variáveis de Controle (Leitura/Uso)
+            if (data.conditionVariable) variables.add(data.conditionVariable);
+            if (data.switchVariable) variables.add(data.switchVariable);
+            if (data.dynamicOptionsVariable) variables.add(data.dynamicOptionsVariable);
+
+            // 3. Varredura Exaustiva de Menções {{var}} em qualquer campo
+            scanDeep(data);
+        });
+
+        return Array.from(variables).filter(v => v.length > 0).sort();
+    },
 }));

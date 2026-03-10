@@ -4,6 +4,7 @@ import { TrackerNodeData } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
+import { NodeBody } from "./base/node-body";
 
 export function WebhookNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const method = data?.webhookMethod || "POST";
@@ -15,16 +16,16 @@ export function WebhookNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
 
             <NodeHeader icon={Globe} label="HTTP WEBHOOK" color="cyan" />
 
-            <div className="p-3 bg-card space-y-2">
+            <NodeBody className="space-y-2" noTextWrapper>
                 <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-mono font-bold text-cyan-500 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">
+                    <span className="text-[9px] font-mono font-bold text-cyan-500 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20 flex-shrink-0">
                         {method}
                     </span>
                     <div className="text-[10px] font-medium truncate text-foreground/70 flex-1">
                         {url}
                     </div>
                 </div>
-            </div>
+            </NodeBody>
 
             <div className="grid grid-cols-2 border-t border-border/50 bg-muted/5 rounded-b-md h-8">
                 <div className="flex items-center justify-center border-r border-border/50 relative group hover:bg-emerald-500/5 transition-colors">

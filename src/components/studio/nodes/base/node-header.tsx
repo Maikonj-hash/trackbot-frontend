@@ -1,4 +1,4 @@
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Undo2 } from "lucide-react";
 import { clsx } from "clsx";
 
 interface NodeHeaderProps {
@@ -6,6 +6,7 @@ interface NodeHeaderProps {
     label: string;
     color?: string;
     badge?: string;
+    allowBack?: boolean;
 }
 
 const textColorMap: Record<string, string> = {
@@ -30,7 +31,7 @@ const badgeColorMap: Record<string, string> = {
     cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
 };
 
-export function NodeHeader({ icon: Icon, label, color = "foreground", badge }: NodeHeaderProps) {
+export function NodeHeader({ icon: Icon, label, color = "foreground", badge, allowBack }: NodeHeaderProps) {
     const textColorClass = textColorMap[color] || textColorMap.foreground;
     const badgeClass = badgeColorMap[color] || badgeColorMap.blue;
 
@@ -42,11 +43,19 @@ export function NodeHeader({ icon: Icon, label, color = "foreground", badge }: N
                     {label || "UNTITLED BLOCK"}
                 </span>
             </div>
-            {badge && (
-                <span className={clsx("text-[8px] font-bold px-1.5 py-0.5 rounded-sm border", badgeClass)}>
-                    {badge}
-                </span>
-            )}
+            
+            <div className="flex items-center gap-1.5">
+                {allowBack && (
+                    <div className="flex items-center px-1 rounded bg-blue-500/10 border border-blue-500/20 shadow-[0_0_8px_rgba(59,130,246,0.1)]" title="Voltar (Undo) Habilitado">
+                        <Undo2 className="w-2.5 h-2.5 text-blue-500" />
+                    </div>
+                )}
+                {badge && (
+                    <span className={clsx("text-[8px] font-bold px-1.5 py-0.5 rounded-sm border", badgeClass)}>
+                        {badge}
+                    </span>
+                )}
+            </div>
         </div>
     );
 }

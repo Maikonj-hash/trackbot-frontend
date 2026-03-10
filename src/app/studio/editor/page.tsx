@@ -33,6 +33,7 @@ import { StudioTopbar } from "@/components/studio/studio-topbar";
 import { API_URL } from "@/lib/constants";
 import { SwitchNode } from "@/components/studio/nodes/switch-node";
 import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer";
+import { VariablesDrawer } from "@/components/studio/variables-drawer";
 
 const customNodeTypes = {
     messageBlock: MessageNode,
@@ -182,6 +183,9 @@ function StudioCanvas() {
 
                 {/* PAINEL LATERAL DIREITO (Propriedades) */}
                 {selectedNode && <PropertiesDrawer />}
+
+                {/* PAINEL LATERAL DIREITO (Variáveis) */}
+                <VariablesDrawer />
 
                 {/* SIMULADOR (Overlay Absoluto à Direita) */}
                 <SimulatorDrawer />

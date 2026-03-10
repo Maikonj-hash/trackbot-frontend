@@ -4,6 +4,8 @@ import { TrackerNodeData } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
+import { NodeBody } from "./base/node-body";
+import { VariableHighlighter } from "./base/variable-highlighter";
 
 export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const rawOptions = Array.isArray(data?.options) ? data.options : [];
@@ -18,13 +20,12 @@ export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
                 label="OPTIONS MENU"
                 color="blue"
                 badge={data.useNativeButtons ? "ELITE" : undefined}
+                allowBack={data.allowBack}
             />
 
-            <div className="p-3 bg-card pb-1">
-                <div className="text-xs font-medium leading-relaxed whitespace-pre-wrap break-words px-1 text-foreground/80">
-                    {data?.content || "Escolha uma das opções:"}
-                </div>
-            </div>
+            <NodeBody className="pb-1 text-left">
+                {data?.content || "Escolha uma das opções:"}
+            </NodeBody>
 
             <div className="flex flex-col gap-1.5 p-3 bg-card pb-4 relative max-h-[300px] overflow-y-auto custom-scrollbar">
                 {menuOptions.map((opt, index) => (
@@ -33,7 +34,9 @@ export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
                             <span className="text-[9px] font-mono text-muted-foreground/50 pr-2 border-r border-border/50 flex-shrink-0">
                                 {String(index + 1).padStart(2, '0')}
                             </span>
-                            <span className="whitespace-pre-wrap break-words group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{opt || "Nova Opção"}</span>
+                            <span className="whitespace-pre-wrap break-words group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                <VariableHighlighter text={opt || "Nova Opção"} />
+                            </span>
                         </div>
 
                         <NodeHandle

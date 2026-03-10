@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Loader2, Play, CheckCircle2, ArrowLeft, CloudIcon, Rocket } from "lucide-react";
+import { Save, Loader2, Play, CheckCircle2, ArrowLeft, CloudIcon, Rocket, Braces } from "lucide-react";
 import { useFlowStore } from "@/store/flow-store";
 import { useSimulator } from "@/hooks/use-simulator";
 import { parseReactFlowToBackend, validateFlow } from "@/lib/flow-parser";
@@ -11,7 +11,7 @@ import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 
 export function StudioTopbar() {
     const router = useRouter();
-    const { nodes, edges, flowId, flowName, setFlowMetadata, setFlowName, isDirty, setSaved } = useFlowStore();
+    const { nodes, edges, flowId, flowName, setFlowMetadata, setFlowName, isDirty, setSaved, isVariablesDrawerOpen, setVariablesDrawerOpen } = useFlowStore();
     const [isSaving, setIsSaving] = useState(false);
     const [isPublishing, setIsPublishing] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -169,6 +169,17 @@ export function StudioTopbar() {
                 >
                     <Play className={clsx("w-4 h-4", useSimulator().isOpen ? "text-red-500 fill-red-500" : "text-blue-600 fill-blue-600")} />
                 </button>
+                <button
+                    onClick={() => setVariablesDrawerOpen(!isVariablesDrawerOpen)}
+                    className={clsx(
+                        "w-8 h-8 rounded-md flex items-center justify-center transition-all hover:scale-105 active:scale-95",
+                        isVariablesDrawerOpen ? "bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]" : "bg-muted hover:bg-muted/80 text-muted-foreground border border-border/50"
+                    )}
+                    title="Gerenciar Variáveis"
+                >
+                    <Braces className="w-4 h-4" />
+                </button>
+
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <input
