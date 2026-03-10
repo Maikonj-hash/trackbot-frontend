@@ -60,6 +60,15 @@ export type TrackerNodeData = {
     submitButtonText?: string;
     skipIfAlreadyFilled?: boolean;
 
+    fields?: Array<{
+        label: string;
+        variableName: string;
+        type?: 'TEXT' | 'EMAIL' | 'PHONE' | 'NUMBER' | 'CPF';
+        saveToVariable?: string;
+    }>;
+    confirmButtonText?: string;
+    editButtonText?: string;
+
     switchVariable?: string;
     switchBranches?: Array<{
         id: string;
@@ -242,6 +251,11 @@ export const useFlowStore = create<FlowState>((set, get) => ({
             if (data.identificationFields) {
                 data.identificationFields.forEach(f => {
                     if (f.saveToVariable) variables.add(f.saveToVariable);
+                });
+            }
+            if (data.fields) {
+                data.fields.forEach(f => {
+                    if (f.variableName) variables.add(f.variableName);
                 });
             }
             if (data.saveStatusToVariable) variables.add(data.saveStatusToVariable);

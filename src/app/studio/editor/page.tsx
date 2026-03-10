@@ -32,6 +32,7 @@ import { SidebarNodes } from "@/components/studio/sidebar-nodes";
 import { StudioTopbar } from "@/components/studio/studio-topbar";
 import { API_URL } from "@/lib/constants";
 import { SwitchNode } from "@/components/studio/nodes/switch-node";
+import { ReviewNode } from "@/components/studio/nodes/review-node";
 import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer";
 import { VariablesDrawer } from "@/components/studio/variables-drawer";
 
@@ -47,6 +48,7 @@ const customNodeTypes = {
     variableBlock: VariableNode,
     handoverBlock: HandoverNode,
     switchBlock: SwitchNode,
+    reviewBlock: ReviewNode,
     endBlock: EndNode,
     startBlock: StartNode,
 };

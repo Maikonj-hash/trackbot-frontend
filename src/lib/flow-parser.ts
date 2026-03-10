@@ -178,6 +178,18 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     nextStepId: null
                 };
                 break;
+            case "reviewBlock":
+                steps[id] = {
+                    id,
+                    type: "REVIEW",
+                    content: node.data.content || "Confirme seus dados:",
+                    fields: node.data.fields || [],
+                    confirmButtonText: node.data.confirmButtonText,
+                    editButtonText: node.data.editButtonText,
+                    nextStepId: getNextStepId("confirm"),
+                    correctionStepId: getNextStepId("edit")
+                };
+                break;
             case "startBlock":
                 break;
         }
@@ -248,6 +260,12 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
                 const isDefaultConnected = edges.some(e => e.source === node.id && e.sourceHandle === 'default');
                 if (!allCasesConnected || !isDefaultConnected) {
                     errors.push(`O bloco Roteador "${(node.data as any).switchVariable || 'Sem Nome'}" precisa de todas as Rotas e a Saída Padrão conectadas.`);
+                }
+            } else if (node.type === "reviewBlock") {
+                const hasConfirm = edges.some(e => e.source === node.id && e.sourceHandle === 'confirm');
+                const hasEdit = edges.some(e => e.source === node.id && e.sourceHandle === 'edit');
+                if (!hasConfirm || !hasEdit) {
+                    errors.push(`O bloco de Revisão "${node.data.label}" precisa ter as saídas CONFIRMAR e CORRIGIR conectadas.`);
                 }
             } else {
                 warnings.push(`O bloco "${node.data.label || node.id}" não tem saída conectada.`);

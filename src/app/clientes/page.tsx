@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Search, Download } from "lucide-react"
 import { ClientesTable } from "@/components/clientes/clientes-table"
 import { ClienteEditModal } from "@/components/clientes/cliente-edit-modal"
+import { ConfirmationModal } from "@/components/ui/confirmation-modal"
 import { API_URL } from "@/lib/constants"
 import { Cliente, Instance, PaginationMeta } from "@/types/models"
 
@@ -16,6 +17,22 @@ export default function ClientesPage() {
     const [loading, setLoading] = useState(true)
     const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null)
     const [page, setPage] = useState(1)
+
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        description: string;
+        variant: "info" | "warning" | "danger";
+        onConfirm: () => void;
+        isLoading: boolean;
+    }>({
+        isOpen: false,
+        title: "",
+        description: "",
+        variant: "info",
+        onConfirm: () => { },
+        isLoading: false
+    });
 
     const fetchInstances = async () => {
         try {
@@ -42,6 +59,50 @@ export default function ClientesPage() {
             setLoading(false)
         }
     }
+
+    const handleResetFlow = (cliente: Cliente) => {
+        setConfirmModal({
+            isOpen: true,
+            title: "Resetar Fluxo",
+            description: `Deseja realmente resetar o fluxo de *${cliente.name || cliente.phone}*?\n\nO robô esquecerá o passo atual e recomeçará o atendimento na próxima mensagem.`,
+            variant: "warning",
+            isLoading: false,
+            onConfirm: async () => {
+                setConfirmModal(prev => ({ ...prev, isLoading: true }));
+                try {
+                    const res = await fetch(`${API_URL}/users/${cliente.id}/reset`, { method: "POST" });
+                    if (!res.ok) throw new Error("Erro ao resetar");
+                    fetchClientes();
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setConfirmModal(prev => ({ ...prev, isOpen: false, isLoading: false }));
+                }
+            }
+        });
+    };
+
+    const handleDeleteCliente = (cliente: Cliente) => {
+        setConfirmModal({
+            isOpen: true,
+            title: "Deletar Cliente",
+            description: `Ação CRÍTICA: Deseja apagar permanentemente o cliente *${cliente.name || cliente.phone}*?\n\nIsso removerá todos os dados do banco e resetará o chat dele.`,
+            variant: "danger",
+            isLoading: false,
+            onConfirm: async () => {
+                setConfirmModal(prev => ({ ...prev, isLoading: true }));
+                try {
+                    const res = await fetch(`${API_URL}/users/${cliente.id}`, { method: "DELETE" });
+                    if (!res.ok) throw new Error("Erro ao deletar");
+                    fetchClientes();
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setConfirmModal(prev => ({ ...prev, isOpen: false, isLoading: false }));
+                }
+            }
+        });
+    };
 
     useEffect(() => {
         fetchInstances()
@@ -117,6 +178,8 @@ export default function ClientesPage() {
                             clientes={clientes}
                             loading={loading}
                             onEdit={(cliente: Cliente) => setSelectedCliente(cliente)}
+                            onReset={handleResetFlow}
+                            onDelete={handleDeleteCliente}
                         />
 
                         {/* Paginação */}
@@ -152,6 +215,16 @@ export default function ClientesPage() {
                     onUpdate={fetchClientes}
                 />
             )}
+
+            <ConfirmationModal
+                isOpen={confirmModal.isOpen}
+                onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={confirmModal.onConfirm}
+                title={confirmModal.title}
+                description={confirmModal.description}
+                variant={confirmModal.variant}
+                isLoading={confirmModal.isLoading}
+            />
         </>
     )
 }

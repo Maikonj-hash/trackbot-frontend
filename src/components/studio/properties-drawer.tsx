@@ -13,6 +13,7 @@ import { VariableProperties } from "./properties/variable-properties";
 import { HandoverProperties } from "./properties/handover-properties";
 import { SwitchProperties } from "./properties/switch-properties";
 import { EndProperties } from "./properties/end-properties";
+import { ReviewProperties } from "./properties/review-properties";
 
 export function PropertiesDrawer() {
     const { selectedNode, setSelectedNode, updateNodeData, deleteNode } = useFlowStore();
@@ -45,6 +46,8 @@ export function PropertiesDrawer() {
                 return <HandoverProperties {...props} />;
             case "switchBlock":
                 return <SwitchProperties {...props} />;
+            case "reviewBlock":
+                return <ReviewProperties {...props} />;
             case "endBlock":
                 return <EndProperties {...props} />;
             default:

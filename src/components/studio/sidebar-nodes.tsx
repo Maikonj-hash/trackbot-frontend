@@ -10,7 +10,8 @@ import {
     Variable,
     CircleStop,
     UserPlus,
-    GitBranch
+    GitBranch,
+    ClipboardCheck
 } from "lucide-react";
 
 export const FLOW_BLOCKS = [
@@ -112,6 +113,15 @@ export const FLOW_BLOCKS = [
         color: "text-blue-500",
         bgColor: "bg-blue-500/10",
         borderColor: "border-blue-500/20"
+    },
+    {
+        type: "reviewBlock",
+        label: "Revisão de Dados",
+        description: "Confirmação de variáveis coletadas",
+        icon: ClipboardCheck,
+        color: "text-indigo-500",
+        bgColor: "bg-indigo-500/10",
+        borderColor: "border-indigo-500/20"
     },
     {
         type: "endBlock",

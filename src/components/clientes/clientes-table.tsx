@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit2, Phone, Calendar, User, Database } from "lucide-react"
+import { Edit2, Phone, Calendar, User, Database, RefreshCw, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Cliente } from "@/types/models"
@@ -9,9 +9,11 @@ interface ClientesTableProps {
     clientes: Cliente[]
     loading: boolean
     onEdit: (cliente: Cliente) => void
+    onReset: (cliente: Cliente) => void
+    onDelete: (cliente: Cliente) => void
 }
 
-export function ClientesTable({ clientes, loading, onEdit }: ClientesTableProps) {
+export function ClientesTable({ clientes, loading, onEdit, onReset, onDelete }: ClientesTableProps) {
     if (loading) {
         return (
             <div className="flex flex-col gap-3 p-6">
@@ -111,12 +113,29 @@ export function ClientesTable({ clientes, loading, onEdit }: ClientesTableProps)
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <button
-                                        onClick={() => onEdit(cliente)}
-                                        className="p-1.5 rounded hover:bg-foreground hover:text-background text-muted-foreground transition-all border border-transparent hover:border-foreground/20"
-                                    >
-                                        <Edit2 className="w-3.5 h-3.5" />
-                                    </button>
+                                    <div className="flex items-center justify-end gap-2">
+                                        <button
+                                            onClick={() => onReset(cliente)}
+                                            className="p-1.5 rounded hover:bg-blue-500/10 text-muted-foreground hover:text-blue-500 transition-all border border-transparent hover:border-blue-500/20"
+                                            title="Resetar Fluxo (Limpar Chat)"
+                                        >
+                                            <RefreshCw className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                            onClick={() => onEdit(cliente)}
+                                            className="p-1.5 rounded hover:bg-foreground hover:text-background text-muted-foreground transition-all border border-transparent hover:border-foreground/20"
+                                            title="Editar Dados"
+                                        >
+                                            <Edit2 className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                            onClick={() => onDelete(cliente)}
+                                            className="p-1.5 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-all border border-transparent hover:border-red-500/20"
+                                            title="Deletar Cliente"
+                                        >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         )
