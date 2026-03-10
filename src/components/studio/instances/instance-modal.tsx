@@ -24,7 +24,6 @@ export function InstanceModal({
     const [provider, setProvider] = React.useState<"BAILEYS" | "META_OFFICIAL">("BAILEYS");
     const [name, setName] = React.useState("");
 
-    // Meta Fields
     const [metaToken, setMetaToken] = React.useState("");
     const [metaPhoneNumberId, setMetaPhoneNumberId] = React.useState("");
     const [metaWabaId, setMetaWabaId] = React.useState("");

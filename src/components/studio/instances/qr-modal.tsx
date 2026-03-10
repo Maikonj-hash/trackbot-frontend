@@ -37,14 +37,13 @@ export function QRModal({ instanceId, instanceName, isOpen, onClose }: QRModalPr
         const wsUrl = API_URL.replace(/\/$/, "");
         const newSocket = io(wsUrl);
 
-        // Dispara o reinicio da sessão apenas UMA VEZ por abertura
         if (connectionRequested.current !== instanceId) {
             console.log(`[QR_MODAL] Solicitando conexão para ${instanceId}`);
             connectionRequested.current = instanceId;
             fetch(`${API_URL}/instances/${instanceId}/connect`, { method: "POST" })
                 .catch(err => {
                     console.error("Erro ao solicitar novo QR:", err);
-                    connectionRequested.current = null; // Permite tentar de novo se falhou
+                    connectionRequested.current = null;
                 });
         }
 
@@ -65,13 +64,12 @@ export function QRModal({ instanceId, instanceName, isOpen, onClose }: QRModalPr
                 console.log(`[QR_MODAL] Novo status: ${data.status}`);
                 setStatus(data.status);
 
-                // Se saiu do estado de QR, limpa o código para evitar glitches
                 if (data.status !== "QR_READY") {
                     setQrCode(null);
                 }
 
                 if (data.status === "CONNECTED") {
-                    setStatus("CONNECTED"); // redundante mas seguro
+                    setStatus("CONNECTED");
                     setTimeout(() => onClose(), 2500);
                 }
             }
@@ -82,7 +80,6 @@ export function QRModal({ instanceId, instanceName, isOpen, onClose }: QRModalPr
         return () => {
             newSocket.disconnect();
         };
-        // instanceId e onClose agora são estáveis o suficiente ou propositalmente re-executáveis se mudarem
     }, [isOpen, instanceId, onClose]);
 
     return (

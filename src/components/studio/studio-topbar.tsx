@@ -16,7 +16,6 @@ export function StudioTopbar() {
     const [isPublishing, setIsPublishing] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-    // Modal States
     const [modal, setModal] = useState<{
         isOpen: boolean;
         title: string;
@@ -51,10 +50,8 @@ export function StudioTopbar() {
         try {
             setIsSaving(true);
 
-            // 1. Traduz JSX XYFlow para Record JSON do Backend
             const backendPayload = parseReactFlowToBackend(nodes, edges, flowName);
 
-            // 2. Dispara pra API do NestJS
             const isUpdate = !!flowId;
             const url = isUpdate ? `${API_URL}/flows/${flowId}` : `${API_URL}/flows`;
 
@@ -96,7 +93,6 @@ export function StudioTopbar() {
     const handlePublish = async () => {
         if (!flowId) return;
 
-        // VALIDAÇÃO ELITE: Impedir deploy de fluxo quebrado
         const validation = validateFlow(nodes, edges);
 
         if (!validation.isValid) {
@@ -107,10 +103,7 @@ export function StudioTopbar() {
         const executePublish = async () => {
             try {
                 setIsPublishing(true);
-                // Primeiro salva o rascunho atual
                 await handleSave();
-
-                // Depois chama a publicação
                 const response = await fetch(`${API_URL}/flows/${flowId}/publish`, {
                     method: "POST",
                 });
@@ -141,7 +134,6 @@ export function StudioTopbar() {
         }
     };
 
-    // Auto-save logic (Debounce 5s)
     useEffect(() => {
         if (isDirty && flowId) {
             const timer = setTimeout(() => {
@@ -165,7 +157,6 @@ export function StudioTopbar() {
                     onClick={() => {
                         const { toggleSimulator, isOpen, startSimulation } = useSimulator.getState();
                         toggleSimulator();
-                        // Se estiver abrindo agora, auto-inicia
                         if (!isOpen) {
                             startSimulation(useFlowStore.getState().nodes, useFlowStore.getState().edges);
                         }

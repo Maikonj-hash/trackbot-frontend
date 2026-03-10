@@ -4,7 +4,6 @@ import { TrackerNodeData } from "@/store/flow-store";
 export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: Edge[], flowName: string = "Meu Novo Fluxo") {
     const steps: Record<string, any> = {};
 
-    // Mágica 4: Encontrar a Bússola Oculta (Onde o fluxo começa de verdade?)
     const startNode = nodes.find(n => n.id === "start-1" || n.type === "startBlock");
     let firstStepId = null;
     if (startNode) {
@@ -17,14 +16,12 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
     for (const node of nodes) {
         const id = node.id;
 
-        // Helper to find next step ID from an edge origin handle
         const getNextStepId = (sourceHandle?: string) => {
             const edge = edges.find(e => {
                 if (e.source !== id) return false;
                 if (sourceHandle) {
                     return e.sourceHandle === sourceHandle;
                 }
-                // Se a busca é genérica (null), pega a corda que não tem origin handle espécifico ou chama-se 'next'
                 return !e.sourceHandle || e.sourceHandle === 'next';
             });
             return edge?.target || null;
@@ -56,7 +53,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                 options.forEach((opt, idx) => {
                     const target = edges.find(e => e.source === id && e.sourceHandle === `option_${idx}`)?.target;
                     if (target) {
-                        optionsMap[opt] = target; // e.g. "Sim" -> "node_abc123"
+                        optionsMap[opt] = target;
                     }
                 });
 
@@ -83,7 +80,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     value: node.data.conditionValue || "",
                     trueStepId: getNextStepId("true"),
                     falseStepId: getNextStepId("false"),
-                    nextStepId: null // Routable
+                    nextStepId: null
                 };
                 break;
             case "delayBlock":
@@ -146,7 +143,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     id,
                     type: "HANDOVER",
                     department: node.data.content || undefined,
-                    nextStepId: null // Encerra automação
+                    nextStepId: null
                 };
                 break;
             case "switchBlock":
@@ -168,8 +165,8 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     type: "SWITCH",
                     variable: node.data.switchVariable || "",
                     branches: mappedBranches,
-                    defaultStepId: getNextStepId("default"), // strict null resolvido (Wave 6)
-                    nextStepId: null // Routable
+                    defaultStepId: getNextStepId("default"),
+                    nextStepId: null
                 };
                 break;
             case "endBlock":
@@ -182,7 +179,6 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                 };
                 break;
             case "startBlock":
-                // Ignorado no banco porque é apenas Metadado Visual
                 break;
         }
     }
@@ -190,7 +186,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
     return {
         id: "flow_" + Date.now().toString(),
         name: flowName,
-        firstStepId, // Bússola oficial Exportada
+        firstStepId,
         steps
     };
 }
@@ -199,7 +195,6 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    // 1. Verificar Bloco Início
     const startNode = nodes.find(n => n.id === "start-1" || n.type === "startBlock");
     if (!startNode) {
         errors.push("Bloco de Início não encontrado.");
@@ -210,7 +205,6 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
         }
     }
 
-    // 2. Verificar Blocos Órfãos (sem entrada, exceto Start)
     nodes.forEach(node => {
         if (node.id === "start-1" || node.type === "startBlock") return;
 
@@ -220,11 +214,9 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
         }
     });
 
-    // 3. Verificar Saídas não conectadas (exceto End)
     nodes.forEach(node => {
         if (node.type === "endBlock" || node.type === "handoverBlock") return;
 
-        // Simplificação: apenas checa se tem pelo menos uma saída
         const hasOutput = edges.some(e => e.source === node.id);
         if (!hasOutput) {
             if (node.type === "conditionBlock") {
@@ -253,7 +245,6 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
                     edges.some(e => e.source === node.id && e.sourceHandle === branch.id)
                 );
 
-                // Validação Estrita: Roteadores precisam de todas as suas rotas ativas com fio
                 const isDefaultConnected = edges.some(e => e.source === node.id && e.sourceHandle === 'default');
                 if (!allCasesConnected || !isDefaultConnected) {
                     errors.push(`O bloco Roteador "${(node.data as any).switchVariable || 'Sem Nome'}" precisa de todas as Rotas e a Saída Padrão conectadas.`);
@@ -264,7 +255,6 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
         }
     });
 
-    // 4. Validação de Nomes de Variáveis (Sanitização)
     const varRegex = /^[a-zA-Z0-9_.]+$/;
     nodes.forEach(node => {
         let varName: string = "";
@@ -276,7 +266,6 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
         }
     });
 
-    // 5. Validação de URLs de Webhook
     nodes.forEach(node => {
         if (node.type === "webhookBlock") {
             const url = String(node.data.content || "");

@@ -7,9 +7,9 @@ export type SimMessage = {
     text?: string;
     isBot: boolean;
     type: "text" | "image" | "video" | "audio" | "document" | "options" | "component";
-    options?: string[]; // Para botões
+    options?: string[];
     mediaUrl?: string;
-    isInteractive?: boolean; // Para input fields mockados
+    isInteractive?: boolean;
 };
 
 type SimulatorState = {
@@ -19,25 +19,19 @@ type SimulatorState = {
     variables: Record<string, string | number | boolean>;
     logs: Array<{ time: string; text: string; type: "info" | "error" | "warn" | "success" }>;
 
-    // Engine State
     currentNodeId: string | null;
     waitingForInput: boolean;
-
-    // Actions
     toggleSimulator: () => void;
     startSimulation: (nodes: Node<TrackerNodeData>[], edges: Edge[]) => void;
     stopSimulation: () => void;
 
-    // Engine Drivers
     processNextNode: (nodes: Node<TrackerNodeData>[], edges: Edge[]) => Promise<void>;
     handleUserInput: (text: string, nodes: Node<TrackerNodeData>[], edges: Edge[]) => void;
 
-    // Memory
     setVariable: (key: string, value: string | number | boolean) => void;
     addLog: (text: string, type?: "info" | "error" | "warn" | "success") => void;
 };
 
-// Motor Lógico Isolado
 const resolveVar = (text: string, vars: Record<string, any>) => {
     if (!text) return text;
     return text.replace(/\{\{(.+?)\}\}/g, (match, path) => {
@@ -102,7 +96,6 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
         const { isRunning, currentNodeId, waitingForInput } = get();
         if (!isRunning || !waitingForInput || !currentNodeId) return;
 
-        // Adiciona à tela
         set((state) => ({
             messages: [...state.messages, { id: `m_${Date.now()}`, isBot: false, type: "text", text }],
             waitingForInput: false
@@ -114,17 +107,14 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
             get().setVariable(varName, text);
             get().addLog(`Valor salvo na variável '${varName}': ${text}`, "success");
 
-            // Seguir para o proximo
             const nextEdge = edges.find(e => e.source === currentNodeId);
             set({ currentNodeId: nextEdge ? nextEdge.target : null });
             await get().processNextNode(nodes, edges);
         } else if (node?.type === "optionsBlock") {
             const options = node.data.options || [];
 
-            // 1. Tenta match Case-Insensitive exato do nome da Rota
             let index = options.findIndex(opt => opt.toLowerCase() === text.trim().toLowerCase());
 
-            // 2. Tenta Match Numérico (Failsafe do Backend - Ex: Digitar "1" entra na primeira opção)
             if (index === -1) {
                 const numericIndex = parseInt(text.trim()) - 1;
                 if (!isNaN(numericIndex) && numericIndex >= 0 && numericIndex < options.length) {
@@ -177,10 +167,8 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
                 case "delayBlock":
                     const ms = data.delayMs || 3000;
                     get().addLog(`Aguardando ${ms}ms...`);
-                    // Mostra um typing indicator simulado
                     set(s => ({ messages: [...s.messages, { id: "typing", text: "digitando...", type: "text", isBot: true }] }));
                     await new Promise(r => setTimeout(r, ms));
-                    // Remove typing
                     set(s => ({ messages: s.messages.filter(m => m.id !== "typing") }));
                     currentNodeId = getTarget();
                     break;
@@ -252,7 +240,7 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
                         waitingForInput: true
                     }));
                     get().addLog(`Aguardando input do usuário (pausado)...`, "warn");
-                    return; // Pause while loop
+                    return;
 
                 case "optionsBlock":
                     const optParse = resolveVar(data.content || "", vars);
@@ -267,7 +255,7 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
                         waitingForInput: true
                     }));
                     get().addLog(`Menu de Opções gerado (pausado)...`, "warn");
-                    return; // Pause while loop
+                    return;
 
                 case "webhookBlock":
                     const isMock = !(data as any).simulateRealRequest;
@@ -276,7 +264,6 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
                     if (!isMock) {
                         get().addLog(`Disparando [${data.webhookMethod}] REAL para: ${url}`);
                         try {
-                            // Cuidado com CORS no simulador.
                             const res = await fetch(url, {
                                 method: data.webhookMethod || "GET",
                             });
@@ -288,7 +275,6 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
                             currentNodeId = getTarget("failure");
                         }
                     } else {
-                        // Mock Behavior
                         get().addLog(`[MOCK] Pulou requisição HTTP. Foi direto pro lado de Sucesso.`, "success");
                         currentNodeId = getTarget("success");
                     }
@@ -312,10 +298,9 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
                     break;
             }
 
-            // Atualiza loop cache pra injetar React Safety breaks e evitar infinite loops (Maximum Call Stack)
             set({ currentNodeId });
             isRunning = get().isRunning;
-            await new Promise(r => setTimeout(r, 150)); // Cinematic tick delay to feel the engine moving
+            await new Promise(r => setTimeout(r, 150));
         }
 
         if (!currentNodeId && get().isRunning && !get().waitingForInput) {

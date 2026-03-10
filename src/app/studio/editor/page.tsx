@@ -34,7 +34,6 @@ import { API_URL } from "@/lib/constants";
 import { SwitchNode } from "@/components/studio/nodes/switch-node";
 import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer";
 
-// O React flow exige que os Componentes das caixas sejam Passados estabilizados para fora do React
 const customNodeTypes = {
     messageBlock: MessageNode,
     optionsBlock: OptionsNode,
@@ -83,7 +82,6 @@ function StudioCanvas() {
                     setFlow([], []);
                 }
 
-                // Mágica 5: Auto-Centralização no Reload com MaxZoom travado (UX mais polida)
                 setTimeout(() => {
                     fitView({ padding: 0.2, duration: 800, maxZoom: 1 });
                 }, 100);
@@ -145,9 +143,8 @@ function StudioCanvas() {
                         onConnect={onConnect}
                         onNodeClick={(_, node) => setSelectedNode(node.id)}
                         onPaneClick={() => setSelectedNode(null)}
-                        deleteKeyCode={["Backspace", "Delete"]} // Mágica 1: UX de Teclado Nativa garantida
+                        deleteKeyCode={["Backspace", "Delete"]}
                         isValidConnection={(connection) => {
-                            // Mágica 3: Anti-Loop (Não pode ligar em si mesmo) e Anti-Reverse (Não liga de volta no Start)
                             if (connection.source === connection.target) return false;
                             if (connection.target === 'start-1') return false;
                             return true;
@@ -174,7 +171,7 @@ function StudioCanvas() {
                             zoomable
                             pannable
                             nodeColor={(n) => {
-                                if (n.type === "messageBlock") return "#2563eb"; // Blue-600
+                                if (n.type === "messageBlock") return "#2563eb";
                                 return "#3b82f6";
                             }}
                             maskColor="rgba(255, 255, 255, 0.5)"

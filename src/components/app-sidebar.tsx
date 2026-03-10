@@ -18,7 +18,6 @@ import {
     useSidebar
 } from "@/components/ui/sidebar"
 
-// Grupos lógicos de navegação para SaaS
 const navGroups = [
     {
         label: "OPERAÇÃO",

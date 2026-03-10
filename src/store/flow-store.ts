@@ -13,8 +13,6 @@ import {
     applyEdgeChanges,
 } from "@xyflow/react";
 
-// Tipo Global do Bot (Para mesclarmos depois ao Flow Master do Backend)
-// Enumerações Estritas para Blindagem
 export type ConditionOperator = 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'IS_EMPTY' | 'IS_NOT_EMPTY';
 export type MediaType = 'image' | 'video' | 'audio' | 'document';
 export type VariableAction = 'SET' | 'INCREMENT' | 'DECREMENT';
@@ -27,27 +25,21 @@ export type TrackerNodeData = {
     options?: string[];
     delayMs?: number;
 
-    // Interactive Options
     useNativeButtons?: boolean;
     listButtonLabel?: string;
     listTitle?: string;
     listFooter?: string;
-    dynamicOptionsVariable?: string; // Futuro: carregar opções de uma var
+    dynamicOptionsVariable?: string;
 
-    // Condition
     conditionVariable?: string;
     conditionOperator?: ConditionOperator;
     conditionValue?: string | boolean;
 
-    // Media
     mediaType?: MediaType;
 
-    // Variable
     variableName?: string;
     variableAction?: VariableAction;
     variableValue?: string;
-
-    // Webhook
     webhookMethod?: WebhookMethod;
     timeout?: number;
     saveStatusToVariable?: string;
@@ -59,7 +51,6 @@ export type TrackerNodeData = {
     headers?: Record<string, string>;
     bodyPayload?: any;
 
-    // Customer Identification
     identificationFields?: Array<{
         label: string;
         type: 'TEXT' | 'EMAIL' | 'PHONE' | 'NUMBER' | 'CPF';
@@ -68,19 +59,16 @@ export type TrackerNodeData = {
     submitButtonText?: string;
     skipIfAlreadyFilled?: boolean;
 
-    // Switch/Router
-    switchVariable?: string; // Variável a ser avaliada (Ex: {{plano}})
+    switchVariable?: string;
     switchBranches?: Array<{
-        id: string; // Gerado gerenciar a sourceHandle
-        value: string; // Valor que executa a rota (Ex: "VIP")
+        id: string;
+        value: string;
     }>;
 
-    // End/Exit
     endResetType?: 'IMMEDIATE' | 'TIMEOUT';
     endTimeoutValue?: number;
 };
 
-// Cérebro Global (Armazena tudo o que acontece no Studio na Memória RAM limpa)
 type FlowState = {
     flowId: string | null;
     flowName: string;
@@ -89,7 +77,7 @@ type FlowState = {
     nodes: Node<TrackerNodeData>[];
     edges: Edge[];
     selectedNode: Node<TrackerNodeData> | null;
-    isDirty: boolean; // Rastreia mudanças não salvas
+    isDirty: boolean;
     onNodesChange: OnNodesChange<Node<TrackerNodeData>>;
     onEdgesChange: OnEdgesChange;
     onConnect: OnConnect;
@@ -101,7 +89,7 @@ type FlowState = {
     setFlowMetadata: (id: string, name: string, description: string) => void;
     setFlowName: (name: string) => void;
     setFlow: (nodes: Node<TrackerNodeData>[], edges: Edge[]) => void;
-    setSaved: () => void; // Reseta o estado Dirty
+    setSaved: () => void;
 };
 
 export const useFlowStore = create<FlowState>((set, get) => ({
@@ -121,34 +109,25 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     selectedNode: null,
     isDirty: false,
 
-    // Eventos Nativos do React Flow para mover as caixas fluidamente
     onNodesChange: (changes: NodeChange<Node<TrackerNodeData>>[]) => {
-        // Blindagem extra contra a Lixeira Nativa (tecla Delete/Backspace)
         const safeChanges = changes.filter(c => !(c.type === 'remove' && c.id === 'start-1'));
         set({
             nodes: applyNodeChanges(safeChanges, get().nodes),
-            isDirty: changes.length > 0, // Qualquer mudança física marca como Dirty
+            isDirty: changes.length > 0,
         });
     },
-
-    // Eventos Nativos do React Flow para apagar/mover Fios e Arestas
     onEdgesChange: (changes: EdgeChange[]) => {
         set({
             edges: applyEdgeChanges(changes, get().edges),
             isDirty: true,
         });
     },
-
-    // Conectar um Ponto A no Ponto B (Fio Redondo)
     onConnect: (connection: Connection) => {
-        // Validar e evitar loops, que está sendo feito lá na view também
         set({
             edges: addEdge(connection, get().edges),
             isDirty: true,
         });
     },
-
-    // Selecionar uma Caixa (Para abrir a Barra de configurações a direita)
     setSelectedNode: (nodeId: string | null) => {
         if (!nodeId) {
             set({ selectedNode: null });
@@ -157,22 +136,15 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         const node = get().nodes.find((n) => n.id === nodeId);
         set({ selectedNode: node || null });
     },
-
-    // Quando o usuário digitar algo na 'Caixinha', atualiza o Grid em Tempo real
     updateNodeData: (nodeId: string, data: Partial<TrackerNodeData>) => {
         set({
             nodes: get().nodes.map((node) => {
                 if (node.id === nodeId) {
-                    // Blindagem: Sanitização de dados numéricos
                     const sanitizedData = { ...data };
                     if (sanitizedData.delayMs !== undefined) {
                         sanitizedData.delayMs = Math.max(0, sanitizedData.delayMs);
                     }
-
-                    // Precisamos clonar o nó para o React perceber a alteração e pintar novamente
                     const updatedNode = { ...node, data: { ...node.data, ...sanitizedData } };
-
-                    // Atualiza o Painel Lateral também de brinde
                     if (get().selectedNode?.id === nodeId) {
                         set({ selectedNode: updatedNode });
                     }
@@ -183,10 +155,8 @@ export const useFlowStore = create<FlowState>((set, get) => ({
             isDirty: true,
         });
     },
-
-    // Deletar a caixa e todos os fios conectados a ela
     deleteNode: (nodeId: string) => {
-        if (nodeId === "start-1") return; // Mágica 2: Bloco Intocável
+        if (nodeId === "start-1") return;
         set({
             nodes: get().nodes.filter((node) => node.id !== nodeId),
             edges: get().edges.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
@@ -194,8 +164,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
             isDirty: true,
         });
     },
-
-    // Injetar uma caixa do Ponto Cego para o Mundo Virtual
     addNode: (node: Node<TrackerNodeData>) => {
         const exists = get().nodes.some(n => n.id === node.id);
         const safeNode = exists ? { ...node, id: `${node.id}-${Date.now()}` } : node;
@@ -205,11 +173,8 @@ export const useFlowStore = create<FlowState>((set, get) => ({
             isDirty: true,
         });
     },
-
-    // Hydration (Carregar arquivo salvo de volta pra tela)
     setFlow: (nodes, edges) => {
         let hydratedNodes = nodes;
-        // Mágica 6: Garantir que fluxos vazios/novos criados no banco não percam o Bloco Início do Frontend
         const hasStart = nodes.some(n => n.id === "start-1" || n.type === "startBlock");
         if (!hasStart) {
             hydratedNodes = [
@@ -224,8 +189,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         }
         set({ nodes: hydratedNodes, edges, selectedNode: null, isDirty: false });
     },
-
-    // Salvar qual ID de fluxo o usuário abriu
     setFlowMetadata: (id, name, description) => {
         set({ flowId: id, flowName: name, flowDescription: description });
     },

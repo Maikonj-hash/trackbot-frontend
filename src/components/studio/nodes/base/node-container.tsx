@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 interface NodeContainerProps {
     children: ReactNode;
     selected?: boolean;
-    color?: string; // emerald, blue, red, etc.
+    color?: string;
     className?: string;
 }
 

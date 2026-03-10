@@ -11,7 +11,6 @@ export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
     };
 
     const handleUpdateBranchValue = (index: number, newValue: string) => {
-        // Correção de Mutação Zustand (Wave 6)
         const updatedBranches = branches.map((branch, i) =>
             i === index ? { ...branch, value: newValue } : branch
         );
@@ -19,7 +18,6 @@ export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
     };
 
     const handleRemoveBranch = (idToRemove: string) => {
-        // Correção de Mutação Zustand (Wave 6)
         const updatedBranches = branches.filter(branch => branch.id !== idToRemove);
         updateNodeData(node.id, { switchBranches: updatedBranches });
     };

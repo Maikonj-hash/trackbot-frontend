@@ -22,7 +22,7 @@ export interface Cliente {
     id: string;
     name: string | null;
     phone: string;
-    metadata: any; // Mantido restrito ao invés de strict unknown por causa de JSONs variáveis
+    metadata: any;
     instanceId: string | null;
     instance?: Instance;
     createdAt: string;

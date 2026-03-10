@@ -17,7 +17,6 @@ export default function InstancesPage() {
     const [isCreating, setIsCreating] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-    // QR Modal State
     const [pairModal, setPairModal] = useState<{ isOpen: boolean; id: string; name: string }>({
         isOpen: false,
         id: "",
@@ -25,7 +24,6 @@ export default function InstancesPage() {
     });
 
     const fetchData = useCallback(async () => {
-        // Não busca se a página estiver em background para economizar recursos e evitar erros de rede vãos
         if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
 
         try {
@@ -40,7 +38,6 @@ export default function InstancesPage() {
                 setFlows(flowData);
             }
         } catch (error) {
-            // Silencia erros de "Failed to fetch" (servidor offline temporariamente)
             console.warn("Servidor indisponível no momento. Tentando novamente em breve...");
         } finally {
             setIsLoading(false);
@@ -54,7 +51,6 @@ export default function InstancesPage() {
 
     useEffect(() => {
         fetchData();
-        // Polling suave para manter status sincronizado sems sockets globais no momento
         const interval = setInterval(fetchData, 10000);
         return () => clearInterval(interval);
     }, [fetchData]);
@@ -72,7 +68,6 @@ export default function InstancesPage() {
                 const newInst = await res.json();
                 await fetchData();
 
-                // Só abre o modal de pareamento se for Baileys
                 if (payload.provider === "BAILEYS") {
                     setPairModal({ isOpen: true, id: newInst.id, name: newInst.name });
                 }

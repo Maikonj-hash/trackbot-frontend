@@ -2,7 +2,7 @@ import { LucideIcon } from "lucide-react";
 import { clsx } from "clsx";
 
 interface NodeHeaderProps {
-    icon?: LucideIcon; // Tornar opcional para evitar crash
+    icon?: LucideIcon;
     label: string;
     color?: string;
     badge?: string;

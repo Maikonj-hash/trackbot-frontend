@@ -6,7 +6,6 @@ import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 
 export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
-    // Blindagem Cirúrgica: Garantir que sempre haja um array, mesmo que vazio
     const rawOptions = Array.isArray(data?.options) ? data.options : [];
     const menuOptions = rawOptions.length > 0 ? rawOptions : ["Sim", "Não"];
 

@@ -1,7 +1,6 @@
 import { useFlowStore } from "@/store/flow-store";
 import { Copy, Trash2, X } from "lucide-react";
 
-// Importando todos os subcomponentes abstraídos (Desacoplamento Clean Architecture)
 import { MessageProperties } from "./properties/message-properties";
 import { InputProperties } from "./properties/input-properties";
 import { IdentificationProperties } from "./properties/identification-properties";
@@ -20,7 +19,6 @@ export function PropertiesDrawer() {
 
     if (!selectedNode) return null;
 
-    // Dicionário de Componentes Renderizadores (Roteador Interno do Modal)
     const renderNodeProperties = () => {
         const props = { node: selectedNode, updateNodeData };
 

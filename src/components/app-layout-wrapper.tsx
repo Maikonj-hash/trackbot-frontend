@@ -10,7 +10,6 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
     const isStudioEditor = pathname?.startsWith("/studio/editor");
 
     if (isStudioEditor) {
-        // Distraction-free mode (100% Canvas Focus)
         return (
             <main className="relative flex flex-col flex-1 min-w-0 overflow-hidden h-screen w-full bg-background">
                 <Providers>{children}</Providers>
@@ -18,7 +17,6 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
         );
     }
 
-    // Default Dashboard mode
     return (
         <SidebarProvider defaultOpen={false}>
             <AppSidebar />
