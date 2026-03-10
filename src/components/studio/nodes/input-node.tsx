@@ -16,7 +16,7 @@ export function InputNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) 
                 <div className="text-[10px] font-mono text-muted-foreground uppercase opacity-70">
                     Question to User:
                 </div>
-                <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
+                <div className="text-xs font-medium leading-relaxed whitespace-pre-wrap break-words px-1 text-foreground/80">
                     {data?.content || "Sua pergunta aqui..."}
                 </div>
 

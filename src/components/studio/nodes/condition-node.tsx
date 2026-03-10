@@ -27,7 +27,7 @@ export function ConditionNode({ data, selected }: NodeProps<Node<TrackerNodeData
             <div className="p-3 flex flex-col gap-2 bg-card">
                 <div className="flex flex-col gap-1 bg-muted/20 p-2 rounded border border-border/40">
                     <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-tight">IF VARIABLE</span>
-                    <div className="text-[11px] font-bold text-violet-500 truncate">
+                    <div className="text-[11px] font-bold text-violet-500 break-words">
                         {variable}
                     </div>
                 </div>

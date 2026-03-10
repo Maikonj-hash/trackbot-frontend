@@ -18,7 +18,7 @@ export function MediaNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) 
                 <div className="aspect-video w-full rounded border border-border/40 bg-muted/20 flex items-center justify-center overflow-hidden">
                     <ImageIcon className="w-6 h-6 text-pink-500/20" />
                 </div>
-                <div className="text-[10px] truncate text-muted-foreground bg-muted/30 px-2 py-1 rounded font-mono">
+                <div className="text-[10px] break-all text-muted-foreground bg-muted/30 px-2 py-1 rounded font-mono">
                     {data?.content || "No media URL"}
                 </div>
             </div>

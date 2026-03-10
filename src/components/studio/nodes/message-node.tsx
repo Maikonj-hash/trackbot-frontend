@@ -13,8 +13,8 @@ export function MessageNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
             <NodeHeader icon={MessageSquareText} label="SEND MESSAGE" color="blue" />
 
             <div className="p-3 bg-card">
-                <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
-                    {data?.content || "Escreva a mensagem..."}
+                <div className="text-xs font-medium leading-relaxed whitespace-pre-wrap break-words px-1 text-foreground/80">
+                    {data?.content || "Sua pergunta aqui..."}
                 </div>
             </div>
 

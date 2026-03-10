@@ -19,7 +19,7 @@ export function SwitchNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
             />
 
             <div className="p-3 bg-card pb-1">
-                <div className="text-xs font-medium leading-relaxed truncate px-1 text-foreground/80">
+                <div className="text-xs font-medium leading-relaxed whitespace-pre-wrap break-words px-1 text-foreground/80">
                     Eval: <span className="font-mono text-purple-600 dark:text-purple-400 font-bold">{data?.switchVariable || "???"}</span>
                 </div>
             </div>
@@ -27,11 +27,11 @@ export function SwitchNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
             <div className="flex flex-col gap-1.5 p-3 bg-card pb-4 relative custom-scrollbar">
                 {rawBranches.map((branch, index) => (
                     <div key={branch.id || index} className="relative w-full">
-                        <div className="text-[11px] font-medium text-foreground py-1.5 px-3 bg-muted/20 border border-border/40 rounded-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] truncate flex items-center gap-2 group hover:border-purple-500/30 hover:bg-muted/40 transition-colors">
+                        <div className="text-[11px] font-medium text-foreground py-1.5 px-3 bg-muted/20 border border-border/40 rounded-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-2 group hover:border-purple-500/30 hover:bg-muted/40 transition-colors">
                             <span className="text-[9px] font-mono text-muted-foreground/50 pr-2 border-r border-border/50 flex-shrink-0">
                                 CASE
                             </span>
-                            <span className="truncate group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                            <span className="whitespace-pre-wrap break-words group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                                 {branch.value || "Vazio"}
                             </span>
                         </div>
