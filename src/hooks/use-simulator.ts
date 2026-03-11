@@ -41,6 +41,43 @@ const resolveVar = (text: string, vars: Record<string, any>) => {
     });
 };
 
+const validateSimulatorInput = (text: string, expectedType?: string): { isValid: boolean, error?: string } => {
+    if (!text || !expectedType || expectedType === 'TEXT') return { isValid: true };
+    const val = text.trim();
+    switch (expectedType) {
+        case 'EMAIL':
+            return { isValid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), error: "Formato de e-mail inválido." };
+        case 'PHONE':
+            return { isValid: val.replace(/\D/g, '').length >= 10, error: "Formato de telefone inválido." };
+        case 'CPF_CNPJ':
+            const doc = val.replace(/\D/g, '');
+            return { isValid: doc.length === 11 || doc.length === 14, error: "Documento inválido." };
+        case 'NUMBER':
+            return { isValid: !isNaN(Number(val)) && val !== '', error: "Por favor, informe apenas números." };
+        case 'CEP':
+            return { isValid: val.replace(/\D/g, '').length === 8, error: "CEP inválido. Deve conter 8 dígitos." };
+        case 'LICENSE_PLATE':
+            const plate = val.replace(/[^A-Za-z0-9]/g, '');
+            return { isValid: /^[A-Za-z]{3}[0-9][A-Za-z0-9][0-9]{2}$/.test(plate), error: "Placa inválida." };
+        case 'DATE':
+            const matchVal = val.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+            if (!matchVal) return { isValid: false, error: "Formato de data inválido (DD/MM/AAAA)." };
+            const d = parseInt(matchVal[1], 10);
+            const m = parseInt(matchVal[2], 10);
+            const y = parseInt(matchVal[3], 10);
+            const dateObj = new Date(y, m - 1, d);
+            if (dateObj.getFullYear() !== y || dateObj.getMonth() !== m - 1 || dateObj.getDate() !== d) {
+                return { isValid: false, error: "A data informada não existe no calendário." };
+            }
+            if (y < 1900 || y > 2100) return { isValid: false, error: "Ano fora do limite aceitável." };
+            return { isValid: true };
+        case 'TIME':
+            return { isValid: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(val), error: "Horário inválido (HH:MM)." };
+        default:
+            return { isValid: true };
+    }
+};
+
 export const useSimulator = create<SimulatorState>((set, get) => ({
     isOpen: false,
     isRunning: false,
@@ -103,6 +140,18 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
 
         const node = nodes.find(n => n.id === currentNodeId);
         if (node?.type === "inputBlock") {
+            const validation = validateSimulatorInput(text, node.data.expectedType);
+            
+            if (!validation.isValid) {
+                const errorMsg = node.data.errorMessage || validation.error || "Entrada inválida.";
+                set((state) => ({
+                    messages: [...state.messages, { id: `err_${Date.now()}`, isBot: true, type: "text", text: `❌ ${errorMsg}` }],
+                    waitingForInput: true
+                }));
+                get().addLog(`[SIMULADOR] Validação falhou: ${errorMsg}`, "warn");
+                return; // Aborta prosseguimento no simulador
+            }
+
             const varName = node.data.variableName || "var_padrao";
             get().setVariable(varName, text);
             get().addLog(`Valor salvo na variável '${varName}': ${text}`, "success");

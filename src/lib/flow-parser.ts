@@ -44,6 +44,10 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     type: "INPUT",
                     content: node.data.content || "Aguardando input...",
                     saveToVariable: node.data.variableName || "var_padrao",
+                    expectedType: node.data.expectedType,
+                    errorMessage: node.data.errorMessage,
+                    maxRetries: node.data.maxRetries,
+                    allowBack: node.data.allowBack,
                     nextStepId: defaultNextStep
                 };
                 break;

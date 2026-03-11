@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { 
     MessageSquare, 
     List, 
@@ -14,6 +14,8 @@ import {
     ClipboardCheck,
     LogOut,
     PlayCircle,
+    ChevronDown,
+    ChevronRight,
     LucideIcon
 } from "lucide-react";
 
@@ -53,6 +55,7 @@ interface BlockDefinition {
     label: string;
     icon: LucideIcon;
     color: ColorKey;
+    subBlocks?: BlockDefinition[];
 }
 
 interface CategoryDefinition {
@@ -73,11 +76,19 @@ const CATEGORIES: CategoryDefinition[] = [
         blocks: [
             { type: "optionsBlock", label: "Escolhas", icon: List, color: "purple" },
             { type: "inputBlock", label: "Pergunta Livre", icon: Type, color: "purple" },
-            { type: "inputBlock:EMAIL", label: "Pedir E-mail", icon: Type, color: "purple" },
-            { type: "inputBlock:PHONE", label: "Pedir Telefone", icon: Type, color: "purple" },
-            { type: "inputBlock:CPF_CNPJ", label: "Pedir CPF/CNPJ", icon: Type, color: "purple" },
-            { type: "inputBlock:CEP", label: "Pedir CEP", icon: Type, color: "purple" },
-            { type: "inputBlock:DATE", label: "Pedir Data", icon: Type, color: "purple" },
+            {
+                type: "smartInputs",
+                label: "Inputs Específicos",
+                icon: UserCheck, // Using UserCheck as representative icon
+                color: "emerald",
+                subBlocks: [
+                    { type: "inputBlock:EMAIL", label: "Pedir E-mail", icon: Type, color: "emerald" },
+                    { type: "inputBlock:PHONE", label: "Pedir Telefone", icon: Type, color: "emerald" },
+                    { type: "inputBlock:CPF_CNPJ", label: "Pedir CPF/CNPJ", icon: Type, color: "emerald" },
+                    { type: "inputBlock:CEP", label: "Pedir CEP", icon: Type, color: "emerald" },
+                    { type: "inputBlock:DATE", label: "Pedir Data", icon: Type, color: "emerald" },
+                ]
+            }
         ]
     },
     {
@@ -113,10 +124,94 @@ const CATEGORIES: CategoryDefinition[] = [
 ];
 
 export const SidebarNodes = memo(function SidebarNodes() {
+    const [expandedBlocks, setExpandedBlocks] = useState<Record<string, boolean>>({});
+
+    const toggleBlock = (blockType: string) => {
+        setExpandedBlocks(prev => ({ ...prev, [blockType]: !prev[blockType] }));
+    };
+
     const onDragStart = (event: React.DragEvent, nodeType: string, label: string) => {
         event.dataTransfer.setData("application/reactflow", nodeType);
         event.dataTransfer.setData("application/reactflow-label", label);
         event.dataTransfer.effectAllowed = "move";
+    };
+
+    const renderBlock = (block: BlockDefinition, isSubBlock = false) => {
+        const styles = COLOR_MAP[block.color];
+        const Icon = block.icon;
+        const isExpanded = expandedBlocks[block.type];
+
+        if (block.subBlocks) {
+            return (
+                <div key={block.type} className="space-y-1">
+                    <div
+                        onClick={() => toggleBlock(block.type)}
+                        className={`
+                            group flex items-center justify-between p-3 bg-card/30 
+                            border border-border/40 rounded-xl cursor-pointer 
+                            transition-all duration-300 ${styles.borderHover} ${styles.glow}
+                            hover:bg-card/60 hover:-translate-y-0.5
+                        `}
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-lg bg-background/50 border border-border/30 group-hover:border-foreground/10 transition-colors shadow-inner`}>
+                                <Icon className={`w-4 h-4 ${styles.text} transition-transform group-hover:scale-110`} />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-bold tracking-tight text-foreground/80 group-hover:text-foreground transition-colors">
+                                    {block.label}
+                                </span>
+                                <span className="text-[8px] font-mono uppercase tracking-tighter text-muted-foreground/40 mt-0.5">
+                                    {block.subBlocks.length} variações
+                                </span>
+                            </div>
+                        </div>
+                        {isExpanded ? (
+                            <ChevronDown className="w-4 h-4 text-muted-foreground/50 group-hover:text-foreground/80 transition-colors" />
+                        ) : (
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-foreground/80 transition-colors" />
+                        )}
+                    </div>
+                    
+                    {/* Sub-blocks Container com animação Grid */}
+                    <div className={`
+                        grid transition-all duration-300 ease-in-out pl-4 ml-4 border-l border-border/40 border-dashed
+                        ${isExpanded ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0 mt-0"}
+                    `}>
+                        <div className="overflow-hidden flex flex-col gap-2">
+                            {block.subBlocks.map(subBlock => renderBlock(subBlock, true))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div
+                key={block.type}
+                className={`
+                    group flex items-center gap-3 p-3 bg-card/30
+                    border outline-none ${isSubBlock ? 'border-border/20 py-2' : 'border-border/40'} rounded-xl cursor-grab active:cursor-grabbing 
+                    transition-all duration-300 ${styles.borderHover} ${styles.glow}
+                    hover:bg-card/60 hover:-translate-y-0.5
+                `}
+                onDragStart={(event) => onDragStart(event, block.type, block.label)}
+                draggable
+            >
+                <div className={`p-2 rounded-lg bg-background/50 border border-border/30 group-hover:border-foreground/10 transition-colors shadow-inner`}>
+                    <Icon className={`w-4 h-4 ${styles.text} transition-transform group-hover:scale-110`} />
+                </div>
+                
+                <div className="flex flex-col">
+                    <span className="text-[11px] font-bold tracking-tight text-foreground/80 group-hover:text-foreground transition-colors">
+                        {block.label}
+                    </span>
+                    <span className="text-[8px] font-mono uppercase tracking-tighter text-muted-foreground/40 mt-0.5">
+                        {block.type.split(':')[0].replace('Block', '')}
+                    </span>
+                </div>
+            </div>
+        );
     };
 
     return (
@@ -143,37 +238,7 @@ export const SidebarNodes = memo(function SidebarNodes() {
                         </h3>
                         
                         <div className="grid grid-cols-1 gap-2">
-                            {category.blocks.map((block) => {
-                                const styles = COLOR_MAP[block.color];
-                                const Icon = block.icon;
-
-                                return (
-                                    <div
-                                        key={block.type}
-                                        className={`
-                                            group flex items-center gap-3 p-3 bg-card/30 
-                                            border border-border/40 rounded-xl cursor-grab active:cursor-grabbing 
-                                            transition-all duration-300 ${styles.borderHover} ${styles.glow}
-                                            hover:bg-card/60 hover:-translate-y-0.5
-                                        `}
-                                        onDragStart={(event) => onDragStart(event, block.type, block.label)}
-                                        draggable
-                                    >
-                                        <div className={`p-2 rounded-lg bg-background/50 border border-border/30 group-hover:border-foreground/10 transition-colors shadow-inner`}>
-                                            <Icon className={`w-4 h-4 ${styles.text} transition-transform group-hover:scale-110`} />
-                                        </div>
-                                        
-                                        <div className="flex flex-col">
-                                            <span className="text-[11px] font-bold tracking-tight text-foreground/80 group-hover:text-foreground transition-colors">
-                                                {block.label}
-                                            </span>
-                                            <span className="text-[8px] font-mono uppercase tracking-tighter text-muted-foreground/40 mt-0.5">
-                                                {block.type.split(':')[0].replace('Block', '')}
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            {category.blocks.map(block => renderBlock(block))}
                         </div>
                     </div>
                 ))}
