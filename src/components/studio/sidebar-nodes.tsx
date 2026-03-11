@@ -1,140 +1,113 @@
-import {
-    MessageSquareText,
-    ListOrdered,
-    Split,
-    Clock,
-    Globe,
-    Headset,
-    Keyboard,
-    Image as ImageIcon,
-    Variable,
-    CircleStop,
-    UserPlus,
+import { memo } from "react";
+import { 
+    MessageSquare, 
+    List, 
+    Type, 
+    Zap, 
+    Clock, 
+    Image as ImageIcon, 
+    UserCheck, 
+    Globe, 
+    Variable, 
+    ArrowRightLeft,
     GitBranch,
-    ClipboardCheck
+    ClipboardCheck,
+    LogOut,
+    PlayCircle,
+    LucideIcon
 } from "lucide-react";
 
-export const FLOW_BLOCKS = [
+// Definição formal das cores para evitar redundância e facilitar manutenção
+const COLOR_MAP = {
+    blue: {
+        text: "text-blue-400",
+        borderHover: "hover:border-blue-500/50",
+        glow: "group-hover:shadow-[0_0_15px_rgba(59,130,246,0.15)]",
+    },
+    purple: {
+        text: "text-purple-400",
+        borderHover: "hover:border-purple-500/50",
+        glow: "group-hover:shadow-[0_0_15px_rgba(168,85,247,0.15)]",
+    },
+    amber: {
+        text: "text-amber-400",
+        borderHover: "hover:border-amber-500/50",
+        glow: "group-hover:shadow-[0_0_15px_rgba(245,158,11,0.15)]",
+    },
+    emerald: {
+        text: "text-emerald-400",
+        borderHover: "hover:border-emerald-500/50",
+        glow: "group-hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]",
+    },
+    rose: {
+        text: "text-rose-400",
+        borderHover: "hover:border-rose-500/50",
+        glow: "group-hover:shadow-[0_0_15px_rgba(244,63,94,0.15)]",
+    },
+} as const;
+
+type ColorKey = keyof typeof COLOR_MAP;
+
+interface BlockDefinition {
+    type: string;
+    label: string;
+    icon: LucideIcon;
+    color: ColorKey;
+}
+
+interface CategoryDefinition {
+    title: string;
+    blocks: BlockDefinition[];
+}
+
+const CATEGORIES: CategoryDefinition[] = [
     {
-        type: "messageBlock",
-        label: "Mensagem",
-        description: "Envia um texto simples",
-        icon: MessageSquareText,
-        color: "text-blue-600",
-        bgColor: "bg-blue-600/10",
-        borderColor: "border-blue-600/20"
+        title: "CONTEÚDO",
+        blocks: [
+            { type: "messageBlock", label: "Mensagem", icon: MessageSquare, color: "blue" },
+            { type: "mediaBlock", label: "Arquivo/Mídia", icon: ImageIcon, color: "blue" },
+        ]
     },
     {
-        type: "optionsBlock",
-        label: "Menu de Opções",
-        description: "Botões ou lista de escolhas",
-        icon: ListOrdered,
-        color: "text-blue-500",
-        bgColor: "bg-blue-500/10",
-        borderColor: "border-blue-500/20"
+        title: "INTERAÇÃO",
+        blocks: [
+            { type: "optionsBlock", label: "Escolhas", icon: List, color: "purple" },
+            { type: "inputBlock", label: "Pergunta Livre", icon: Type, color: "purple" },
+        ]
     },
     {
-        type: "inputBlock",
-        label: "Aguardar Resposta",
-        description: "Espera e salva o que digitar",
-        icon: Keyboard,
-        color: "text-violet-500",
-        bgColor: "bg-violet-500/10",
-        borderColor: "border-violet-500/20"
+        title: "LÓGICA",
+        blocks: [
+            { type: "conditionBlock", label: "Condição (IF)", icon: Zap, color: "amber" },
+            { type: "switchBlock", label: "Switch/Case", icon: GitBranch, color: "amber" },
+            { type: "delayBlock", label: "Aguardar", icon: Clock, color: "amber" },
+        ]
     },
     {
-        type: "switchBlock",
-        label: "Roteador (Switch)",
-        description: "Rotas múltiplas por variável",
-        icon: GitBranch,
-        color: "text-purple-500",
-        bgColor: "bg-purple-500/10",
-        borderColor: "border-purple-500/20"
+        title: "CRM & DADOS",
+        blocks: [
+            { type: "identificationBlock", label: "Identificação", icon: UserCheck, color: "emerald" },
+            { type: "variableBlock", label: "Variavel", icon: Variable, color: "emerald" },
+            { type: "reviewBlock", label: "Revisão", icon: ClipboardCheck, color: "emerald" },
+        ]
     },
     {
-        type: "conditionBlock",
-        label: "Condição (If/Else)",
-        description: "Muda o caminho por regras",
-        icon: Split,
-        color: "text-amber-500",
-        bgColor: "bg-amber-500/10",
-        borderColor: "border-amber-500/20"
+        title: "AVANÇADO",
+        blocks: [
+            { type: "webhookBlock", label: "Integração/API", icon: Globe, color: "rose" },
+            { type: "handoverBlock", label: "Transbordo", icon: ArrowRightLeft, color: "rose" },
+        ]
     },
     {
-        type: "delayBlock",
-        label: "Atraso (Delay)",
-        description: "Pausa simulando digitação",
-        icon: Clock,
-        color: "text-slate-400",
-        bgColor: "bg-slate-400/10",
-        borderColor: "border-slate-400/20"
-    },
-    {
-        type: "mediaBlock",
-        label: "Multimídia",
-        description: "Imagens, vídeos ou áudios",
-        icon: ImageIcon,
-        color: "text-pink-500",
-        bgColor: "bg-pink-500/10",
-        borderColor: "border-pink-500/20"
-    },
-    {
-        type: "webhookBlock",
-        label: "Webhook (API)",
-        description: "Integra com sistemas externos",
-        icon: Globe,
-        color: "text-cyan-500",
-        bgColor: "bg-cyan-500/10",
-        borderColor: "border-cyan-500/20"
-    },
-    {
-        type: "variableBlock",
-        label: "Definir Variável",
-        description: "Altera dados e pontuações",
-        icon: Variable,
-        color: "text-fuchsia-500",
-        bgColor: "bg-fuchsia-500/10",
-        borderColor: "border-fuchsia-500/20"
-    },
-    {
-        type: "handoverBlock",
-        label: "Atendimento Humano",
-        description: "Transfere para o chat ao vivo",
-        icon: Headset,
-        color: "text-rose-500",
-        bgColor: "bg-rose-500/10",
-        borderColor: "border-rose-500/20"
-    },
-    {
-        type: "identificationBlock",
-        label: "Identificação",
-        description: "Formulário para identificar o cliente (Nome, CPF, etc)",
-        icon: UserPlus,
-        color: "text-blue-500",
-        bgColor: "bg-blue-500/10",
-        borderColor: "border-blue-500/20"
-    },
-    {
-        type: "reviewBlock",
-        label: "Revisão de Dados",
-        description: "Confirmação de variáveis coletadas",
-        icon: ClipboardCheck,
-        color: "text-indigo-500",
-        bgColor: "bg-indigo-500/10",
-        borderColor: "border-indigo-500/20"
-    },
-    {
-        type: "endBlock",
-        label: "Encerrar Chat",
-        description: "Finaliza o fluxo atual",
-        icon: CircleStop,
-        color: "text-red-500",
-        bgColor: "bg-red-500/10",
-        borderColor: "border-red-500/20"
+        title: "FLUXO",
+        blocks: [
+            { type: "jumpBlock", label: "Salto/Jump", icon: Zap, color: "rose" },
+            { type: "endBlock", label: "Encerrar", icon: LogOut, color: "rose" },
+        ]
     }
 ];
 
-export function SidebarNodes() {
+export const SidebarNodes = memo(function SidebarNodes() {
     const onDragStart = (event: React.DragEvent, nodeType: string, label: string) => {
         event.dataTransfer.setData("application/reactflow", nodeType);
         event.dataTransfer.setData("application/reactflow-label", label);
@@ -142,32 +115,77 @@ export function SidebarNodes() {
     };
 
     return (
-        <aside className="w-72 border-r border-border/50 bg-background/95 shadow-lg flex flex-col z-10 transition-transform duration-300">
-            <div className="p-4 border-b border-border/50 bg-card/50">
-                <h2 className="text-sm font-semibold tracking-tight">Biblioteca de Blocos</h2>
-                <p className="text-xs text-muted-foreground mt-1">
-                    Arraste e solte no canvas para construir seu Chatbot.
+        <aside className="w-72 bg-background/40 backdrop-blur-xl border-r border-border/50 flex flex-col h-full overflow-hidden z-10">
+            {/* Header da Sidebar */}
+            <div className="p-4 border-b border-border/50 bg-card/20">
+                <div className="flex items-center gap-2 mb-1">
+                    <PlayCircle className="w-4 h-4 text-blue-500" />
+                    <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/70 font-mono">
+                        Node Library
+                    </h2>
+                </div>
+                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider opacity-50">
+                    Industrial Builder v2.0
                 </p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-2 relative">
-                {FLOW_BLOCKS.map((block) => (
-                    <div
-                        key={block.type}
-                        onDragStart={(e) => onDragStart(e, block.type, block.label)}
-                        draggable
-                        className={`flex items-start gap-3 p-3 rounded-lg border border-transparent hover:${block.borderColor} hover:bg-muted/50 cursor-grab active:cursor-grabbing transition-all hover:shadow-sm`}
-                    >
-                        <div className={`mt-0.5 p-2 rounded-md ${block.bgColor}`}>
-                            <block.icon className={`w-4 h-4 ${block.color}`} />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-sm font-medium text-foreground">{block.label}</span>
-                            <span className="text-xs text-muted-foreground line-clamp-1">{block.description}</span>
+            {/* Lista de Blocos Categorizada */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-8 scrollbar-thin scrollbar-thumb-border/50">
+                {CATEGORIES.map((category) => (
+                    <div key={category.title} className="space-y-3">
+                        <h3 className="text-[9px] font-bold text-muted-foreground/40 font-mono tracking-[0.3em] uppercase pl-1 border-l-2 border-border/20">
+                            {category.title}
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 gap-2">
+                            {category.blocks.map((block) => {
+                                const styles = COLOR_MAP[block.color];
+                                const Icon = block.icon;
+
+                                return (
+                                    <div
+                                        key={block.type}
+                                        className={`
+                                            group flex items-center gap-3 p-3 bg-card/30 
+                                            border border-border/40 rounded-xl cursor-grab active:cursor-grabbing 
+                                            transition-all duration-300 ${styles.borderHover} ${styles.glow}
+                                            hover:bg-card/60 hover:-translate-y-0.5
+                                        `}
+                                        onDragStart={(event) => onDragStart(event, block.type, block.label)}
+                                        draggable
+                                    >
+                                        <div className={`p-2 rounded-lg bg-background/50 border border-border/30 group-hover:border-foreground/10 transition-colors shadow-inner`}>
+                                            <Icon className={`w-4 h-4 ${styles.text} transition-transform group-hover:scale-110`} />
+                                        </div>
+                                        
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-bold tracking-tight text-foreground/80 group-hover:text-foreground transition-colors">
+                                                {block.label}
+                                            </span>
+                                            <span className="text-[8px] font-mono uppercase tracking-tighter text-muted-foreground/40 mt-0.5">
+                                                {block.type.replace('Block', '')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 ))}
             </div>
+
+            {/* Status Footer */}
+            <div className="p-4 border-t border-border/30 bg-card/10 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[9px] font-mono text-muted-foreground/50 uppercase tracking-widest font-bold">
+                        Builder Studio 2.0
+                    </span>
+                </div>
+                <span className="text-[9px] font-mono text-muted-foreground/30 uppercase tracking-widest">
+                    v2.0.4-PRO
+                </span>
+            </div>
         </aside>
     );
-}
+});

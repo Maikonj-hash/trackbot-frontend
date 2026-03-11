@@ -178,6 +178,14 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     nextStepId: null
                 };
                 break;
+            case "jumpBlock":
+                steps[id] = {
+                    id,
+                    type: "JUMP",
+                    targetStepId: node.data.targetStepId,
+                    nextStepId: null
+                };
+                break;
             case "reviewBlock":
                 steps[id] = {
                     id,
@@ -186,6 +194,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     fields: node.data.fields || [],
                     confirmButtonText: node.data.confirmButtonText,
                     editButtonText: node.data.editButtonText,
+                    skipIfAlreadyFilled: node.data.skipIfAlreadyFilled,
                     nextStepId: getNextStepId("confirm"),
                     correctionStepId: getNextStepId("edit")
                 };
@@ -289,6 +298,12 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
             const url = String(node.data.content || "");
             if (!url || (!url.startsWith("http://") && !url.startsWith("https://"))) {
                 errors.push(`O bloco de Webhook "${node.data.label}" precisa de uma URL válida (http/https).`);
+            }
+        }
+
+        if (node.type === "jumpBlock") {
+            if (!node.data.targetStepId) {
+                errors.push(`O bloco de Salto "${node.data.label}" precisa de um destino selecionado.`);
             }
         }
     });

@@ -15,19 +15,19 @@ export function CustomerIdentificationNode({ data, selected }: NodeProps<Node<Tr
         <NodeContainer selected={selected} color="blue">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={UserPlus} label="IDENTIFICATION" color="blue" allowBack={data.allowBack} />
+            <NodeHeader 
+                icon={UserPlus} 
+                label="IDENTIFICATION" 
+                color="blue" 
+                allowBack={data.allowBack} 
+                skipEnabled={data.skipIfAlreadyFilled}
+            />
 
             <NodeBody className="p-2 space-y-1" noTextWrapper>
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-widest px-1">
                         {fields.length} {fields.length === 1 ? 'CAMPO' : 'CAMPOS'}
                     </span>
-                    {skipIfAlreadyFilled && (
-                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20" title="Pular se já preenchido">
-                            <Brain className="w-3 h-3 text-blue-500" />
-                            <span className="text-[9px] font-bold text-blue-500 uppercase tracking-tighter">Skip ON</span>
-                        </div>
-                    )}
                 </div>
 
                 {fields.length > 0 ? (

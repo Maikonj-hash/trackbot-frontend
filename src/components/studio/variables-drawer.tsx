@@ -11,10 +11,23 @@ import { clsx } from "clsx";
  * Estética premium com busca e destaque visual.
  */
 export function VariablesDrawer() {
-    const { nodes, getVariables, isVariablesDrawerOpen, setVariablesDrawerOpen } = useFlowStore();
+    const isVariablesDrawerOpen = useFlowStore(s => s.isVariablesDrawerOpen);
+    const setVariablesDrawerOpen = useFlowStore(s => s.setVariablesDrawerOpen);
+    const nodes = useFlowStore(s => s.nodes);
+    const getVariables = useFlowStore(s => s.getVariables);
+    
     const [search, setSearch] = useState("");
 
-    const allVariables = useMemo(() => getVariables(), [nodes, getVariables]);
+    // Otimização: Só calcula variáveis se a drawer estiver aberta
+    // E ignoramos mudanças de posição criando um hash apenas dos dados/labels
+    const nodesDataHash = useMemo(() => {
+        return nodes.map(n => JSON.stringify(n.data)).join('|');
+    }, [nodes]);
+
+    const allVariables = useMemo(() => {
+        if (!isVariablesDrawerOpen) return [];
+        return getVariables();
+    }, [isVariablesDrawerOpen, nodesDataHash, getVariables]);
 
     const filteredVariables = allVariables.filter(v =>
         v.toLowerCase().includes(search.toLowerCase())

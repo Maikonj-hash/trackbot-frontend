@@ -1,4 +1,4 @@
-import { LucideIcon, Undo2 } from "lucide-react";
+import { LucideIcon, Undo2, Zap } from "lucide-react";
 import { clsx } from "clsx";
 
 interface NodeHeaderProps {
@@ -7,6 +7,7 @@ interface NodeHeaderProps {
     color?: string;
     badge?: string;
     allowBack?: boolean;
+    skipEnabled?: boolean;
 }
 
 const textColorMap: Record<string, string> = {
@@ -31,7 +32,7 @@ const badgeColorMap: Record<string, string> = {
     cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
 };
 
-export function NodeHeader({ icon: Icon, label, color = "foreground", badge, allowBack }: NodeHeaderProps) {
+export function NodeHeader({ icon: Icon, label, color = "foreground", badge, allowBack, skipEnabled }: NodeHeaderProps) {
     const textColorClass = textColorMap[color] || textColorMap.foreground;
     const badgeClass = badgeColorMap[color] || badgeColorMap.blue;
 
@@ -48,6 +49,11 @@ export function NodeHeader({ icon: Icon, label, color = "foreground", badge, all
                 {allowBack && (
                     <div className="flex items-center px-1 rounded bg-blue-500/10 border border-blue-500/20 shadow-[0_0_8px_rgba(59,130,246,0.1)]" title="Voltar (Undo) Habilitado">
                         <Undo2 className="w-2.5 h-2.5 text-blue-500" />
+                    </div>
+                )}
+                {skipEnabled && (
+                    <div className="flex items-center px-1 rounded bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.1)]" title="Salto Inteligente (Skip) Habilitado">
+                        <Zap className="w-2.5 h-2.5 text-emerald-500 fill-emerald-500/20" />
                     </div>
                 )}
                 {badge && (

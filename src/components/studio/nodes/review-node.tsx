@@ -21,6 +21,7 @@ export function ReviewNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
                 label="DATA REVIEW"
                 color="blue"
                 allowBack={data.allowBack}
+                skipEnabled={data.skipIfAlreadyFilled}
             />
 
             <NodeBody className="pb-1 space-y-1" noTextWrapper>

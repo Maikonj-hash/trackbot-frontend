@@ -35,6 +35,7 @@ import { SwitchNode } from "@/components/studio/nodes/switch-node";
 import { ReviewNode } from "@/components/studio/nodes/review-node";
 import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer";
 import { VariablesDrawer } from "@/components/studio/variables-drawer";
+import { JumpNode } from "@/components/studio/nodes/jump-node";
 
 const customNodeTypes = {
     messageBlock: MessageNode,
@@ -49,6 +50,7 @@ const customNodeTypes = {
     handoverBlock: HandoverNode,
     switchBlock: SwitchNode,
     reviewBlock: ReviewNode,
+    jumpBlock: JumpNode,
     endBlock: EndNode,
     startBlock: StartNode,
 };

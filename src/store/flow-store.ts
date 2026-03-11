@@ -77,6 +77,7 @@ export type TrackerNodeData = {
 
     endResetType?: 'IMMEDIATE' | 'TIMEOUT';
     endTimeoutValue?: number;
+    targetStepId?: string;
 };
 
 type FlowState = {
