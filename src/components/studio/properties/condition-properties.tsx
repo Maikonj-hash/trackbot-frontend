@@ -1,51 +1,44 @@
 import { PropertyPanelProps } from "./types"
+import { PropertySection, PropertyInput } from "./base-properties"
 
 export function ConditionProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
-        <div className="space-y-4 pt-2">
-            <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Variável para Testar
-                </label>
-                <input
-                    type="text"
+        <div className="space-y-6">
+            <PropertySection title="Variável de Teste">
+                <PropertyInput
                     value={node.data.conditionVariable || ""}
                     onChange={(e) => updateNodeData(node.id, { conditionVariable: e.target.value })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background font-mono"
                     placeholder="Ex: user.name"
+                    className="font-mono"
                 />
-            </div>
+            </PropertySection>
 
-            <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">
-                    Operador
-                </label>
-                <select
-                    value={node.data.conditionOperator || "EQUALS"}
-                    onChange={(e) => updateNodeData(node.id, { conditionOperator: e.target.value as any })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                >
-                    <option value="EQUALS">Igual a (=)</option>
-                    <option value="NOT_EQUALS">Diferente de (!=)</option>
-                    <option value="CONTAINS">Contém</option>
-                    <option value="IS_EMPTY">Está Vazio</option>
-                    <option value="IS_NOT_EMPTY">Não Está Vazio</option>
-                </select>
-            </div>
+            <PropertySection title="Regra de Comparação">
+                <div className="space-y-4">
+                    <select
+                        value={node.data.conditionOperator || "EQUALS"}
+                        onChange={(e) => updateNodeData(node.id, { conditionOperator: e.target.value as any })}
+                        className="w-full bg-background/50 border border-border/50 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all outline-none font-medium"
+                    >
+                        <option value="EQUALS">Igual a (=)</option>
+                        <option value="NOT_EQUALS">Diferente de (!=)</option>
+                        <option value="CONTAINS">Contém</option>
+                        <option value="IS_EMPTY">Está Vazio</option>
+                        <option value="IS_NOT_EMPTY">Não Está Vazio</option>
+                    </select>
 
-            <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">
-                    Valor
-                </label>
-                <input
-                    type="text"
-                    value={String(node.data.conditionValue || "")}
-                    onChange={(e) => updateNodeData(node.id, { conditionValue: e.target.value })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background font-mono"
-                    placeholder="Ex: João"
-                />
-                <p className="text-[10px] text-muted-foreground pt-1">
-                    O roteamento vai pro caminho "Verdadeiro" ou "Falso".
+                    <PropertyInput
+                        value={String(node.data.conditionValue || "")}
+                        onChange={(e) => updateNodeData(node.id, { conditionValue: e.target.value })}
+                        placeholder="Valor esperado"
+                        className="font-mono text-blue-400/80"
+                    />
+                </div>
+            </PropertySection>
+
+            <div className="px-3 py-2 bg-blue-500/5 border border-blue-500/10 rounded-lg">
+                <p className="text-[10px] text-muted-foreground leading-relaxed font-mono uppercase tracking-tighter">
+                    // O roteamento seguirá os pinos [TRUE] ou [FALSE]
                 </p>
             </div>
         </div>

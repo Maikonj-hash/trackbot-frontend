@@ -1,204 +1,210 @@
 import { PropertyPanelProps } from "./types"
-import { PlusCircle, X } from "lucide-react"
+import { PlusCircle, X, Globe, Database, Settings } from "lucide-react"
+import { PropertySection, PropertyInput, PropertyToggle } from "./base-properties"
 
 export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
-        <div className="space-y-4 pt-2">
-            {/* Headers Section */}
-            <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Headers</label>
-                    <button
-                        onClick={() => {
-                            const currentHeaders = node.data.headers || {};
-                            updateNodeData(node.id, {
-                                headers: { ...currentHeaders, "": "" }
-                            });
-                        }}
-                        className="text-foreground hover:text-muted-foreground p-1 transition-colors"
-                    >
-                        <PlusCircle className="w-4 h-4" />
-                    </button>
-                </div>
-                <div className="space-y-2">
-                    {Object.entries(node.data.headers || {}).map(([key, value], index) => (
-                        <div key={index} className="flex gap-2 group relative">
-                            <input
-                                type="text"
-                                placeholder="Chave"
-                                value={key}
-                                onChange={(e) => {
-                                    const newHeaders = { ...node.data.headers };
-                                    const val = newHeaders[key];
-                                    delete newHeaders[key];
-                                    newHeaders[e.target.value] = val as string;
-                                    updateNodeData(node.id, { headers: newHeaders });
-                                }}
-                                className="w-1/2 rounded-md border border-input bg-background px-2 py-1 text-[10px] font-mono"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Valor"
-                                value={value as string}
-                                onChange={(e) => {
-                                    updateNodeData(node.id, {
-                                        headers: { ...node.data.headers, [key]: e.target.value }
-                                    });
-                                }}
-                                className="w-1/2 rounded-md border border-input bg-background px-2 py-1 text-[10px] font-mono"
-                            />
-                            <button
-                                onClick={() => {
-                                    const newHeaders = { ...node.data.headers };
-                                    delete newHeaders[key];
-                                    updateNodeData(node.id, { headers: newHeaders });
-                                }}
-                                className="p-1 text-muted-foreground hover:text-destructive self-center"
-                            >
-                                <X className="w-3 h-3" />
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
+        <div className="space-y-6">
+            <PropertySection title="Configuração da Requisição">
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Endpoint URL</span>
+                        <PropertyInput
+                            value={node.data.content as string || ""}
+                            onChange={(e) => updateNodeData(node.id, { content: e.target.value })}
+                            placeholder="https://api.site.com/webhook"
+                            className="font-mono text-blue-400"
+                        />
+                    </div>
 
-            {/* Body Payload Section */}
-            {["POST", "PUT", "PATCH"].includes((node.data.webhookMethod as string) || "") && (
-                <div className="space-y-2 pt-2 border-t border-border/10">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">Body JSON</label>
-                    <textarea
-                        value={typeof node.data.bodyPayload === 'string' ? node.data.bodyPayload : JSON.stringify(node.data.bodyPayload, null, 2)}
-                        onChange={(e) => {
-                            try {
-                                const val = e.target.value;
-                                updateNodeData(node.id, { bodyPayload: val });
-                            } catch (err) { }
-                        }}
-                        className="min-h-[100px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-[11px] font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                        placeholder='{ "key": "{{valor}}" }'
-                    />
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                            <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Método</span>
+                            <select
+                                value={node.data.webhookMethod as string || "POST"}
+                                onChange={(e) => updateNodeData(node.id, { webhookMethod: e.target.value as any })}
+                                className="w-full bg-background/50 border border-border/50 rounded-lg px-2 py-2 text-xs focus:ring-1 focus:ring-blue-500/50 outline-none font-medium"
+                            >
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Timeout (ms)</span>
+                            <PropertyInput
+                                type="number"
+                                value={node.data.timeout as number || 10000}
+                                onChange={(e) => updateNodeData(node.id, { timeout: parseInt(e.target.value) })}
+                                className="font-mono"
+                            />
+                        </div>
+                    </div>
                 </div>
+            </PropertySection>
+
+            <PropertySection title="Headers & Segurança">
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between px-1">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 font-mono">
+                            Lista de Cabeçalhos
+                        </span>
+                        <button
+                            onClick={() => {
+                                const currentHeaders = node.data.headers || {};
+                                updateNodeData(node.id, { headers: { ...currentHeaders, "": "" } });
+                            }}
+                            className="text-blue-500 hover:text-blue-400 p-1 bg-blue-500/10 rounded-md transition-colors"
+                        >
+                            <PlusCircle className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-2">
+                        {Object.entries(node.data.headers || {}).map(([key, value], index) => (
+                            <div key={index} className="flex gap-2 group relative bg-muted/5 p-1 rounded-lg border border-border/20">
+                                <PropertyInput
+                                    placeholder="Key"
+                                    value={key}
+                                    onChange={(e) => {
+                                        const newHeaders = { ...node.data.headers };
+                                        const val = newHeaders[key];
+                                        delete newHeaders[key];
+                                        newHeaders[e.target.value] = val as string;
+                                        updateNodeData(node.id, { headers: newHeaders });
+                                    }}
+                                    className="w-1/2 border-none bg-transparent h-8 text-[10px]"
+                                />
+                                <div className="w-[1px] bg-border/20 self-stretch my-1" />
+                                <PropertyInput
+                                    placeholder="Value"
+                                    value={value as string}
+                                    onChange={(e) => {
+                                        updateNodeData(node.id, {
+                                            headers: { ...node.data.headers, [key]: e.target.value }
+                                        });
+                                    }}
+                                    className="w-1/3 border-none bg-transparent h-8 text-[10px]"
+                                />
+                                <button
+                                    onClick={() => {
+                                        const newHeaders = { ...node.data.headers };
+                                        delete newHeaders[key];
+                                        updateNodeData(node.id, { headers: newHeaders });
+                                    }}
+                                    className="p-1.5 text-muted-foreground/30 hover:text-rose-500 transition-colors"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </PropertySection>
+
+            {["POST", "PUT", "PATCH"].includes((node.data.webhookMethod as string) || "") && (
+                <PropertySection title="Corpo da Requisição (JSON)">
+                    <div className="space-y-2">
+                        <PropertyInput
+                            isTextArea
+                            value={typeof node.data.bodyPayload === 'string' ? node.data.bodyPayload : JSON.stringify(node.data.bodyPayload, null, 2)}
+                            onChange={(e) => updateNodeData(node.id, { bodyPayload: e.target.value })}
+                            className="min-h-[100px] font-mono text-[10px] bg-muted/5"
+                            placeholder='{ "key": "{{valor}}" }'
+                        />
+                        <p className="text-[9px] font-mono text-muted-foreground/30 uppercase text-right tracking-tighter">
+                            // Variáveis aceitas: {"{{"}nome{"}}"}
+                        </p>
+                    </div>
+                </PropertySection>
             )}
 
-            <div className="space-y-2 pt-2 border-t border-border/10">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">URL do Endpoint</label>
-                <input
-                    type="text"
-                    value={node.data.content as string || ""}
-                    onChange={(e) => updateNodeData(node.id, { content: e.target.value })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono"
-                    placeholder="https://api.site.com/webhook"
-                />
-            </div>
+            <PropertySection title="Tratamento de Resposta">
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Status Code em:</span>
+                        <PropertyInput
+                            value={node.data.saveStatusToVariable as string || ""}
+                            onChange={(e) => updateNodeData(node.id, { saveStatusToVariable: e.target.value })}
+                            placeholder="ex: status_api"
+                            className="font-mono text-[11px]"
+                        />
+                    </div>
 
-            <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">Método</label>
-                    <select
-                        value={node.data.webhookMethod as string || "POST"}
-                        onChange={(e) => updateNodeData(node.id, { webhookMethod: e.target.value as any })}
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    >
-                        <option value="GET">GET</option>
-                        <option value="POST">POST</option>
-                        <option value="PUT">PUT</option>
-                        <option value="DELETE">DELETE</option>
-                    </select>
-                </div>
-                <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">Timeout (ms)</label>
-                    <input
-                        type="number"
-                        value={node.data.timeout as number || 10000}
-                        onChange={(e) => updateNodeData(node.id, { timeout: parseInt(e.target.value) })}
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    />
-                </div>
-            </div>
-
-            <div className="space-y-2 pt-2 border-t border-border/10 mt-2">
-                <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground cursor-pointer">
-                    <input
-                        type="checkbox"
-                        checked={(node.data as any).simulateRealRequest || false}
-                        onChange={(e) => updateNodeData(node.id, { simulateRealRequest: e.target.checked } as any)}
-                        className="rounded border-input bg-background w-3.5 h-3.5 text-foreground focus:ring-ring"
-                    />
-                    Disparo REAL no Simulador
-                </label>
-                <p className="text-[10px] text-muted-foreground leading-relaxed pl-5">
-                    Se desmarcado, o Sandbox (Play) vai apenas fingir que a API retornou Sucesso sem estourar quotas.
-                </p>
-            </div>
-
-            <div className="space-y-2 pt-2 border-t border-border/10">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">Salvar Status em</label>
-                <input
-                    type="text"
-                    value={node.data.saveStatusToVariable as string || ""}
-                    onChange={(e) => updateNodeData(node.id, { saveStatusToVariable: e.target.value })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono"
-                    placeholder="ex: status_code"
-                />
-            </div>
-
-            {/* Response Mapping Section */}
-            <div className="space-y-3 pt-4 border-t border-border/50">
-                <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mapeamento de Resposta</label>
-                    <button
-                        onClick={() => {
-                            const currentMapping = node.data.responseMapping || [];
-                            updateNodeData(node.id, {
-                                responseMapping: [...currentMapping, { jsonPath: "", variableName: "" }]
-                            });
-                        }}
-                        className="text-foreground hover:text-muted-foreground p-1 transition-colors"
-                    >
-                        <PlusCircle className="w-4 h-4" />
-                    </button>
-                </div>
-
-                <div className="space-y-2">
-                    {(node.data.responseMapping || []).map((mapping, index: number) => (
-                        <div key={index} className="space-y-1 p-2 bg-muted/20 rounded-md border border-border/30 relative group">
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between px-1">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 font-mono">
+                                Mapear JSON para Variáveis
+                            </span>
                             <button
                                 onClick={() => {
-                                    const newMapping = [...(node.data.responseMapping || [])];
-                                    newMapping.splice(index, 1);
-                                    updateNodeData(node.id, { responseMapping: newMapping });
+                                    const currentMapping = node.data.responseMapping || [];
+                                    updateNodeData(node.id, {
+                                        responseMapping: [...currentMapping, { jsonPath: "", variableName: "" }]
+                                    });
                                 }}
-                                className="absolute -top-2 -right-2 bg-background border border-border p-1 rounded-full text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="text-blue-500 hover:text-blue-400 p-1 bg-blue-500/10 rounded-md transition-colors"
                             >
-                                <X className="w-3 h-3" />
+                                <PlusCircle className="w-4 h-4" />
                             </button>
-                            <input
-                                type="text"
-                                placeholder="Caminho JSON (ex: data.id)"
-                                value={mapping.jsonPath}
-                                onChange={(e) => {
-                                    const newMapping = [...(node.data.responseMapping || [])];
-                                    newMapping[index].jsonPath = e.target.value;
-                                    updateNodeData(node.id, { responseMapping: newMapping });
-                                }}
-                                className="w-full bg-transparent border-none text-[11px] font-mono focus:ring-0 p-0"
-                            />
-                            <div className="h-[1px] bg-border/30 my-1" />
-                            <input
-                                type="text"
-                                placeholder="Variável (ex: user_id)"
-                                value={mapping.variableName}
-                                onChange={(e) => {
-                                    const newMapping = [...(node.data.responseMapping || [])];
-                                    newMapping[index].variableName = e.target.value;
-                                    updateNodeData(node.id, { responseMapping: newMapping });
-                                }}
-                                className="w-full bg-transparent border-none text-[11px] font-mono focus:ring-0 p-0 text-foreground"
-                            />
                         </div>
-                    ))}
+
+                        <div className="space-y-2">
+                            {(node.data.responseMapping || []).map((mapping, index: number) => (
+                                <div key={index} className="space-y-1 p-2 bg-muted/10 rounded-xl border border-border/40 relative group">
+                                    <button
+                                        onClick={() => {
+                                            const newMapping = [...(node.data.responseMapping || [])];
+                                            newMapping.splice(index, 1);
+                                            updateNodeData(node.id, { responseMapping: newMapping });
+                                        }}
+                                        className="absolute -top-2 -right-2 bg-background border border-border p-1 rounded-full text-muted-foreground/40 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all z-10"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[8px] font-bold text-muted-foreground/30 font-mono w-12 uppercase">Path</span>
+                                        <PropertyInput
+                                            placeholder="data.user.id"
+                                            value={mapping.jsonPath}
+                                            onChange={(e) => {
+                                                const newMapping = [...(node.data.responseMapping || [])];
+                                                newMapping[index].jsonPath = e.target.value;
+                                                updateNodeData(node.id, { responseMapping: newMapping });
+                                            }}
+                                            className="h-7 border-none bg-transparent font-mono text-[10px]"
+                                        />
+                                    </div>
+                                    <div className="h-[1px] bg-border/20 my-1" />
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[8px] font-bold text-muted-foreground/30 font-mono w-12 uppercase">Var</span>
+                                        <PropertyInput
+                                            placeholder="id_externo"
+                                            value={mapping.variableName}
+                                            onChange={(e) => {
+                                                const newMapping = [...(node.data.responseMapping || [])];
+                                                newMapping[index].variableName = e.target.value;
+                                                updateNodeData(node.id, { responseMapping: newMapping });
+                                            }}
+                                            className="h-7 border-none bg-transparent font-mono text-[10px] text-blue-400"
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </PropertySection>
+
+            <PropertySection title="Simulador HUD">
+                <PropertyToggle
+                    label="Disparo Real"
+                    description="Executar chamada real durante testes no Play."
+                    checked={!!(node.data as any).simulateRealRequest}
+                    onChange={(checked) => updateNodeData(node.id, { simulateRealRequest: checked } as any)}
+                />
+            </PropertySection>
         </div>
     )
 }

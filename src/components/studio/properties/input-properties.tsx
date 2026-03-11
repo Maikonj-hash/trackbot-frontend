@@ -1,57 +1,41 @@
 import { PropertyPanelProps } from "./types"
+import { PropertySection, PropertyInput, PropertyToggle, PropertyHint } from "./base-properties"
 
 export function InputProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
-        <div className="space-y-4">
-            <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Texto da Pergunta
-                </label>
-                <textarea
+        <div className="space-y-6">
+            <PropertySection title="Pergunta ao Cliente">
+                <PropertyInput
+                    isTextArea
                     value={node.data.content as string || ""}
                     onChange={(e) => updateNodeData(node.id, { content: e.target.value })}
-                    className="min-h-[80px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     placeholder="O que o bot deve perguntar?"
                 />
-            </div>
+            </PropertySection>
 
-            <div className="space-y-3 pt-4 border-t border-border/50">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Salvar resposta na variável
-                </label>
-                <input
-                    type="text"
-                    value={node.data.variableName || ""}
-                    onChange={(e) => updateNodeData(node.id, { variableName: e.target.value })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background font-mono"
-                    placeholder="Ex: nome_cliente"
+            <PropertySection title="Armazenamento">
+                <div className="space-y-2">
+                    <PropertyInput
+                        type="text"
+                        value={node.data.variableName || ""}
+                        onChange={(e) => updateNodeData(node.id, { variableName: e.target.value })}
+                        placeholder="NOME_DA_VARIAVEL"
+                        className="font-mono uppercase tracking-wider"
+                    />
+                    <PropertyHint>
+                        O dado coletado será salvo no perfil do cliente com esta chave.
+                    </PropertyHint>
+                </div>
+            </PropertySection>
+
+            <PropertySection title="Ações">
+                <PropertyToggle
+                    label="Habilitar Voltar (Undo)"
+                    description="Permitir que o cliente retorne ao passo anterior digitando '0'."
+                    checked={!!node.data.allowBack}
+                    onChange={(checked) => updateNodeData(node.id, { allowBack: checked })}
                 />
-                <p className="text-[10px] text-muted-foreground">
-                    O que o usuário digitar será salvo com este nome para uso futuro.
-                </p>
-            </div>
-            <div className="space-y-3 pt-4 border-t border-border/50">
-                <label className="flex items-center justify-between cursor-pointer group">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
-                        Habilitar Botão Voltar (Undo)
-                    </span>
-                    <div className="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-border">
-                        <input
-                            type="checkbox"
-                            className="sr-only"
-                            checked={node.data.allowBack || false}
-                            onChange={(e) => updateNodeData(node.id, { allowBack: e.target.checked })}
-                        />
-                        <span
-                            className={`${node.data.allowBack ? 'translate-x-4 bg-blue-500' : 'translate-x-1 bg-muted-foreground'
-                                } inline-block h-3 w-3 transform rounded-full transition-all duration-200 ease-in-out`}
-                        />
-                    </div>
-                </label>
-                <p className="text-[10px] text-muted-foreground">
-                    Permite que o cliente digite "0" para voltar ao passo anterior.
-                </p>
-            </div>
+            </PropertySection>
         </div>
     )
 }

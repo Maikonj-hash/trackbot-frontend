@@ -1,179 +1,132 @@
 import { PropertyPanelProps } from "./types"
 import { PlusCircle, X } from "lucide-react"
+import { PropertySection, PropertyToggle, PropertyInput, PropertyHint } from "./base-properties"
 
 export function OptionsProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
-        <div className="space-y-4 pt-2">
-            <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">
-                    Texto da Mensagem
-                </label>
-                <textarea
+        <div className="space-y-6">
+            <PropertySection title="Pergunta ao Cliente">
+                <PropertyInput
+                    isTextArea
                     value={node.data.content as string || ""}
                     onChange={(e) => updateNodeData(node.id, { content: e.target.value })}
-                    className="min-h-[80px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="O que o bot deve perguntar?"
                 />
-            </div>
+            </PropertySection>
 
-            <div className="space-y-3 pt-4 border-t border-border/50">
-                <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Botões de Opções
-                    </label>
-                    <button
-                        onClick={() => {
-                            const currentOptions = node.data.options || [];
-                            updateNodeData(node.id, { options: [...currentOptions, `Opção ${currentOptions.length + 1}`] });
-                        }}
-                        className="text-blue-500 hover:text-blue-400 p-1"
-                    >
-                        <PlusCircle className="w-4 h-4" />
-                    </button>
-                </div>
-
-                <div className="space-y-2">
-                    {(node.data.options || ["Sim", "Não"]).map((opt, index) => (
-                        <div key={index} className="space-y-1">
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="text"
-                                    value={opt}
-                                    onChange={(e) => {
-                                        const newOptions = [...(node.data.options || ["Sim", "Não"])];
-                                        newOptions[index] = e.target.value;
-                                        updateNodeData(node.id, { options: newOptions });
-                                    }}
-                                    className={`w-full rounded-md border bg-background px-3 py-1.5 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${node.data.useNativeButtons && (opt.length > 24) ? 'border-destructive' : 'border-input'}`}
-                                />
-                                <button
-                                    onClick={() => {
-                                        const newOptions = [...(node.data.options || ["Sim", "Não"])];
-                                        newOptions.splice(index, 1);
-                                        updateNodeData(node.id, { options: newOptions });
-                                    }}
-                                    className="text-muted-foreground hover:text-destructive p-1"
-                                >
-                                    <X className="w-3.5 h-3.5" />
-                                </button>
-                            </div>
-                            {node.data.useNativeButtons && opt.length > 20 && (
-                                <p className={`text-[9px] ${opt.length > 24 ? 'text-destructive font-bold' : 'text-amber-500'}`}>
-                                    {opt.length > 24 ? '❌ Limite ultrapassado (Máx 24)' : '⚠️ Recomendado: Máx 20 para botões'}
-                                </p>
-                            )}
-                        </div>
-                    ))}
-                </div>
-
-                <div className="space-y-3 pt-4 border-t border-border/10">
-                    <label className="flex items-center justify-between cursor-pointer group">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
-                            Usar Botões Nativos (WhatsApp)
+            <PropertySection title="Lista de Opções">
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between px-1">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 font-mono">
+                            Opções Cadastradas
                         </span>
-                        <div className="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-border">
-                            <input
-                                type="checkbox"
-                                className="sr-only"
-                                checked={node.data.useNativeButtons || false}
-                                onChange={(e) => updateNodeData(node.id, { useNativeButtons: e.target.checked })}
-                            />
-                            <span
-                                className={`${node.data.useNativeButtons ? 'translate-x-4 bg-foreground' : 'translate-x-1 bg-muted-foreground'
-                                    } inline-block h-3 w-3 transform rounded-full transition-all duration-200 ease-in-out`}
-                            />
-                        </div>
-                    </label>
-                    <p className="text-[10px] text-muted-foreground pb-2">
-                        Envia botões reais (até 3) ou lista automática (até 10).
-                    </p>
+                        <button
+                            onClick={() => {
+                                const currentOptions = node.data.options || [];
+                                updateNodeData(node.id, { options: [...currentOptions, `Opção ${currentOptions.length + 1}`] });
+                            }}
+                            className="text-blue-500 hover:text-blue-400 p-1 bg-blue-500/10 rounded-md transition-colors"
+                        >
+                            <PlusCircle className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-2">
+                        {(node.data.options || ["Sim", "Não"]).map((opt, index) => (
+                            <div key={index} className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <PropertyInput
+                                        value={opt}
+                                        onChange={(e) => {
+                                            const newOptions = [...(node.data.options || ["Sim", "Não"])];
+                                            newOptions[index] = e.target.value;
+                                            updateNodeData(node.id, { options: newOptions });
+                                        }}
+                                        className={node.data.useNativeButtons && (opt.length > 24) ? 'border-rose-500/50 focus:ring-rose-500/50' : ''}
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            const newOptions = [...(node.data.options || ["Sim", "Não"])];
+                                            newOptions.splice(index, 1);
+                                            updateNodeData(node.id, { options: newOptions });
+                                        }}
+                                        className="text-muted-foreground/40 hover:text-rose-500 p-1.5 transition-colors"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                                {node.data.useNativeButtons && opt.length > 20 && (
+                                    <p className={`text-[9px] font-mono uppercase px-2 ${opt.length > 24 ? 'text-rose-500 font-bold' : 'text-amber-500'}`}>
+                                        {opt.length > 24 ? 'CRITICAL: MAX 24 CHR' : 'WARN: RECOM. MAX 20'}
+                                    </p>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </PropertySection>
+
+            <PropertySection title="Interface WhatsApp">
+                <div className="space-y-4">
+                    <PropertyToggle
+                        label="Botões Nativos"
+                        description="Envia botões reais ou lista automática."
+                        checked={!!node.data.useNativeButtons}
+                        onChange={(checked) => updateNodeData(node.id, { useNativeButtons: checked })}
+                    />
 
                     {node.data.useNativeButtons && (
-                        <div className="space-y-3">
-                            {(node.data.options?.length || 0) > 3 && (node.data.options?.length || 0) <= 10 && (
-                                <div className="px-2 py-1 border border-border bg-muted/30 rounded text-[9px] text-muted-foreground uppercase font-bold tracking-tight">
-                                    // MODO LISTA ATIVADO
+                        <div className="space-y-4 p-3 bg-muted/10 rounded-xl border border-border/40 animate-in fade-in slide-in-from-top-1 duration-300">
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center px-1">
+                                    <span className="text-[9px] font-bold uppercase text-muted-foreground/60 font-mono">Título do Menu</span>
+                                    <span className={`text-[9px] font-mono ${(node.data.listTitle?.length || 0) > 24 ? 'text-rose-500 font-bold' : 'text-muted-foreground/40'}`}>
+                                        {(node.data.listTitle?.length || 0)}/24
+                                    </span>
                                 </div>
-                            )}
-                            {(node.data.options?.length || 0) > 10 && (
-                                <div className="px-2 py-1 border border-destructive/30 bg-destructive/5 rounded text-[9px] text-destructive uppercase font-bold tracking-tight">
-                                    // LIMITE EXCEDIDO (MÁX 10)
+                                <PropertyInput
+                                    value={node.data.listTitle || ""}
+                                    onChange={(e) => updateNodeData(node.id, { listTitle: e.target.value })}
+                                    placeholder="Ex: Escolha um serviço"
+                                    className={(node.data.listTitle?.length || 0) > 24 ? 'border-rose-500/50' : ''}
+                                />
+                            </div>
+                            
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center px-1">
+                                    <span className="text-[9px] font-bold uppercase text-muted-foreground/60 font-mono">Texto do Botão</span>
+                                    <span className={`text-[9px] font-mono ${(node.data.listButtonLabel?.length || 0) > 20 ? 'text-rose-500 font-bold' : 'text-muted-foreground/40'}`}>
+                                        {(node.data.listButtonLabel?.length || 0)}/20
+                                    </span>
                                 </div>
-                            )}
+                                <PropertyInput
+                                    value={node.data.listButtonLabel || ""}
+                                    onChange={(e) => updateNodeData(node.id, { listButtonLabel: e.target.value })}
+                                    placeholder="Ex: Ver Opções"
+                                    className={(node.data.listButtonLabel?.length || 0) > 20 ? 'border-rose-500/50' : ''}
+                                />
+                            </div>
 
-                            <div className="space-y-3 p-3 bg-muted/10 rounded border border-border/50">
-                                <div className="space-y-1.5">
-                                    <div className="flex justify-between items-center">
-                                        <label className="text-[10px] font-bold uppercase text-muted-foreground">Título do Menu</label>
-                                        <span className={`text-[9px] ${(node.data.listTitle?.length || 0) > 24 ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
-                                            {(node.data.listTitle?.length || 0)}/24
-                                        </span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={node.data.listTitle || ""}
-                                        onChange={(e) => updateNodeData(node.id, { listTitle: e.target.value })}
-                                        className={`w-full rounded-md border bg-background px-2 py-1 text-xs ${(node.data.listTitle?.length || 0) > 24 ? 'border-destructive' : 'border-input'}`}
-                                        placeholder="Ex: Escolha um serviço"
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <div className="flex justify-between items-center">
-                                        <label className="text-[10px] font-bold uppercase text-muted-foreground">Texto do Botão (Lista)</label>
-                                        <span className={`text-[9px] ${(node.data.listButtonLabel?.length || 0) > 20 ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
-                                            {(node.data.listButtonLabel?.length || 0)}/20
-                                        </span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={node.data.listButtonLabel || ""}
-                                        onChange={(e) => updateNodeData(node.id, { listButtonLabel: e.target.value })}
-                                        className={`w-full rounded-md border bg-background px-2 py-1 text-xs ${(node.data.listButtonLabel?.length || 0) > 20 ? 'border-destructive' : 'border-input'}`}
-                                        placeholder="Ex: Ver Opções"
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <div className="flex justify-between items-center">
-                                        <label className="text-[10px] font-bold uppercase text-muted-foreground">Rodapé</label>
-                                        <span className={`text-[9px] ${(node.data.listFooter?.length || 0) > 72 ? 'text-amber-500 font-bold' : 'text-muted-foreground'}`}>
-                                            {(node.data.listFooter?.length || 0)}/72
-                                        </span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={node.data.listFooter || ""}
-                                        onChange={(e) => updateNodeData(node.id, { listFooter: e.target.value })}
-                                        className={`w-full rounded border bg-background px-2 py-1 text-xs font-mono ${(node.data.listFooter?.length || 0) > 72 ? 'border-amber-500' : 'border-input'}`}
-                                        placeholder="Ex: Selecione para continuar"
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <span className="text-[9px] font-bold uppercase text-muted-foreground/60 font-mono px-1">Rodapé</span>
+                                <PropertyInput
+                                    value={node.data.listFooter || ""}
+                                    onChange={(e) => updateNodeData(node.id, { listFooter: e.target.value })}
+                                    placeholder="Ex: Selecione para continuar"
+                                    className="font-mono text-[10px]"
+                                />
                             </div>
                         </div>
                     )}
+
+                    <PropertyToggle
+                        label="Habilitar Voltar (Undo)"
+                        description="Permitir que o cliente retorne ao passo anterior digitando '0'."
+                        checked={!!node.data.allowBack}
+                        onChange={(checked) => updateNodeData(node.id, { allowBack: checked })}
+                    />
                 </div>
-                <div className="space-y-3 pt-4 border-t border-border/10">
-                    <label className="flex items-center justify-between cursor-pointer group">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
-                            Habilitar Botão Voltar (Undo)
-                        </span>
-                        <div className="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-border">
-                            <input
-                                type="checkbox"
-                                className="sr-only"
-                                checked={node.data.allowBack || false}
-                                onChange={(e) => updateNodeData(node.id, { allowBack: e.target.checked })}
-                            />
-                            <span
-                                className={`${node.data.allowBack ? 'translate-x-4 bg-blue-500' : 'translate-x-1 bg-muted-foreground'
-                                    } inline-block h-3 w-3 transform rounded-full transition-all duration-200 ease-in-out`}
-                            />
-                        </div>
-                    </label>
-                    <p className="text-[10px] text-muted-foreground pb-2">
-                        Permite que o cliente digite "0" para voltar ao passo anterior.
-                    </p>
-                </div>
-            </div>
+            </PropertySection>
         </div>
     )
 }

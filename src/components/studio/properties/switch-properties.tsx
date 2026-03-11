@@ -1,5 +1,6 @@
 import { PropertyPanelProps } from "./types"
 import { PlusCircle, X } from "lucide-react"
+import { PropertySection, PropertyInput } from "./base-properties"
 
 export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
     const branches = Array.isArray(node.data.switchBranches) ? node.data.switchBranches : [];
@@ -23,74 +24,69 @@ export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
     };
 
     return (
-        <div className="space-y-4 pt-2">
-            <div className="space-y-3">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">
-                    Variável a ser Avaliada
-                </label>
-                <input
-                    type="text"
-                    value={node.data.switchVariable || ""}
-                    onChange={(e) => updateNodeData(node.id, { switchVariable: e.target.value })}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:border-blue-500/50 focus:border-blue-500 transition-colors"
-                    placeholder="Ex: plano (NÃO USE {{ }})"
-                />
-                <p className="text-[10px] text-muted-foreground pt-1">
-                    Insira apenas o nome da variável. Ex: <code>plano</code>, <code>score</code>. O bot irá comparar o valor salvo nela com os casos abaixo.
-                </p>
-            </div>
-
-            <div className="space-y-4 pt-4 border-t border-border/50">
-                <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Casos (Branches)
-                    </label>
-                    <button
-                        onClick={handleAddBranch}
-                        className="text-purple-500 hover:text-purple-400 p-1 flex items-center gap-1 rounded-md hover:bg-purple-500/10 transition-colors"
-                        title="Adicionar Novo Caso"
-                    >
-                        <PlusCircle className="w-4 h-4" />
-                    </button>
-                </div>
-
-                <div className="space-y-3">
-                    {branches.map((branch, index: number) => (
-                        <div key={branch.id} className="flex gap-2 group relative items-center bg-muted/20 p-2 rounded-lg border border-border/50 hover:border-purple-500/30 transition-all">
-                            <div className="flex-1 space-y-1">
-                                <label className="text-[9px] font-bold uppercase text-muted-foreground">Se valor for igual a:</label>
-                                <input
-                                    type="text"
-                                    value={branch.value}
-                                    onChange={(e) => handleUpdateBranchValue(index, e.target.value)}
-                                    className="w-full rounded-md border border-input/50 bg-background px-2 py-1 text-sm font-mono focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-500 hover:border-purple-500/50 transition-colors"
-                                    placeholder="Ex: premium"
-                                />
-                            </div>
-                            <button
-                                onClick={() => handleRemoveBranch(branch.id)}
-                                className="p-1.5 text-muted-foreground hover:text-destructive self-end mb-0.5 rounded-md hover:bg-destructive/10 transition-colors"
-                                title="Remover Rota"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                    ))}
-
-                    {branches.length === 0 && (
-                        <div className="text-xs text-center text-muted-foreground py-4 border border-dashed border-border/50 rounded-lg">
-                            Nenhum caso cadastrado.<br />Clique no <span className="text-purple-500">+</span> para adicionar a primeira rota.
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div className="pt-2">
-                <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-md">
-                    <p className="text-[10px] text-purple-600 dark:text-purple-400 font-medium leading-relaxed">
-                        ℹ️ <strong>Rota Default:</strong> Qualquer valor que não bata com os casos acima será roteado para o pino <code>Fallback</code> automaticamente.
+        <div className="space-y-6">
+            <PropertySection title="Variável de Avaliação">
+                <div className="space-y-2">
+                    <PropertyInput
+                        value={node.data.switchVariable || ""}
+                        onChange={(e) => updateNodeData(node.id, { switchVariable: e.target.value })}
+                        placeholder="Ex: categoria_cliente"
+                        className="font-mono text-blue-400"
+                    />
+                    <p className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-tighter px-1">
+                        // O bot comparará o valor desta variável
                     </p>
                 </div>
+            </PropertySection>
+
+            <PropertySection title="Casos (Branches)">
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 font-mono">
+                            Rotas Ativas
+                        </span>
+                        <button
+                            onClick={handleAddBranch}
+                            className="text-purple-500 hover:text-purple-400 p-1 bg-purple-500/10 rounded-md transition-colors"
+                        >
+                            <PlusCircle className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-3">
+                        {branches.map((branch, index: number) => (
+                            <div key={branch.id} className="flex gap-2 group relative items-center bg-muted/10 p-2 rounded-xl border border-border/40 hover:border-purple-500/30 transition-all">
+                                <div className="flex-1 space-y-1">
+                                    <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Se valor for igual a:</span>
+                                    <PropertyInput
+                                        value={branch.value}
+                                        onChange={(e) => handleUpdateBranchValue(index, e.target.value)}
+                                        placeholder="Ex: premium"
+                                        className="font-mono text-[11px]"
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => handleRemoveBranch(branch.id)}
+                                    className="p-1.5 text-muted-foreground/40 hover:text-rose-500 self-end mb-0.5 transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ))}
+
+                        {branches.length === 0 && (
+                            <div className="text-[10px] text-center text-muted-foreground/40 py-6 border border-dashed border-border/40 rounded-xl font-mono uppercase tracking-tighter">
+                                Nenhuma rota definida.<br />Clique no [+] no canto superior.
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </PropertySection>
+
+            <div className="p-3 bg-purple-500/5 border border-purple-500/10 rounded-xl">
+                <p className="text-[9px] text-purple-400/80 font-mono uppercase leading-relaxed tracking-tighter">
+                    ℹ️ <strong>Default Fallback:</strong> Qualquer valor não mapeado seguirá para o pino [Fallback].
+                </p>
             </div>
         </div>
     )

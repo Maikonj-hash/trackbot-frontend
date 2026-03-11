@@ -1,18 +1,27 @@
 import { PropertyPanelProps } from "./types"
+import { PropertySection, PropertyInput } from "./base-properties"
 
 export function HandoverProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
-        <div className="space-y-3 pt-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Departamento Comercial (Opcional)
-            </label>
-            <input
-                type="text"
-                value={node.data.content as string || ""}
-                onChange={(e) => updateNodeData(node.id, { content: e.target.value })}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                placeholder="Ex: Vendas"
-            />
+        <div className="space-y-6">
+            <PropertySection title="Transbordo Humano">
+                <div className="space-y-2">
+                    <PropertyInput
+                        value={node.data.content as string || ""}
+                        onChange={(e) => updateNodeData(node.id, { content: e.target.value })}
+                        placeholder="Ex: Departamento de Vendas"
+                    />
+                    <p className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-tighter px-1">
+                        // Opcional: Definir departamento de destino
+                    </p>
+                </div>
+            </PropertySection>
+
+            <div className="p-4 bg-orange-500/5 border border-orange-500/10 rounded-xl">
+                <p className="text-[10px] text-orange-500/70 leading-relaxed font-mono uppercase tracking-tighter">
+                    ⚠️ Este bloco encerra a automação e notifica os agentes disponíveis no painel.
+                </p>
+            </div>
         </div>
     )
 }
