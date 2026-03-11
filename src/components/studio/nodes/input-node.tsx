@@ -23,6 +23,12 @@ export function InputNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) 
                         <VariableHighlighter text={data?.content || "Sua pergunta aqui..."} />
                     </div>
 
+                    {data.expectedType && data.expectedType !== 'TEXT' && (
+                        <div className="mt-2 text-[9px] font-mono text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded-full inline-block border border-amber-500/20">
+                            Exige: {data.expectedType}
+                        </div>
+                    )}
+
                     <div className="mt-3 pt-3 border-t border-border/30">
                         <div className="text-[9px] font-mono text-violet-500 uppercase tracking-widest bg-violet-500/10 px-2 py-0.5 rounded-full inline-block">
                             Save to Variable

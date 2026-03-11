@@ -39,6 +39,9 @@ export type TrackerNodeData = {
     mediaType?: MediaType;
 
     variableName?: string;
+    expectedType?: 'TEXT' | 'CEP' | 'LICENSE_PLATE' | 'DATE' | 'TIME' | 'EMAIL' | 'PHONE' | 'CPF_CNPJ' | 'NUMBER';
+    errorMessage?: string;
+    maxRetries?: number;
     variableAction?: VariableAction;
     variableValue?: string;
     webhookMethod?: WebhookMethod;

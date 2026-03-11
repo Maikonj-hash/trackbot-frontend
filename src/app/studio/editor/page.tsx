@@ -102,12 +102,14 @@ function StudioCanvas() {
     const onDrop = (event: React.DragEvent) => {
         event.preventDefault();
 
-        const type = event.dataTransfer.getData("application/reactflow");
+        const rawType = event.dataTransfer.getData("application/reactflow");
         const label = event.dataTransfer.getData("application/reactflow-label");
 
-        if (typeof type === "undefined" || !type) {
+        if (typeof rawType === "undefined" || !rawType) {
             return;
         }
+
+        const [type, expectedType] = rawType.split(":");
 
         const position = screenToFlowPosition({
             x: event.clientX,
@@ -118,7 +120,12 @@ function StudioCanvas() {
             id: `dndnode_${Date.now()}`,
             type,
             position,
-            data: { label, type: type.replace("Block", ""), content: "" },
+            data: { 
+                label, 
+                type: type.replace("Block", ""), 
+                content: "",
+                ...(expectedType ? { expectedType: expectedType as any } : {})
+            },
         };
 
         addNode(newNode);

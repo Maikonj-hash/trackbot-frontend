@@ -69,10 +69,15 @@ const CATEGORIES: CategoryDefinition[] = [
         ]
     },
     {
-        title: "INTERAÇÃO",
+        title: "INTERAÇÃO & COLETA",
         blocks: [
             { type: "optionsBlock", label: "Escolhas", icon: List, color: "purple" },
             { type: "inputBlock", label: "Pergunta Livre", icon: Type, color: "purple" },
+            { type: "inputBlock:EMAIL", label: "Pedir E-mail", icon: Type, color: "purple" },
+            { type: "inputBlock:PHONE", label: "Pedir Telefone", icon: Type, color: "purple" },
+            { type: "inputBlock:CPF_CNPJ", label: "Pedir CPF/CNPJ", icon: Type, color: "purple" },
+            { type: "inputBlock:CEP", label: "Pedir CEP", icon: Type, color: "purple" },
+            { type: "inputBlock:DATE", label: "Pedir Data", icon: Type, color: "purple" },
         ]
     },
     {
@@ -163,7 +168,7 @@ export const SidebarNodes = memo(function SidebarNodes() {
                                                 {block.label}
                                             </span>
                                             <span className="text-[8px] font-mono uppercase tracking-tighter text-muted-foreground/40 mt-0.5">
-                                                {block.type.replace('Block', '')}
+                                                {block.type.split(':')[0].replace('Block', '')}
                                             </span>
                                         </div>
                                     </div>

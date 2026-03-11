@@ -91,3 +91,33 @@ export function PropertyHint({ children }: BaseProps) {
         </p>
     );
 }
+
+interface SelectProps {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    options: Array<{ label: string; value: string }>;
+}
+
+export function PropertySelect({ label, value, onChange, options }: SelectProps) {
+    return (
+        <div className="space-y-2">
+            <PropertyLabel>{label}</PropertyLabel>
+            <select
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className={clsx(
+                    "w-full bg-background/50 border border-border/50 rounded-lg px-3 py-2 text-xs transition-all",
+                    "focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50",
+                    "font-medium appearance-none"
+                )}
+            >
+                {options.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-background text-foreground">
+                        {opt.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
