@@ -15,6 +15,7 @@ import { SwitchProperties } from "./properties/switch-properties";
 import { EndProperties } from "./properties/end-properties";
 import { ReviewProperties } from "./properties/review-properties";
 import { JumpProperties } from "./properties/jump-properties";
+import { SegmentProperties } from "./properties/segment-properties";
 
 export function PropertiesDrawer() {
     const { selectedNode, setSelectedNode, updateNodeData, deleteNode } = useFlowStore();
@@ -53,6 +54,8 @@ export function PropertiesDrawer() {
                 return <JumpProperties {...props} />;
             case "endBlock":
                 return <EndProperties {...props} />;
+            case "segmentBlock":
+                return <SegmentProperties {...props} />;
             default:
                 return (
                     <p className="text-sm text-muted-foreground italic text-center py-8">

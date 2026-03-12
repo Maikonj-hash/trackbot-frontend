@@ -231,7 +231,7 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
     }
 
     nodes.forEach(node => {
-        if (node.id === "start-1" || node.type === "startBlock") return;
+        if (node.id === "start-1" || node.type === "startBlock" || node.type === "segmentBlock") return;
 
         const hasInput = edges.some(e => e.target === node.id);
         if (!hasInput) {
@@ -240,7 +240,7 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
     });
 
     nodes.forEach(node => {
-        if (node.type === "endBlock" || node.type === "handoverBlock") return;
+        if (node.type === "endBlock" || node.type === "handoverBlock" || node.type === "segmentBlock") return;
 
         const hasOutput = edges.some(e => e.source === node.id);
         if (!hasOutput) {

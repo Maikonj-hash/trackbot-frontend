@@ -117,6 +117,7 @@ const CATEGORIES: CategoryDefinition[] = [
     {
         title: "FLUXO",
         blocks: [
+            { type: "segmentBlock", label: "Segmentador", icon: Zap, color: "rose" },
             { type: "jumpBlock", label: "Salto/Jump", icon: Zap, color: "rose" },
             { type: "endBlock", label: "Encerrar", icon: LogOut, color: "rose" },
         ]

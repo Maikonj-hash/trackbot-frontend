@@ -36,6 +36,7 @@ import { ReviewNode } from "@/components/studio/nodes/review-node";
 import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer";
 import { VariablesDrawer } from "@/components/studio/variables-drawer";
 import { JumpNode } from "@/components/studio/nodes/jump-node";
+import { SegmentNode } from "@/components/studio/nodes/segment-node";
 
 const customNodeTypes = {
     messageBlock: MessageNode,
@@ -51,6 +52,7 @@ const customNodeTypes = {
     switchBlock: SwitchNode,
     reviewBlock: ReviewNode,
     jumpBlock: JumpNode,
+    segmentBlock: SegmentNode,
     endBlock: EndNode,
     startBlock: StartNode,
 };
@@ -116,7 +118,7 @@ function StudioCanvas() {
             y: event.clientY,
         });
 
-        const newNode = {
+        const newNode: any = {
             id: `dndnode_${Date.now()}`,
             type,
             position,
@@ -127,6 +129,14 @@ function StudioCanvas() {
                 ...(expectedType ? { expectedType: expectedType as any } : {})
             },
         };
+
+        // Adiciona dimensões iniciais apenas para o Segmentador
+        if (type === "segmentBlock") {
+            newNode.width = 400;
+            newNode.height = 300;
+            newNode.zIndex = -1; // Garante que fique atrás dos outros nós
+            newNode.data.color = "#3b82f6"; // Cor padrão inicial
+        }
 
         addNode(newNode);
         setSelectedNode(newNode.id);
@@ -182,7 +192,8 @@ function StudioCanvas() {
                         <MiniMap
                             zoomable
                             pannable
-                            nodeColor={(n) => {
+                        nodeColor={(n) => {
+                                if (n.type === "segmentBlock") return (n.data as any).color || "#3b82f6";
                                 if (n.type === "messageBlock") return "#2563eb";
                                 return "#3b82f6";
                             }}

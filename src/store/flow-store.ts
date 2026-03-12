@@ -21,6 +21,7 @@ export type WebhookMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 export type TrackerNodeData = {
     label: string;
     type: string;
+    color?: string;
     content?: string;
     options?: string[];
     delayMs?: number;
