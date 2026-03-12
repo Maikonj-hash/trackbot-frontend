@@ -15,6 +15,7 @@ const GLOBAL_VARIABLES = [
     { name: "sys.month_name", description: "O mês atual por extenso", example: "Março" },
     { name: "sys.year", description: "O ano atual com 4 dígitos", example: "2026" },
     { name: "sys.protocol", description: "Gera um número de protocolo único", example: "20260311-165030-1234" },
+    { name: "sys.payload", description: "JSON completo do chamado (Dados + Respostas)", example: "{ 'ticket': {...}, 'customer': {...} }" },
     { name: "user.name", description: "O nome rastreado do cliente", example: "João Santos" },
     { name: "user.phone", description: "O número de WhatsApp do cliente", example: "5511999999999" },
 ];
