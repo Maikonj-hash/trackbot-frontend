@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit2, Phone, Calendar, User, Database, RefreshCw, Trash2 } from "lucide-react"
+import { Edit2, Phone, Calendar, User, Database, RefreshCw, Trash2, Activity } from "lucide-react"
 import { clsx } from "clsx"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
@@ -54,9 +54,14 @@ export function ClientesTable({ clientes, loading, selectedId, onEdit, onReset, 
                 </thead>
                 <tbody className="divide-y divide-border/10">
                     {clientes.map((cliente) => {
-                        const metadata = typeof cliente.metadata === 'string'
-                            ? JSON.parse(cliente.metadata)
-                            : cliente.metadata || {};
+                        let metadata: any = {};
+                        try {
+                            metadata = typeof cliente.metadata === 'string'
+                                ? JSON.parse(cliente.metadata)
+                                : cliente.metadata || {};
+                        } catch (e) {
+                            console.error("Failed to parse metadata for cliente", cliente.id, e);
+                        }
 
                         return (
                             <tr 
@@ -72,13 +77,23 @@ export function ClientesTable({ clientes, loading, selectedId, onEdit, onReset, 
                                             {cliente.name ? cliente.name.charAt(0).toUpperCase() : <User className="w-4 h-4 text-muted-foreground" />}
                                         </div>
                                         <div className="flex flex-col gap-0.5">
-                                            <span className="text-xs font-bold text-foreground tracking-tight uppercase">
-                                                {cliente.name || "UNIDENTIFIED_USER"}
+                                            <span className={clsx(
+                                                "text-xs font-bold tracking-tight uppercase transition-colors",
+                                                (cliente.name === 'UNIDENTIFIED_USER' || !cliente.name) ? "text-muted-foreground/50 italic text-[10px]" : "text-foreground"
+                                            )}>
+                                                {cliente.name === 'UNIDENTIFIED_USER' ? 'Cadastro Pendente' : (cliente.name || "SEM NOME")}
                                             </span>
-                                            <div className="flex items-center gap-1.5 opacity-60">
-                                                <Phone className="w-3 h-3 text-muted-foreground" />
-                                                <span className="text-[10px] font-mono text-muted-foreground tracking-tighter">
-                                                    {cliente.phone}
+                                            <div className="flex items-center gap-1.5">
+                                                <Phone className="w-3 h-3 text-blue-500/40" />
+                                                <span className="text-[10px] font-mono tracking-tighter">
+                                                    {metadata.whatsapp_real ? (
+                                                        <span className="text-blue-400 font-bold flex items-center gap-1">
+                                                            {metadata.whatsapp_real}
+                                                            <Activity className="w-2.5 h-2.5 opacity-40 animate-pulse" />
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-muted-foreground/60">{cliente.phone.split('@')[0]}</span>
+                                                    )}
                                                 </span>
                                             </div>
                                         </div>
@@ -96,12 +111,15 @@ export function ClientesTable({ clientes, loading, selectedId, onEdit, onReset, 
                                 </td>
                                 <td className={clsx("px-6 py-4", selectedId && "hidden lg:table-cell")}>
                                     <div className="flex flex-wrap gap-1 max-w-[320px]">
-                                        {Object.entries(metadata).slice(0, 3).map(([key, value]: any) => (
-                                            <div key={key} className="px-2 py-0.5 rounded bg-muted/5 border border-border/30 flex items-center gap-2">
-                                                <span className="text-[9px] font-bold text-muted-foreground/40 font-mono">.{key}</span>
-                                                <span className="text-[9px] text-foreground/70 font-mono truncate max-w-[90px]">{value}</span>
-                                            </div>
-                                        ))}
+                                        {Object.entries(metadata)
+                                            .filter(([key]) => key !== 'whatsapp_real') // Oculta o telefone já exibido no topo
+                                            .slice(0, 3)
+                                            .map(([key, value]: any) => (
+                                                <div key={key} className="px-2 py-0.5 rounded bg-muted/5 border border-border/30 flex items-center gap-2">
+                                                    <span className="text-[9px] font-bold text-muted-foreground/40 font-mono">.{key}</span>
+                                                    <span className="text-[9px] text-foreground/70 font-mono truncate max-w-[90px]">{String(value)}</span>
+                                                </div>
+                                            ))}
                                         {Object.keys(metadata).length > 3 && (
                                             <span className="text-[9px] text-muted-foreground/30 font-mono self-center px-1">
                                                 +{Object.keys(metadata).length - 3}_MORE

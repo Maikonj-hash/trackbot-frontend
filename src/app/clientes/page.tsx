@@ -227,7 +227,7 @@ export default function ClientesPage() {
 
             {/* Right Panel: Detail (View/Edit) */}
             {selectedCliente && (
-                <aside className="w-[50%] flex flex-col border-l border-border/20 shadow-2xl z-20 overflow-hidden">
+                <aside className="w-[50%] flex flex-col border-l border-border/20 shadow-[-10px_0_30px_rgba(0,0,0,0.2)] z-20 overflow-hidden relative">
                     <ClienteDetailView
                         cliente={selectedCliente}
                         onClose={() => setSelectedCliente(null)}

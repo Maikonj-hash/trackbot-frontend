@@ -94,10 +94,21 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                 <div className="flex items-center gap-3">
                     <User className="w-5 h-5 text-blue-500" />
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold tracking-tight uppercase">Detalhes do Cliente</span>
-                        <span className="text-[9px] font-mono text-muted-foreground opacity-60 uppercase tracking-tighter">
-                            ID: {cliente.id.substring(0, 8)}... // {cliente.phone}
+                        <span className="text-sm font-bold tracking-tight uppercase">
+                            {cliente.name === 'UNIDENTIFIED_USER' ? 'Cadastro Pendente' : (cliente.name || 'Sem Nome')}
                         </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[9px] font-mono text-muted-foreground opacity-60 uppercase tracking-tighter">
+                                {metadata.whatsapp_real ? (
+                                    <span className="text-blue-500 font-bold">WPP: {metadata.whatsapp_real}</span>
+                                ) : (
+                                    `ID: ${cliente.id.substring(0, 8)}...`
+                                )}
+                            </span>
+                            <span className="text-[9px] font-mono text-muted-foreground opacity-30 uppercase tracking-tighter">
+                                // {cliente.phone.split('@')[0]}
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <button 
