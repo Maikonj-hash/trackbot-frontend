@@ -1,6 +1,7 @@
 "use client"
 
 import { Edit2, Phone, Calendar, User, Database, RefreshCw, Trash2 } from "lucide-react"
+import { clsx } from "clsx"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Cliente } from "@/types/models"
@@ -8,12 +9,13 @@ import { Cliente } from "@/types/models"
 interface ClientesTableProps {
     clientes: Cliente[]
     loading: boolean
+    selectedId?: string
     onEdit: (cliente: Cliente) => void
     onReset: (cliente: Cliente) => void
     onDelete: (cliente: Cliente) => void
 }
 
-export function ClientesTable({ clientes, loading, onEdit, onReset, onDelete }: ClientesTableProps) {
+export function ClientesTable({ clientes, loading, selectedId, onEdit, onReset, onDelete }: ClientesTableProps) {
     if (loading) {
         return (
             <div className="flex flex-col gap-3 p-6">
@@ -57,7 +59,13 @@ export function ClientesTable({ clientes, loading, onEdit, onReset, onDelete }: 
                             : cliente.metadata || {};
 
                         return (
-                            <tr key={cliente.id} className="group hover:bg-foreground/[0.02] transition-colors">
+                            <tr 
+                                key={cliente.id} 
+                                className={clsx(
+                                    "group transition-colors",
+                                    selectedId === cliente.id ? "bg-blue-500/10 border-l-2 border-blue-500" : "hover:bg-foreground/[0.02]"
+                                )}
+                            >
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded bg-muted/10 border border-border/30 flex items-center justify-center text-foreground font-bold shadow-sm text-xs font-mono">
@@ -86,7 +94,7 @@ export function ClientesTable({ clientes, loading, onEdit, onReset, onDelete }: 
                                         </span>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className={clsx("px-6 py-4", selectedId && "hidden lg:table-cell")}>
                                     <div className="flex flex-wrap gap-1 max-w-[320px]">
                                         {Object.entries(metadata).slice(0, 3).map(([key, value]: any) => (
                                             <div key={key} className="px-2 py-0.5 rounded bg-muted/5 border border-border/30 flex items-center gap-2">
@@ -104,7 +112,7 @@ export function ClientesTable({ clientes, loading, onEdit, onReset, onDelete }: 
                                         )}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className={clsx("px-6 py-4", selectedId && "hidden 2xl:table-cell")}>
                                     <div className="flex items-center gap-2 text-muted-foreground font-mono">
                                         <Calendar className="w-3 h-3 opacity-30" />
                                         <span className="text-[10px] tracking-tighter">
