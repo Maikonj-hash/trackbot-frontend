@@ -1,31 +1,24 @@
 "use client";
 
 import { useFlowStore } from "@/store/flow-store";
-import { Braces, X, Search, Database, Info, Globe, ChevronDown, ChevronRight } from "lucide-react";
 import { useState, useMemo } from "react";
-import { VariableHighlighter } from "./nodes/base/variable-highlighter";
-import { clsx } from "clsx";
+import { Braces, X, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const GLOBAL_VARIABLES = [
-    { name: "sys.time", description: "Imprime a hora exata local", example: "14:30" },
-    { name: "sys.date", description: "Imprime a data de hoje", example: "11/03/2026" },
-    { name: "sys.datetime", description: "Imprime a data e hora juntos", example: "11/03/2026, 14:30:00" },
-    { name: "sys.greeting", description: "A famosa saudação inteligente", example: "Bom dia, Boa tarde..." },
-    { name: "sys.day_name", description: "O dia da semana por extenso", example: "Segunda-feira" },
-    { name: "sys.month_name", description: "O mês atual por extenso", example: "Março" },
-    { name: "sys.year", description: "O ano atual com 4 dígitos", example: "2026" },
-    { name: "wpp_name", description: "Campo oficial para captura de Nome", example: "Captura automática" },
-    { name: "wpp_phone", description: "Campo oficial para captura de WhatsApp", example: "Captura automática" },
-    { name: "contact.name", description: "Nome capturado durante o atendimento", example: "João Silva" },
-    { name: "contact.phone", description: "WhatsApp real (mesmo para @lid)", example: "5511999999999" },
-    { name: "sys.protocol", description: "Gera um número de protocolo único", example: "20260311-165030-1234" },
-    { name: "sys.payload", description: "JSON completo do chamado (Dados + Respostas)", example: "{ 'ticket': {...}, 'customer': {...} }" },
+    { name: "sys.time", description: "Hora local exata", example: "14:30" },
+    { name: "sys.date", description: "Data atual", example: "11/03/2026" },
+    { name: "sys.datetime", description: "Data e hora", example: "11/03/2026, 14:30" },
+    { name: "sys.greeting", description: "Saudação dinâmica", example: "Bom dia/tarde" },
+    { name: "sys.day_name", description: "Dia da semana", example: "Segunda-feira" },
+    { name: "sys.year", description: "Ano atual", example: "2026" },
+    { name: "contact.name", description: "Nome capturado no CRM", example: "João Silva" },
+    { name: "contact.phone", description: "WhatsApp real do cliente", example: "5511999999999" },
+    { name: "wpp_name", description: "Gatilho: Capturar Nome", example: "Use no nó de Identificação" },
+    { name: "wpp_phone", description: "Gatilho: Capturar WhatsApp", example: "Use no nó de Identificação" },
+    { name: "sys.protocol", description: "Protocolo único", example: "20260311-1234" },
 ];
 
-/**
- * Gaveta lateral para visualização e gerenciamento de variáveis.
- * Estética premium com busca e destaque visual e abas para globais/locais.
- */
 export function VariablesDrawer() {
     const isVariablesDrawerOpen = useFlowStore(s => s.isVariablesDrawerOpen);
     const setVariablesDrawerOpen = useFlowStore(s => s.setVariablesDrawerOpen);
@@ -39,9 +32,8 @@ export function VariablesDrawer() {
         setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
     };
 
-    // Otimização: Só calcula variáveis locais se a drawer estiver aberta
     const nodesDataHash = useMemo(() => {
-        return nodes.map(n => JSON.stringify(n.data)).join('|');
+        return nodes.map((n: any) => JSON.stringify(n.data)).join('|');
     }, [nodes]);
 
     const allLocalVariables = useMemo(() => {
@@ -49,7 +41,7 @@ export function VariablesDrawer() {
         return getVariables();
     }, [isVariablesDrawerOpen, nodesDataHash, getVariables]);
 
-    const filteredLocalVariables = allLocalVariables.filter(v =>
+    const filteredLocalVariables = allLocalVariables.filter((v: string) =>
         v.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -61,141 +53,100 @@ export function VariablesDrawer() {
     if (!isVariablesDrawerOpen) return null;
 
     return (
-        <div className="w-80 h-full border-l border-border/50 bg-background/95 shadow-2xl flex flex-col z-50 animate-in slide-in-from-right duration-300">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border/50 bg-muted/20">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center border border-blue-600/20">
-                        <Braces className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-sm tracking-tight flex items-center gap-1.5">
-                            Gerenciador de Variáveis
+        <TooltipProvider delayDuration={100}>
+            <div className="w-72 h-full border-l border-border/30 bg-background flex flex-col z-50">
+                {/* Header Industrial */}
+                <div className="flex items-center justify-between p-4 border-b border-border/30">
+                    <div className="flex items-center gap-2">
+                        <Braces className="w-3.5 h-3.5 text-muted-foreground/30" />
+                        <h3 className="font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80">
+                            Variable_Engine
                         </h3>
-                        <p className="text-[10px] text-muted-foreground uppercase font-mono">{(allLocalVariables.length + GLOBAL_VARIABLES.length)} mapeadas</p>
                     </div>
+                    <button
+                        onClick={() => setVariablesDrawerOpen(false)}
+                        className="p-1 text-muted-foreground/50 hover:text-foreground"
+                    >
+                        <X className="w-3.5 h-3.5" />
+                    </button>
                 </div>
-                <button
-                    onClick={() => setVariablesDrawerOpen(false)}
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground transition-colors"
-                >
-                    <X className="w-4 h-4" />
-                </button>
-            </div>
 
-            {/* Busca */}
-            <div className="px-4 py-3 border-b border-border/30">
-                <div className="relative group">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-blue-500 transition-colors" />
+                {/* Busca Minimalista */}
+                <div className="px-4 py-2 border-b border-border/30">
                     <input
                         type="text"
-                        placeholder="Buscar variável (ex: sys.time)..."
+                        placeholder="FILTER_ID..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-muted/30 border border-border/50 rounded-md py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                        className="w-full bg-transparent border-b border-border/20 py-1 text-[10px] font-mono focus:outline-none focus:border-blue-500/50 transition-colors placeholder:opacity-10 uppercase"
                     />
                 </div>
-            </div>
 
-            {/* Lista Principal com Accordions */}
-            <div className="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-4 pb-12">
-                
-                {/* Accordion Globais */}
-                {(filteredGlobalVariables.length > 0 || search) && (
-                    <div className="space-y-1">
+                {/* Lista Técnica */}
+                <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-6">
+                    
+                    {/* Variáveis de Sistema */}
+                    <div className="space-y-3">
                         <button 
                             onClick={() => toggleSection('global')}
-                            className="w-full px-2 py-1.5 flex items-center justify-between hover:bg-muted/50 rounded-md transition-colors group"
+                            className="flex items-center gap-2 w-full text-left opacity-30"
                         >
-                            <div className="flex items-center gap-2">
-                                <Globe className="w-3.5 h-3.5 text-blue-500" />
-                                <span className="text-xs font-semibold text-foreground/80 group-hover:text-foreground">Variáveis do Sistema</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-mono font-medium text-muted-foreground bg-muted/50 px-1.5 rounded">{filteredGlobalVariables.length}</span>
-                                {expandedSections.global ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
-                            </div>
+                            <span className="text-[9px] font-bold uppercase tracking-widest">// SYSTEM_GLOBAL</span>
+                            <div className="flex-1 h-[1px] bg-border/20" />
                         </button>
                         
                         {expandedSections.global && (
-                            <div className="space-y-1.5 pt-1 pl-1">
-                                {filteredGlobalVariables.length > 0 ? (
-                                    filteredGlobalVariables.map((v) => (
-                                        <div key={v.name} className="flex flex-col gap-1 p-2.5 rounded-lg border border-border/50 bg-muted/5 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all">
-                                            <div className="flex items-center justify-between">
-                                                <VariableHighlighter text={`{{${v.name}}}`} />
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1">
+                                {filteredGlobalVariables.map((v) => (
+                                    <Tooltip key={v.name}>
+                                        <TooltipTrigger asChild>
+                                            <span className="text-[10px] font-mono text-blue-500/60 cursor-help">
+                                                {`{{${v.name}}}`}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="left" className="bg-background border border-border shadow-xl p-3 max-w-[200px]">
+                                            <div className="space-y-1.5">
+                                                <p className="text-[10px] font-bold text-blue-500 uppercase tracking-tighter">{v.name}</p>
+                                                <p className="text-[10px] text-foreground/80 leading-relaxed font-mono">{v.description}</p>
+                                                <p className="text-[9px] text-muted-foreground italic border-t border-border/10 pt-1">Ex: {v.example}</p>
                                             </div>
-                                            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">{v.description}</p>
-                                            <p className="text-[10px] font-mono text-blue-500/80 italic mt-0.5 opacity-80">Ex: {v.example}</p>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="p-4 text-center text-xs text-muted-foreground/60 border border-dashed border-border/40 rounded-lg">
-                                        Nenhuma variável de sistema encontrada.
-                                    </div>
-                                )}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                ))}
                             </div>
                         )}
                     </div>
-                )}
 
-
-                {/* Accordion Locais (Metadata) */}
-                {(filteredLocalVariables.length > 0 || search) && (
-                    <div className="space-y-1">
+                    {/* Variáveis de Fluxo */}
+                    <div className="space-y-3">
                         <button 
                             onClick={() => toggleSection('local')}
-                            className="w-full px-2 py-1.5 flex items-center justify-between hover:bg-muted/50 rounded-md transition-colors group"
+                            className="flex items-center gap-2 w-full text-left opacity-30"
                         >
-                            <div className="flex items-center gap-2">
-                                <Database className="w-3.5 h-3.5 text-emerald-500" />
-                                <span className="text-xs font-semibold text-foreground/80 group-hover:text-foreground">Variáveis do Fluxo (Locais)</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-mono font-medium text-muted-foreground bg-muted/50 px-1.5 rounded">{filteredLocalVariables.length}</span>
-                                {expandedSections.local ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />}
-                            </div>
+                            <span className="text-[9px] font-bold uppercase tracking-widest">// FLOW_CUSTOM</span>
+                            <div className="flex-1 h-[1px] bg-border/20" />
                         </button>
                         
                         {expandedSections.local && (
-                            <div className="space-y-1.5 pt-1 pl-1">
-                                {filteredLocalVariables.length > 0 ? (
-                                    filteredLocalVariables.map((variable) => (
-                                        <div key={variable} className="flex flex-col gap-1 p-2.5 rounded-lg border border-border/50 bg-muted/5 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all">
-                                            <div className="flex items-center justify-between">
-                                                <VariableHighlighter text={`{{${variable}}}`} />
-                                            </div>
-                                            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">Capturada em nós do tipo Input/Identificação.</p>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="p-4 text-center text-xs text-muted-foreground/60 border border-dashed border-border/40 rounded-lg">
-                                        Nenhuma variável customizada detectada neste fluxo.
-                                    </div>
-                                )}
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1">
+                                {filteredLocalVariables.map((variable: string) => (
+                                    <span key={variable} className="text-[10px] font-mono text-emerald-500/60">
+                                        {`{{${variable}}}`}
+                                    </span>
+                                ))}
                             </div>
                         )}
                     </div>
-                )}
+                </div>
 
-                {/* Empty State Geral */}
-                {filteredGlobalVariables.length === 0 && filteredLocalVariables.length === 0 && (
-                    <div className="h-40 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-border/40 rounded-xl bg-muted/5 mt-4">
-                        <Search className="w-8 h-8 text-muted-foreground/20 mb-2" />
-                        <p className="text-xs text-muted-foreground font-medium">Nenhuma variável encontrada</p>
+                {/* Footer Status */}
+                <div className="p-4 border-t border-border/30">
+                    <div className="flex items-center gap-2 opacity-20">
+                        <Info className="w-3 h-3" />
+                        <span className="text-[8px] font-mono uppercase tracking-tighter">ENGINE_STATE: READY</span>
                     </div>
-                )}
-            </div>
-
-            {/* Footer Info */}
-            <div className="p-4 border-t border-border/50 bg-muted/20 shrink-0">
-                <div className="flex gap-2 p-3 rounded-md bg-blue-500/5 border border-blue-500/10">
-                    <Info className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
-                    <p className="text-[10px] text-blue-600/80 leading-relaxed italic">
-                        Variáveis Globais são sempre acessíveis. Variáveis de Fluxo são detectadas ao serem criadas em blocos de Entrada de Dados.
-                    </p>
                 </div>
             </div>
-        </div>
+        </TooltipProvider>
     );
 }

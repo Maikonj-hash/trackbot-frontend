@@ -123,12 +123,12 @@ export function IdentificationProperties({ node, updateNodeData }: PropertyPanel
                         </p>
                     )}
 
-                    <div className="mt-4 p-3 rounded bg-blue-500/5 border border-blue-500/10 flex gap-2">
-                        <Info className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
+                    <div className="mt-4 p-3 border border-border/40 flex gap-2 bg-muted/5">
+                        <Info className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
                         <div className="space-y-1">
-                            <p className="text-[10px] text-blue-600/80 font-bold uppercase tracking-tight">Promoção de Identidade</p>
-                            <p className="text-[9px] text-blue-600/70 leading-relaxed italic">
-                                Use as variáveis <span className="font-mono font-bold text-blue-600">wpp_name</span> e <span className="font-mono font-bold text-blue-600">wpp_phone</span> para atualizar automaticamente o cadastro real do cliente no sistema.
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">Promoção de Identidade</p>
+                            <p className="text-[9px] text-muted-foreground/70 leading-relaxed italic">
+                                Use as variáveis <span className="font-mono font-bold">wpp_name</span> e <span className="font-mono font-bold">wpp_phone</span> para atualizar automaticamente o cadastro real do cliente no sistema.
                             </p>
                         </div>
                     </div>
