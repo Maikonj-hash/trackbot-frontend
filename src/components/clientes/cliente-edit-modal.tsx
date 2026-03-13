@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Save, User, Brain, Tag, Trash2, History, ClipboardList, ChevronRight, ChevronDown } from "lucide-react"
+import { Save, User, Brain, Tag, Trash2, History, ClipboardList, ChevronRight, ChevronDown, Activity, FileJson, LogIn, MousePointer2, Copy, Check } from "lucide-react"
 import { API_URL } from "@/lib/constants"
-import { Cliente } from "@/types/models"
+import { Cliente, Ticket } from "@/types/models"
 import { StandardModal } from "@/components/ui/standard-modal"
 import { clsx } from "clsx"
 
@@ -14,16 +14,17 @@ interface ClienteEditModalProps {
 }
 
 export function ClienteEditModal({ cliente, onClose, onUpdate }: ClienteEditModalProps) {
-    const [activeTab, setActiveTab] = useState<'data' | 'history'>('data')
+    const [activeTab, setActiveTab] = useState<'data' | 'history' | 'journey'>('data')
     const [name, setName] = useState(cliente.name || "")
     const [metadata, setMetadata] = useState<any>(
         typeof cliente.metadata === 'string' ? JSON.parse(cliente.metadata) : cliente.metadata || {}
     )
-    const [tickets, setTickets] = useState<any[]>([])
+    const [tickets, setTickets] = useState<Ticket[]>([])
     const [loadingTickets, setLoadingTickets] = useState(false)
     const [ticketError, setTicketError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false)
     const [expandedTicketId, setExpandedTicketId] = useState<string | null>(null)
+    const [copiedId, setCopiedId] = useState<string | null>(null)
 
     const fetchTickets = async () => {
         setLoadingTickets(true)
@@ -45,7 +46,7 @@ export function ClienteEditModal({ cliente, onClose, onUpdate }: ClienteEditModa
     }
 
     useEffect(() => {
-        if (activeTab === 'history') {
+        if (activeTab === 'history' || activeTab === 'journey') {
             fetchTickets()
         }
     }, [activeTab])
@@ -144,6 +145,18 @@ export function ClienteEditModal({ cliente, onClose, onUpdate }: ClienteEditModa
                         <div className="flex items-center gap-2">
                             <History className="w-3 h-3" />
                             <span>Histórico de Chamados</span>
+                        </div>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('journey')}
+                        className={clsx(
+                            "px-4 py-3 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
+                            activeTab === 'journey' ? "border-blue-500 text-foreground bg-blue-500/5" : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                        )}
+                    >
+                        <div className="flex items-center gap-2">
+                            <Activity className="w-3 h-3" />
+                            <span>Jornadas & Cargas</span>
                         </div>
                     </button>
                 </div>
@@ -286,6 +299,109 @@ export function ClienteEditModal({ cliente, onClose, onUpdate }: ClienteEditModa
                                 <h4 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Nada para Ver</h4>
                                 <p className="text-[10px] text-muted-foreground/60 max-w-[200px] leading-relaxed">
                                     Este cliente ainda não finalizou nenhum fluxo com o robô.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Tab Content: Journey & Payloads */}
+                {activeTab === 'journey' && (
+                    <div className="flex-1 flex flex-col space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        {loadingTickets ? (
+                            <div className="flex-1 flex flex-col items-center justify-center py-20 space-y-4">
+                                <Activity className="w-6 h-6 text-blue-500/30 animate-pulse" />
+                                <span className="text-[10px] font-mono text-muted-foreground uppercase animate-pulse">Rastreando Jornadas...</span>
+                            </div>
+                        ) : tickets.length > 0 ? (
+                            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar pb-10">
+                                {tickets.map((ticket) => (
+                                    <div key={ticket.id} className="border border-border/50 rounded-lg overflow-hidden bg-muted/5">
+                                        <div className="p-4 bg-muted/10 border-b border-border/30 flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                                <span className="text-[10px] font-bold uppercase tracking-widest">{ticket.protocol || "Sessão"}</span>
+                                                <span className="text-[9px] font-mono text-muted-foreground opacity-60">[{new Date(ticket.createdAt).toLocaleString('pt-BR')}]</span>
+                                            </div>
+                                            <div className="px-2 py-0.5 rounded bg-foreground/10 text-[8px] font-bold uppercase tracking-tighter">
+                                                {ticket.flowName}
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {/* Timeline Visual */}
+                                            <div className="space-y-4">
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <Activity className="w-3 h-3 text-blue-500" />
+                                                    <h4 className="text-[10px] font-bold uppercase tracking-widest">Timeline de Interaction</h4>
+                                                </div>
+                                                <div className="relative pl-4 space-y-6 border-l border-border/50 ml-2">
+                                                    {(ticket.content.journey || []).map((event, i) => (
+                                                        <div key={i} className="relative">
+                                                            <div className={clsx(
+                                                                "absolute -left-[21px] top-0 w-3 h-3 rounded-full border-2 border-background flex items-center justify-center",
+                                                                event.type === 'ENTRY' ? "bg-blue-500" : "bg-emerald-500"
+                                                            )}>
+                                                                {event.type === 'ENTRY' ? <LogIn className="w-1.5 h-1.5 text-white" /> : <MousePointer2 className="w-1.5 h-1.5 text-white" />}
+                                                            </div>
+                                                            <div className="flex flex-col gap-0.5">
+                                                                <span className="text-[10px] font-bold uppercase tracking-tight">
+                                                                    {event.type === 'ENTRY' ? `Entrou em: ${event.label || event.nodeId}` : `Interagiu: ${event.value}`}
+                                                                </span>
+                                                                <span className="text-[8px] font-mono text-muted-foreground/60 uppercase">
+                                                                    Node: {event.nodeType} // {new Date(event.timestamp).toLocaleTimeString('pt-BR')}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {(ticket.content.journey || []).length === 0 && (
+                                                        <p className="text-[10px] text-muted-foreground italic ml-2">Nenhum evento registrado nesta jornada.</p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Raw Payload Block */}
+                                            <div className="space-y-4">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <FileJson className="w-3 h-3 text-orange-500" />
+                                                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-orange-500">Payload Analítico (sys.payload)</h4>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(JSON.stringify(ticket.content, null, 2))
+                                                            setCopiedId(ticket.id)
+                                                            setTimeout(() => setCopiedId(null), 2000)
+                                                        }}
+                                                        className="p-1.5 hover:bg-orange-500/10 rounded transition-colors group/copy"
+                                                        title="Copiar JSON"
+                                                    >
+                                                        {copiedId === ticket.id ? (
+                                                            <Check className="w-3 h-3 text-emerald-500" />
+                                                        ) : (
+                                                            <Copy className="w-3 h-3 text-orange-500/50 group-hover/copy:text-orange-500" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                                <div className="p-3 bg-black/40 rounded border border-orange-500/20 max-h-[250px] overflow-y-auto custom-scrollbar relative group">
+                                                    <pre className="text-[9px] font-mono text-orange-200/70 whitespace-pre-wrap leading-relaxed">
+                                                        {JSON.stringify(ticket.content, null, 2)}
+                                                    </pre>
+                                                </div>
+                                                <p className="text-[8px] font-mono text-muted-foreground/40 uppercase tracking-tighter">
+                                                    // Dados preservados exatamente como enviados para o webhook
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex-1 flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-border/30 rounded-2xl bg-muted/5 mx-4">
+                                <Activity className="w-12 h-12 text-muted-foreground/10 mb-4" />
+                                <h4 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Sem Jornadas</h4>
+                                <p className="text-[10px] text-muted-foreground/60 max-w-[200px] leading-relaxed">
+                                    Nenhuma jornada analítica foi gerada para este cliente ainda.
                                 </p>
                             </div>
                         )}

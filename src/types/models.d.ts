@@ -42,3 +42,37 @@ export interface Flow {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface JourneyEvent {
+    type: 'ENTRY' | 'INTERACTION';
+    nodeId: string;
+    nodeType: string;
+    label?: string;
+    value?: string;
+    timestamp: string;
+}
+
+export interface Ticket {
+    id: string;
+    protocol: string | null;
+    flowId: string;
+    flowName: string;
+    content: {
+        ticket: {
+            protocol: string;
+            timestamp: string;
+            flowId: string;
+            flowName: string;
+        };
+        customer: {
+            id: string;
+            name: string | null;
+            phone: string;
+            metadata: any;
+        };
+        journey: JourneyEvent[];
+    };
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+}
