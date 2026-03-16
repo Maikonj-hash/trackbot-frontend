@@ -1,6 +1,7 @@
 import { PropertyPanelProps } from "./types"
 import { PlusCircle, X, Info } from "lucide-react"
 import { PropertySection, PropertyToggle, PropertyInput } from "./base-properties"
+import { sanitizeVariableName } from "@/lib/node-registry"
 
 export function IdentificationProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
@@ -105,7 +106,7 @@ export function IdentificationProperties({ node, updateNodeData }: PropertyPanel
                                         type="text"
                                         value={field.saveToVariable}
                                         onChange={(e) => {
-                                            const cleanValue = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+                                            const cleanValue = sanitizeVariableName(e.target.value);
                                             const newFields = [...(node.data.identificationFields || [])];
                                             newFields[index] = { ...newFields[index], saveToVariable: cleanValue };
                                             updateNodeData(node.id, { identificationFields: newFields });

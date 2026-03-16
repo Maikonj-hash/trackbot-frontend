@@ -1,5 +1,6 @@
 import { PropertyPanelProps } from "./types"
 import { PropertySection, PropertyInput, PropertyToggle, PropertyHint, PropertySelect } from "./base-properties"
+import { sanitizeVariableName } from "@/lib/node-registry"
 
 export function InputProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
@@ -18,7 +19,7 @@ export function InputProperties({ node, updateNodeData }: PropertyPanelProps) {
                     <PropertyInput
                         type="text"
                         value={node.data.variableName || ""}
-                        onChange={(e) => updateNodeData(node.id, { variableName: e.target.value })}
+                        onChange={(e) => updateNodeData(node.id, { variableName: sanitizeVariableName(e.target.value) })}
                         placeholder="NOME_DA_VARIAVEL"
                         className="font-mono uppercase tracking-wider"
                     />

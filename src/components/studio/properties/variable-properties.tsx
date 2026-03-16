@@ -1,5 +1,6 @@
 import { PropertyPanelProps } from "./types"
 import { PropertySection, PropertyInput } from "./base-properties"
+import { sanitizeVariableName } from "@/lib/node-registry"
 
 export function VariableProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
@@ -8,7 +9,7 @@ export function VariableProperties({ node, updateNodeData }: PropertyPanelProps)
                 <div className="space-y-2">
                     <PropertyInput
                         value={node.data.variableName || ""}
-                        onChange={(e) => updateNodeData(node.id, { variableName: e.target.value })}
+                        onChange={(e) => updateNodeData(node.id, { variableName: sanitizeVariableName(e.target.value) })}
                         placeholder="Ex: contador_leads"
                         className="font-mono text-blue-400"
                     />

@@ -100,6 +100,10 @@ type FlowState = {
     updateNodeData: (nodeId: string, data: Partial<TrackerNodeData>) => void;
     deleteNode: (nodeId: string) => void;
     addNode: (node: Node<TrackerNodeData>) => void;
+    duplicateNodes: (nodeIds: string[]) => void;
+    copyNodes: (nodeIds: string[]) => void;
+    pasteNodes: (position: { x: number; y: number }) => void;
+    clipboard: { nodes: Node<TrackerNodeData>[]; edges: Edge[] } | null;
 
     setFlowMetadata: (id: string, name: string, description: string) => void;
     setFlowName: (name: string) => void;
@@ -127,7 +131,60 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     selectedNode: null,
     isDirty: false,
     isVariablesDrawerOpen: false,
+    clipboard: null,
 
+    copyNodes: (nodeIds: string[]) => {
+        const nodes = get().nodes.filter(n => nodeIds.includes(n.id) && n.id !== 'start-1');
+        const edges = get().edges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target));
+        
+        if (nodes.length > 0) {
+            set({ clipboard: { nodes, edges } });
+        }
+    },
+
+    pasteNodes: (position: { x: number; y: number }) => {
+        const { clipboard, nodes: existingNodes, edges: existingEdges } = get();
+        if (!clipboard || clipboard.nodes.length === 0) return;
+
+        // 1. Calcular o bounding box dos nodes no clipboard para o offset
+        const minX = Math.min(...clipboard.nodes.map(n => n.position.x));
+        const minY = Math.min(...clipboard.nodes.map(n => n.position.y));
+
+        // 2. Mapear IDs antigos para novos IDs
+        const idMap: Record<string, string> = {};
+        const newNodes = clipboard.nodes.map(node => {
+            const newId = `${node.type}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+            idMap[node.id] = newId;
+
+            return {
+                ...node,
+                id: newId,
+                position: {
+                    x: position.x + (node.position.x - minX),
+                    y: position.y + (node.position.y - minY),
+                },
+                selected: true,
+            };
+        });
+
+        // 3. Mapear arestas com os novos IDs
+        const newEdges = clipboard.edges.map(edge => ({
+            ...edge,
+            id: `edge_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+            source: idMap[edge.source],
+            target: idMap[edge.target],
+        }));
+
+        set({
+            nodes: [
+                ...existingNodes.map(n => ({ ...n, selected: false })),
+                ...newNodes
+            ],
+            edges: [...existingEdges, ...newEdges],
+            selectedNode: newNodes.length === 1 ? newNodes[0] : null,
+            isDirty: true,
+        });
+    },
     setVariablesDrawerOpen: (open: boolean) => {
         set({ isVariablesDrawerOpen: open });
         if (open) set({ selectedNode: null }); // Fecha o editor de blocos ao abrir variáveis
@@ -194,6 +251,46 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
         set({
             nodes: [...get().nodes, safeNode],
+            isDirty: true,
+        });
+    },
+    duplicateNodes: (nodeIds: string[]) => {
+        const { nodes: existingNodes, edges: existingEdges } = get();
+        const nodesToDuplicate = existingNodes.filter(n => nodeIds.includes(n.id) && n.id !== 'start-1');
+        const edgesToDuplicate = existingEdges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target));
+        
+        if (nodesToDuplicate.length === 0) return;
+
+        const idMap: Record<string, string> = {};
+        const newNodes = nodesToDuplicate.map(node => {
+            const newId = `${node.type}_copy_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+            idMap[node.id] = newId;
+
+            return {
+                ...node,
+                id: newId,
+                position: {
+                    x: node.position.x + 40,
+                    y: node.position.y + 40,
+                },
+                selected: true,
+            };
+        });
+
+        const newEdges = edgesToDuplicate.map(edge => ({
+            ...edge,
+            id: `edge_copy_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+            source: idMap[edge.source],
+            target: idMap[edge.target],
+        }));
+
+        set({
+            nodes: [
+                ...existingNodes.map(n => ({ ...n, selected: false })),
+                ...newNodes
+            ],
+            edges: [...existingEdges, ...newEdges],
+            selectedNode: newNodes.length === 1 ? newNodes[0] : null,
             isDirty: true,
         });
     },

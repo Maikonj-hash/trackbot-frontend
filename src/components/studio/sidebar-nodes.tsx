@@ -19,42 +19,13 @@ import {
     LucideIcon
 } from "lucide-react";
 
-// Definição formal das cores para evitar redundância e facilitar manutenção
-const COLOR_MAP = {
-    blue: {
-        text: "text-blue-400",
-        borderHover: "hover:border-blue-500/50",
-        glow: "group-hover:shadow-[0_0_15px_rgba(59,130,246,0.15)]",
-    },
-    purple: {
-        text: "text-purple-400",
-        borderHover: "hover:border-purple-500/50",
-        glow: "group-hover:shadow-[0_0_15px_rgba(168,85,247,0.15)]",
-    },
-    amber: {
-        text: "text-amber-400",
-        borderHover: "hover:border-amber-500/50",
-        glow: "group-hover:shadow-[0_0_15px_rgba(245,158,11,0.15)]",
-    },
-    emerald: {
-        text: "text-emerald-400",
-        borderHover: "hover:border-emerald-500/50",
-        glow: "group-hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]",
-    },
-    rose: {
-        text: "text-rose-400",
-        borderHover: "hover:border-rose-500/50",
-        glow: "group-hover:shadow-[0_0_15px_rgba(244,63,94,0.15)]",
-    },
-} as const;
-
-type ColorKey = keyof typeof COLOR_MAP;
+import { NODE_REGISTRY, getColorClass, NodeColorKey } from "@/lib/node-registry";
 
 interface BlockDefinition {
     type: string;
     label: string;
     icon: LucideIcon;
-    color: ColorKey;
+    color: NodeColorKey;
     subBlocks?: BlockDefinition[];
 }
 
@@ -63,30 +34,31 @@ interface CategoryDefinition {
     blocks: BlockDefinition[];
 }
 
+// Mapeamento dinâmico baseado no Registry
 const CATEGORIES: CategoryDefinition[] = [
     {
         title: "CONTEÚDO",
         blocks: [
-            { type: "messageBlock", label: "Mensagem", icon: MessageSquare, color: "blue" },
-            { type: "mediaBlock", label: "Arquivo/Mídia", icon: ImageIcon, color: "blue" },
+            NODE_REGISTRY.messageBlock,
+            NODE_REGISTRY.mediaBlock,
         ]
     },
     {
         title: "INTERAÇÃO & COLETA",
         blocks: [
-            { type: "optionsBlock", label: "Escolhas", icon: List, color: "purple" },
-            { type: "inputBlock", label: "Pergunta Livre", icon: Type, color: "purple" },
+            NODE_REGISTRY.optionsBlock,
+            NODE_REGISTRY.inputBlock,
             {
                 type: "smartInputs",
                 label: "Inputs Específicos",
-                icon: UserCheck, // Using UserCheck as representative icon
+                icon: UserCheck,
                 color: "emerald",
                 subBlocks: [
-                    { type: "inputBlock:EMAIL", label: "Pedir E-mail", icon: Type, color: "emerald" },
-                    { type: "inputBlock:PHONE", label: "Pedir Telefone", icon: Type, color: "emerald" },
-                    { type: "inputBlock:CPF_CNPJ", label: "Pedir CPF/CNPJ", icon: Type, color: "emerald" },
-                    { type: "inputBlock:CEP", label: "Pedir CEP", icon: Type, color: "emerald" },
-                    { type: "inputBlock:DATE", label: "Pedir Data", icon: Type, color: "emerald" },
+                    { ...NODE_REGISTRY.inputBlock, type: "inputBlock:EMAIL", label: "Pedir E-mail" },
+                    { ...NODE_REGISTRY.inputBlock, type: "inputBlock:PHONE", label: "Pedir Telefone" },
+                    { ...NODE_REGISTRY.inputBlock, type: "inputBlock:CPF_CNPJ", label: "Pedir CPF/CNPJ" },
+                    { ...NODE_REGISTRY.inputBlock, type: "inputBlock:CEP", label: "Pedir CEP" },
+                    { ...NODE_REGISTRY.inputBlock, type: "inputBlock:DATE", label: "Pedir Data" },
                 ]
             }
         ]
@@ -94,32 +66,32 @@ const CATEGORIES: CategoryDefinition[] = [
     {
         title: "LÓGICA",
         blocks: [
-            { type: "conditionBlock", label: "Condição (IF)", icon: Zap, color: "amber" },
-            { type: "switchBlock", label: "Switch/Case", icon: GitBranch, color: "amber" },
-            { type: "delayBlock", label: "Aguardar", icon: Clock, color: "amber" },
+            NODE_REGISTRY.conditionBlock,
+            NODE_REGISTRY.switchBlock,
+            NODE_REGISTRY.delayBlock,
         ]
     },
     {
         title: "CRM & DADOS",
         blocks: [
-            { type: "identificationBlock", label: "Identificação", icon: UserCheck, color: "emerald" },
-            { type: "variableBlock", label: "Variavel", icon: Variable, color: "emerald" },
-            { type: "reviewBlock", label: "Revisão", icon: ClipboardCheck, color: "emerald" },
+            NODE_REGISTRY.identificationBlock,
+            NODE_REGISTRY.variableBlock,
+            NODE_REGISTRY.reviewBlock,
         ]
     },
     {
         title: "AVANÇADO",
         blocks: [
-            { type: "webhookBlock", label: "Integração/API", icon: Globe, color: "rose" },
-            { type: "handoverBlock", label: "Transbordo", icon: ArrowRightLeft, color: "rose" },
+            NODE_REGISTRY.webhookBlock,
+            NODE_REGISTRY.handoverBlock,
         ]
     },
     {
         title: "FLUXO",
         blocks: [
-            { type: "segmentBlock", label: "Segmentador", icon: Zap, color: "rose" },
-            { type: "jumpBlock", label: "Salto/Jump", icon: Zap, color: "rose" },
-            { type: "endBlock", label: "Encerrar", icon: LogOut, color: "rose" },
+            NODE_REGISTRY.segmentBlock,
+            NODE_REGISTRY.jumpBlock,
+            NODE_REGISTRY.endBlock,
         ]
     }
 ];
@@ -138,7 +110,7 @@ export const SidebarNodes = memo(function SidebarNodes() {
     };
 
     const renderBlock = (block: BlockDefinition, isSubBlock = false) => {
-        const styles = COLOR_MAP[block.color];
+        const colorClass = getColorClass(block.color);
         const Icon = block.icon;
         const isExpanded = expandedBlocks[block.type];
 
@@ -150,13 +122,13 @@ export const SidebarNodes = memo(function SidebarNodes() {
                         className={`
                             group flex items-center justify-between p-3 bg-card/30 
                             border border-border/40 rounded-xl cursor-pointer 
-                            transition-all duration-300 ${styles.borderHover} ${styles.glow}
+                            transition-all duration-300 hover:border-foreground/20
                             hover:bg-card/60 hover:-translate-y-0.5
                         `}
                     >
                         <div className="flex items-center gap-3">
                             <div className={`p-2 rounded-lg bg-background/50 border border-border/30 group-hover:border-foreground/10 transition-colors shadow-inner`}>
-                                <Icon className={`w-4 h-4 ${styles.text} transition-transform group-hover:scale-110`} />
+                                <Icon className={`w-4 h-4 ${colorClass.split(' ')[0]} transition-transform group-hover:scale-110`} />
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-[11px] font-bold tracking-tight text-foreground/80 group-hover:text-foreground transition-colors">
@@ -174,7 +146,6 @@ export const SidebarNodes = memo(function SidebarNodes() {
                         )}
                     </div>
 
-                    {/* Sub-blocks Container com animação Grid */}
                     <div className={`
                         grid transition-all duration-300 ease-in-out pl-4 ml-4 border-l border-border/40 border-dashed
                         ${isExpanded ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0 mt-0"}
@@ -193,14 +164,14 @@ export const SidebarNodes = memo(function SidebarNodes() {
                 className={`
                     group flex items-center gap-3 p-3 bg-card/30
                     border outline-none ${isSubBlock ? 'border-border/20 py-2' : 'border-border/40'} rounded-xl cursor-grab active:cursor-grabbing 
-                    transition-all duration-300 ${styles.borderHover} ${styles.glow}
+                    transition-all duration-300 hover:border-foreground/20
                     hover:bg-card/60 hover:-translate-y-0.5
                 `}
                 onDragStart={(event) => onDragStart(event, block.type, block.label)}
                 draggable
             >
                 <div className={`p-2 rounded-lg bg-background/50 border border-border/30 group-hover:border-foreground/10 transition-colors shadow-inner`}>
-                    <Icon className={`w-4 h-4 ${styles.text} transition-transform group-hover:scale-110`} />
+                    <Icon className={`w-4 h-4 ${colorClass.split(' ')[0]} transition-transform group-hover:scale-110`} />
                 </div>
 
                 <div className="flex flex-col">

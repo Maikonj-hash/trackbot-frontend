@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect, Suspense } from "react";
+import { useMemo, useEffect, Suspense, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import {
@@ -37,6 +37,9 @@ import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer"
 import { VariablesDrawer } from "@/components/studio/variables-drawer";
 import { JumpNode } from "@/components/studio/nodes/jump-node";
 import { SegmentNode } from "@/components/studio/nodes/segment-node";
+import { ContextMenu } from "@/components/studio/context-menu";
+import { ShortcutGuide } from "@/components/studio/shortcut-guide";
+import { NODE_REGISTRY } from "@/lib/node-registry";
 
 const customNodeTypes = {
     messageBlock: MessageNode,
@@ -74,7 +77,7 @@ function StudioCanvas() {
         setFlowMetadata
     } = useFlowStore();
 
-    const { screenToFlowPosition, fitView } = useReactFlow();
+    const { screenToFlowPosition, fitView, getViewport } = useReactFlow();
 
     useEffect(() => {
         if (!flowId) return;
@@ -101,17 +104,18 @@ function StudioCanvas() {
         event.dataTransfer.dropEffect = "move";
     };
 
+    const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
+
     const onDrop = (event: React.DragEvent) => {
         event.preventDefault();
 
         const rawType = event.dataTransfer.getData("application/reactflow");
-        const label = event.dataTransfer.getData("application/reactflow-label");
+        const labelFromSidebar = event.dataTransfer.getData("application/reactflow-label");
 
-        if (typeof rawType === "undefined" || !rawType) {
-            return;
-        }
+        if (typeof rawType === "undefined" || !rawType) return;
 
-        const [type, expectedType] = rawType.split(":");
+        const [type, specificType] = rawType.split(":");
+        const registryNode = NODE_REGISTRY[type];
 
         const position = screenToFlowPosition({
             x: event.clientX,
@@ -119,29 +123,81 @@ function StudioCanvas() {
         });
 
         const newNode: any = {
-            id: `dndnode_${Date.now()}`,
-            type,
+            id: `${type}_${Date.now()}`,
+            type: registryNode?.type || type,
             position,
             data: { 
-                label, 
-                type: type.replace("Block", ""), 
-                content: "",
-                allowBack: false,
-                ...(expectedType ? { expectedType: expectedType as any } : {})
+                ...(registryNode?.initialData || {}),
+                label: labelFromSidebar || registryNode?.label || "Novo Bloco",
+                ...(specificType ? { expectedType: specificType as any } : {})
             },
         };
 
-        // Adiciona dimensões iniciais apenas para o Segmentador
         if (type === "segmentBlock") {
             newNode.width = 400;
             newNode.height = 300;
-            newNode.zIndex = -1; // Garante que fique atrás dos outros nós
-            newNode.data.color = "#3b82f6"; // Cor padrão inicial
+            newNode.zIndex = -1;
         }
 
         addNode(newNode);
         setSelectedNode(newNode.id);
     };
+
+    const handleContextMenu = useCallback((event: React.MouseEvent, node?: Node) => {
+        event.preventDefault();
+        if (node) setSelectedNode(node.id);
+        
+        setContextMenu({
+            x: event.clientX,
+            y: event.clientY,
+        });
+    }, [setSelectedNode]);
+
+    // Atalhos de Teclado
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            const modifier = isMac ? e.metaKey : e.ctrlKey;
+
+            // Bloquear atalhos se o usuário estiver digitando em um input
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+                return;
+            }
+
+            if (modifier && e.key === 'd') {
+                e.preventDefault();
+                const selectedIds = nodes.filter(n => n.selected).map(n => n.id);
+                if (selectedIds.length > 0) {
+                    useFlowStore.getState().duplicateNodes(selectedIds);
+                }
+            }
+
+            if (modifier && e.key === 'c') {
+                const selectedIds = nodes.filter(n => n.selected).map(n => n.id);
+                if (selectedIds.length > 0) {
+                    useFlowStore.getState().copyNodes(selectedIds);
+                }
+            }
+
+            if (modifier && e.key === 'v') {
+                e.preventDefault();
+                const { clipboard } = useFlowStore.getState();
+                if (clipboard) {
+                    const { x, y, zoom } = getViewport();
+                    const centerX = (window.innerWidth / 2 - x) / zoom;
+                    const centerY = (window.innerHeight / 2 - y) / zoom;
+
+                    useFlowStore.getState().pasteNodes({ 
+                        x: centerX - 100, // Offset leve para visualização
+                        y: centerY - 100 
+                    });
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [nodes]);
 
     return (
         <div className="flex flex-col w-full h-screen font-sans overflow-hidden bg-background">
@@ -165,7 +221,12 @@ function StudioCanvas() {
                         onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
                         onNodeClick={(_, node) => setSelectedNode(node.id)}
-                        onPaneClick={() => setSelectedNode(null)}
+                        onPaneClick={() => {
+                            setSelectedNode(null);
+                            setContextMenu(null);
+                        }}
+                        onNodeContextMenu={(e, node) => handleContextMenu(e as any, node as any)}
+                        onPaneContextMenu={(e) => handleContextMenu(e as any)}
                         deleteKeyCode={["Backspace", "Delete"]}
                         isValidConnection={(connection) => {
                             if (connection.source === connection.target) return false;
@@ -173,6 +234,8 @@ function StudioCanvas() {
                             return true;
                         }}
                         fitView
+                        snapToGrid
+                        snapGrid={[15, 15]}
                         className="bg-transparent"
                     >
                         <Background
@@ -202,6 +265,40 @@ function StudioCanvas() {
                             className="bg-card/50 border border-border rounded-md shadow-xl"
                         />
                     </ReactFlow>
+
+                    {/* Componentes de Refinamento Industrial v2 */}
+                    {contextMenu && (
+                        <ContextMenu 
+                            x={contextMenu.x}
+                            y={contextMenu.y}
+                            onClose={() => setContextMenu(null)}
+                            onDuplicate={() => {
+                                const selectedIds = nodes.filter(n => n.selected).map(n => n.id);
+                                if (selectedIds.length > 0) useFlowStore.getState().duplicateNodes(selectedIds);
+                            }}
+                            onCopy={() => {
+                                const selectedIds = nodes.filter(n => n.selected).map(n => n.id);
+                                if (selectedIds.length > 0) useFlowStore.getState().copyNodes(selectedIds);
+                            }}
+                            onPaste={() => {
+                                const { clipboard } = useFlowStore.getState();
+                                if (clipboard) {
+                                    const { x, y, zoom } = getViewport();
+                                    useFlowStore.getState().pasteNodes({ 
+                                        x: (window.innerWidth / 2 - x) / zoom - 100, 
+                                        y: (window.innerHeight / 2 - y) / zoom - 100 
+                                    });
+                                }
+                            }}
+                            onDelete={() => {
+                                const selected = nodes.find(n => n.selected);
+                                if (selected) useFlowStore.getState().deleteNode(selected.id);
+                            }}
+                            hasSelection={nodes.some(n => n.selected)}
+                            canPaste={!!useFlowStore.getState().clipboard}
+                        />
+                    )}
+                    <ShortcutGuide />
                 </div>
 
                 {/* PAINEL LATERAL DIREITO (Propriedades) */}
