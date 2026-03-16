@@ -105,7 +105,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-tight">Gráfico de Atividade</h4>
-                <p className="text-[10px] text-muted-foreground max-w-[200px] mt-1">Análise temporal de mensagens recebidas vs enviadas (Disponível em breve).</p>
+                <p className="text-[10px] text-muted-foreground max-w-[200px] mt-1">Análise temporal de mensagens recebidas vs enviadas.</p>
               </div>
             </div>
           </CardContent>

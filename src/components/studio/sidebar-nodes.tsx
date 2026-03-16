@@ -1,14 +1,14 @@
 import { memo, useState } from "react";
-import { 
-    MessageSquare, 
-    List, 
-    Type, 
-    Zap, 
-    Clock, 
-    Image as ImageIcon, 
-    UserCheck, 
-    Globe, 
-    Variable, 
+import {
+    MessageSquare,
+    List,
+    Type,
+    Zap,
+    Clock,
+    Image as ImageIcon,
+    UserCheck,
+    Globe,
+    Variable,
     ArrowRightLeft,
     GitBranch,
     ClipboardCheck,
@@ -173,7 +173,7 @@ export const SidebarNodes = memo(function SidebarNodes() {
                             <ChevronRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-foreground/80 transition-colors" />
                         )}
                     </div>
-                    
+
                     {/* Sub-blocks Container com animação Grid */}
                     <div className={`
                         grid transition-all duration-300 ease-in-out pl-4 ml-4 border-l border-border/40 border-dashed
@@ -202,7 +202,7 @@ export const SidebarNodes = memo(function SidebarNodes() {
                 <div className={`p-2 rounded-lg bg-background/50 border border-border/30 group-hover:border-foreground/10 transition-colors shadow-inner`}>
                     <Icon className={`w-4 h-4 ${styles.text} transition-transform group-hover:scale-110`} />
                 </div>
-                
+
                 <div className="flex flex-col">
                     <span className="text-[11px] font-bold tracking-tight text-foreground/80 group-hover:text-foreground transition-colors">
                         {block.label}
@@ -225,9 +225,6 @@ export const SidebarNodes = memo(function SidebarNodes() {
                         Node Library
                     </h2>
                 </div>
-                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider opacity-50">
-                    Industrial Builder v2.0
-                </p>
             </div>
 
             {/* Lista de Blocos Categorizada */}
@@ -237,7 +234,7 @@ export const SidebarNodes = memo(function SidebarNodes() {
                         <h3 className="text-[9px] font-bold text-muted-foreground/40 font-mono tracking-[0.3em] uppercase pl-1 border-l-2 border-border/20">
                             {category.title}
                         </h3>
-                        
+
                         <div className="grid grid-cols-1 gap-2">
                             {category.blocks.map(block => renderBlock(block))}
                         </div>
@@ -250,12 +247,9 @@ export const SidebarNodes = memo(function SidebarNodes() {
                 <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-[9px] font-mono text-muted-foreground/50 uppercase tracking-widest font-bold">
-                        Builder Studio 2.0
+                        Builder Studio 1.0
                     </span>
                 </div>
-                <span className="text-[9px] font-mono text-muted-foreground/30 uppercase tracking-widest">
-                    v2.0.4-PRO
-                </span>
             </div>
         </aside>
     );
