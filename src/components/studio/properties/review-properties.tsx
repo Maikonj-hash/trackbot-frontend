@@ -1,7 +1,7 @@
 import { PropertyPanelProps } from "./types";
 import { PlusCircle, X } from "lucide-react";
 import { useFlowStore } from "@/store/flow-store";
-import { PropertySection, PropertyToggle, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyToggle, PropertyInput, NodeLabelProperty } from "./base-properties"
 
 export function ReviewProperties({ node, updateNodeData }: PropertyPanelProps) {
     const { getVariables } = useFlowStore();
@@ -29,6 +29,7 @@ export function ReviewProperties({ node, updateNodeData }: PropertyPanelProps) {
 
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Configurações Globais">
                 <PropertyToggle
                     label="Salto Inteligente (Skip)"

@@ -2,14 +2,14 @@
 
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { ClipboardCheck, ChevronRight } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 import { VariableHighlighter } from "./base/variable-highlighter";
 
-export function ReviewNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function ReviewNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const fields = data.fields || [];
 
     return (
@@ -18,10 +18,11 @@ export function ReviewNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
 
             <NodeHeader
                 icon={ClipboardCheck}
-                label="DATA REVIEW"
+                label={data.label || "DATA REVIEW"}
                 color="blue"
                 allowBack={data.allowBack}
                 skipEnabled={data.skipIfAlreadyFilled}
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
             />
 
             <NodeBody className="pb-1 space-y-1" noTextWrapper>

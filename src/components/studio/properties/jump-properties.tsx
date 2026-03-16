@@ -2,15 +2,29 @@ import { PropertyPanelProps } from "./types"
 import { useFlowStore } from "@/store/flow-store";
 import { Zap, Target, AlertCircle } from "lucide-react";
 import { useShallow } from 'zustand/react/shallow';
-import { PropertySection, PropertyHint } from "./base-properties"
+import { PropertySection, PropertyHint, NodeLabelProperty } from "./base-properties"
+import { NODE_REGISTRY } from "@/lib/node-registry";
 
 export function JumpProperties({ node, updateNodeData }: PropertyPanelProps) {
     const nodes = useFlowStore(useShallow(s => s.nodes));
 
-    const availableTargets = nodes.filter(n => n.id !== node.id);
+    const availableTargets = nodes
+        .filter(n => n.id !== node.id)
+        .map(n => {
+            const type = n.type || 'unknown';
+            const definition = NODE_REGISTRY[type];
+            const typeLabel = definition?.label || type || "BLOCO";
+            const customName = n.data?.label || "";
+            return {
+                id: n.id,
+                displayLabel: `[${typeLabel.toUpperCase()}] ${customName}`.trim()
+            };
+        })
+        .sort((a, b) => a.displayLabel.localeCompare(b.displayLabel));
 
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <div className="p-4 bg-rose-500/5 border border-rose-500/10 rounded-xl space-y-2">
                 <div className="flex items-center gap-2 text-rose-500">
                     <Zap className="w-4 h-4" />
@@ -30,9 +44,9 @@ export function JumpProperties({ node, updateNodeData }: PropertyPanelProps) {
                             className="w-full bg-background/50 border border-border/60 hover:border-rose-500/50 rounded-lg px-3 py-2.5 text-xs focus:ring-1 focus:ring-rose-500/30 outline-none transition-all appearance-none cursor-pointer font-medium"
                         >
                             <option value="">Selecione um bloco...</option>
-                            {availableTargets.map((target) => (
+                             {availableTargets.map((target) => (
                                 <option key={target.id} value={target.id}>
-                                    {target.data?.label || target.type || target.id}
+                                    {target.displayLabel}
                                 </option>
                             ))}
                         </select>

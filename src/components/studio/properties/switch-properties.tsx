@@ -1,6 +1,6 @@
 import { PropertyPanelProps } from "./types"
 import { PlusCircle, X } from "lucide-react"
-import { PropertySection, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyInput, NodeLabelProperty } from "./base-properties"
 
 export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
     const branches = Array.isArray(node.data.switchBranches) ? node.data.switchBranches : [];
@@ -25,6 +25,7 @@ export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
 
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Variável de Avaliação">
                 <div className="space-y-2">
                     <PropertyInput

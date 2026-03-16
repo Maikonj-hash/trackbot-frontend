@@ -7,7 +7,7 @@ import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 import { useShallow } from 'zustand/react/shallow';
 
-export function JumpNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function JumpNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const targetNode = useFlowStore(
         useShallow(s => s.nodes.find(n => n.id === data.targetStepId))
     );
@@ -20,8 +20,9 @@ export function JumpNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
 
             <NodeHeader
                 icon={Zap}
-                label="JUMP / SALTO"
+                label={data.label || "JUMP / SALTO"}
                 color="rose"
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
             />
 
             <NodeBody className="text-left py-4">

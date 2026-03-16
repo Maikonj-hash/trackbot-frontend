@@ -1,12 +1,13 @@
 import { PropertyPanelProps } from "./types"
 import { Timer, Zap } from "lucide-react"
-import { PropertySection, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyInput, NodeLabelProperty } from "./base-properties"
 
 export function EndProperties({ node, updateNodeData }: PropertyPanelProps) {
     const resetType = node.data.endResetType || "IMMEDIATE";
 
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Modo de Finalização">
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-2">

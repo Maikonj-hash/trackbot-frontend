@@ -1,18 +1,24 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { UserRound } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 import { VariableHighlighter } from "./base/variable-highlighter";
 
-export function InputNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function InputNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     return (
         <NodeContainer selected={selected} color="violet">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={UserRound} label="USER INPUT" color="violet" allowBack={data.allowBack} />
+            <NodeHeader 
+                icon={UserRound} 
+                label={data.label || "USER INPUT"} 
+                color="violet" 
+                allowBack={data.allowBack} 
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
+            />
 
             <NodeBody className="text-left" noTextWrapper>
                 <div className="space-y-2">

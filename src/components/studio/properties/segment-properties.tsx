@@ -1,5 +1,5 @@
 import { PropertyPanelProps } from "./types"
-import { PropertySection, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyInput, NodeLabelProperty } from "./base-properties"
 import { Layout } from "lucide-react"
 
 export function SegmentProperties({ node, updateNodeData }: PropertyPanelProps) {
@@ -14,19 +14,7 @@ export function SegmentProperties({ node, updateNodeData }: PropertyPanelProps) 
 
     return (
         <div className="space-y-6">
-            <PropertySection title="Identificação do Segmento">
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Título da Área</span>
-                        <PropertyInput
-                            value={node.data.label || ""}
-                            onChange={(e) => updateNodeData(node.id, { label: e.target.value })}
-                            placeholder="Ex: BLOCO DE VENDAS"
-                            className="font-bold text-foreground"
-                        />
-                    </div>
-                </div>
-            </PropertySection>
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
 
             <PropertySection title="Estilização Visual">
                 <div className="space-y-4">

@@ -1,19 +1,25 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { Image as ImageIcon } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 
-export function MediaNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function MediaNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const typeLabel = data?.mediaType?.toUpperCase() || "IMAGE";
 
     return (
         <NodeContainer selected={selected} color="pink">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={ImageIcon} label={`SEND ${typeLabel}`} color="pink" allowBack={data.allowBack} />
+            <NodeHeader 
+                icon={ImageIcon} 
+                label={data.label || `SEND ${typeLabel}`} 
+                color="pink" 
+                allowBack={data.allowBack} 
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
+            />
 
             <NodeBody className="space-y-3" noTextWrapper>
                 <div className="aspect-video w-full rounded border border-border/40 bg-muted/20 flex items-center justify-center overflow-hidden">

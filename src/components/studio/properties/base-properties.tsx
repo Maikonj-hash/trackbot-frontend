@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { clsx } from "clsx";
+import { Tag } from "lucide-react";
+import { PropertyPanelProps } from "./types";
 
 interface BaseProps {
     children: ReactNode;
@@ -118,6 +120,29 @@ export function PropertySelect({ label, value, onChange, options }: SelectProps)
                     </option>
                 ))}
             </select>
+        </div>
+    );
+}
+export function NodeLabelProperty({ node, updateNodeData }: PropertyPanelProps) {
+    return (
+        <div className="space-y-3 pb-6 border-b border-border/40">
+            <div className="flex items-center gap-2 text-muted-foreground/50">
+                <Tag className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-widest font-mono">Identificação do Bloco</span>
+            </div>
+            
+            <div className="space-y-1.5">
+                <PropertyLabel>Nome do Bloco</PropertyLabel>
+                <PropertyInput
+                    value={node.data.label || ""}
+                    placeholder="Ex: Saudação Inicial, Menu de Vendas..."
+                    onChange={(e) => updateNodeData(node.id, { label: e.target.value })}
+                    className="font-mono text-[10px] uppercase tracking-wider"
+                />
+                <PropertyHint>
+                    Este nome será exibido nos logs e na seleção de destinos (Jump).
+                </PropertyHint>
+            </div>
         </div>
     );
 }

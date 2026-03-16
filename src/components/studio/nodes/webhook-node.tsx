@@ -1,12 +1,12 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { Globe } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 
-export function WebhookNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function WebhookNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const method = data?.webhookMethod || "POST";
     const url = data?.content || "https://api.exemplo.com/webhook";
 
@@ -14,7 +14,12 @@ export function WebhookNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
         <NodeContainer selected={selected} color="cyan">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={Globe} label="HTTP WEBHOOK" color="cyan" />
+            <NodeHeader 
+                icon={Globe} 
+                label={data.label || "HTTP WEBHOOK"} 
+                color="cyan" 
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
+            />
 
             <NodeBody className="space-y-2" noTextWrapper>
                 <div className="flex items-center gap-2">

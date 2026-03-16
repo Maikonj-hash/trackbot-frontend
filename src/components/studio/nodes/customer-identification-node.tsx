@@ -1,13 +1,13 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { UserPlus, Mail, Phone, Hash, CreditCard, ChevronRight, Brain } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 import { VariableHighlighter } from "./base/variable-highlighter";
 
-export function CustomerIdentificationNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function CustomerIdentificationNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const fields = (data?.identificationFields as any[]) || [];
     const skipIfAlreadyFilled = data?.skipIfAlreadyFilled || false;
 
@@ -17,10 +17,11 @@ export function CustomerIdentificationNode({ data, selected }: NodeProps<Node<Tr
 
             <NodeHeader 
                 icon={UserPlus} 
-                label="IDENTIFICATION" 
+                label={data.label || "IDENTIFICATION"} 
                 color="blue" 
                 allowBack={data.allowBack} 
                 skipEnabled={data.skipIfAlreadyFilled}
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
             />
 
             <NodeBody className="p-2 space-y-1" noTextWrapper>

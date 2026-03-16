@@ -1,13 +1,13 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { ListOrdered } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 import { VariableHighlighter } from "./base/variable-highlighter";
 
-export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function OptionsNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const rawOptions = Array.isArray(data?.options) ? data.options : [];
     const menuOptions = rawOptions.length > 0 ? rawOptions : ["Sim", "Não"];
 
@@ -17,10 +17,11 @@ export function OptionsNode({ data, selected }: NodeProps<Node<TrackerNodeData>>
 
             <NodeHeader
                 icon={ListOrdered}
-                label="OPTIONS MENU"
+                label={data.label || "OPTIONS MENU"}
                 color="blue"
                 badge={data.useNativeButtons ? "ELITE" : undefined}
                 allowBack={data.allowBack}
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
             />
 
             <NodeBody className="pb-1 text-left">

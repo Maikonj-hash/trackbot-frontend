@@ -1,9 +1,10 @@
 import { PropertyPanelProps } from "./types"
-import { PropertySection, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyInput, NodeLabelProperty } from "./base-properties"
 
 export function HandoverProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Transbordo Humano">
                 <div className="space-y-2">
                     <PropertyInput

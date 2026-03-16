@@ -1,12 +1,12 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { Variable } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 
-export function VariableNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function VariableNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const actionMap: Record<string, string> = {
         SET: "=",
         INCREMENT: "+=",
@@ -21,7 +21,12 @@ export function VariableNode({ data, selected }: NodeProps<Node<TrackerNodeData>
         <NodeContainer selected={selected} color="fuchsia">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={Variable} label="SET VARIABLE" color="fuchsia" />
+            <NodeHeader 
+                icon={Variable} 
+                label={data.label || "SET VARIABLE"} 
+                color="fuchsia" 
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
+            />
 
             <NodeBody noTextWrapper>
                 <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-fuchsia-500 bg-fuchsia-500/5 px-2 py-2 rounded border border-fuchsia-500/10 shadow-inner">

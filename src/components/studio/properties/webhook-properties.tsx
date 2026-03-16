@@ -1,10 +1,11 @@
 import { PropertyPanelProps } from "./types"
 import { PlusCircle, X, Globe, Database, Settings } from "lucide-react"
-import { PropertySection, PropertyInput, PropertyToggle } from "./base-properties"
+import { PropertySection, PropertyInput, PropertyToggle, NodeLabelProperty } from "./base-properties"
 
 export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Configuração da Requisição">
                 <div className="space-y-4">
                     <div className="space-y-2">

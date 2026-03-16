@@ -1,10 +1,11 @@
 import { PropertyPanelProps } from "./types"
 import { PlusCircle, X } from "lucide-react"
-import { PropertySection, PropertyToggle, PropertyInput, PropertyHint } from "./base-properties"
+import { PropertySection, PropertyToggle, PropertyInput, PropertyHint, NodeLabelProperty } from "./base-properties"
 
 export function OptionsProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Pergunta ao Cliente">
                 <PropertyInput
                     isTextArea

@@ -1,12 +1,12 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { GitBranch } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 
-export function SwitchNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function SwitchNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const rawBranches = Array.isArray(data?.switchBranches) ? data.switchBranches : [];
 
     return (
@@ -15,8 +15,9 @@ export function SwitchNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
 
             <NodeHeader
                 icon={GitBranch}
-                label="SWITCH ROUTER"
+                label={data.label || "SWITCH ROUTER"}
                 color="purple"
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
             />
 
             <NodeBody className="pb-1">

@@ -1,10 +1,11 @@
 import { PropertyPanelProps } from "./types"
-import { PropertySection, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyInput, NodeLabelProperty } from "./base-properties"
 import { sanitizeVariableName } from "@/lib/node-registry"
 
 export function VariableProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Identificação da Variável">
                 <div className="space-y-2">
                     <PropertyInput

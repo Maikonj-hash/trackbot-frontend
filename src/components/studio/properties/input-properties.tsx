@@ -1,10 +1,11 @@
 import { PropertyPanelProps } from "./types"
-import { PropertySection, PropertyInput, PropertyToggle, PropertyHint, PropertySelect } from "./base-properties"
+import { PropertySection, PropertyInput, PropertyToggle, PropertyHint, PropertySelect, NodeLabelProperty } from "./base-properties"
 import { sanitizeVariableName } from "@/lib/node-registry"
 
 export function InputProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Pergunta ao Cliente">
                 <PropertyInput
                     isTextArea

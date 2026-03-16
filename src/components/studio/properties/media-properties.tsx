@@ -1,9 +1,10 @@
 import { PropertyPanelProps } from "./types"
-import { PropertySection, PropertyInput, PropertyToggle } from "./base-properties"
+import { PropertySection, PropertyInput, PropertyToggle, NodeLabelProperty } from "./base-properties"
 
 export function MediaProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Tipo de Mídia">
                 <select
                     value={node.data.mediaType || "image"}

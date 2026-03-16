@@ -1,11 +1,12 @@
 import { PropertyPanelProps } from "./types"
 import { PlusCircle, X, Info } from "lucide-react"
-import { PropertySection, PropertyToggle, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyToggle, PropertyInput, NodeLabelProperty } from "./base-properties"
 import { sanitizeVariableName } from "@/lib/node-registry"
 
 export function IdentificationProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
         <div className="space-y-6">
+            <NodeLabelProperty node={node} updateNodeData={updateNodeData} />
             <PropertySection title="Configurações Globais">
                 <PropertyToggle
                     label="Salto Inteligente (Skip)"

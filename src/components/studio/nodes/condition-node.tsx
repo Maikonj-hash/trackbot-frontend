@@ -1,13 +1,13 @@
 import { Position, NodeProps, Node } from "@xyflow/react";
 import { GitBranch } from "lucide-react";
-import { TrackerNodeData } from "@/store/flow-store";
+import { TrackerNodeData, useFlowStore } from "@/store/flow-store";
 import { NodeContainer } from "./base/node-container";
 import { NodeHeader } from "./base/node-header";
 import { NodeHandle } from "./base/node-handle";
 import { NodeBody } from "./base/node-body";
 import { VariableHighlighter } from "./base/variable-highlighter";
 
-export function ConditionNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
+export function ConditionNode({ id, data, selected }: NodeProps<Node<TrackerNodeData>>) {
     const operatorMap: Record<string, string> = {
         EQUALS: "==",
         NOT_EQUALS: "!=",
@@ -24,7 +24,12 @@ export function ConditionNode({ data, selected }: NodeProps<Node<TrackerNodeData
         <NodeContainer selected={selected} color="violet">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={GitBranch} label="LOGIC CONDITION" color="violet" />
+            <NodeHeader 
+                icon={GitBranch} 
+                label={data.label || "LOGIC CONDITION"} 
+                color="violet" 
+                onLabelChange={(newLabel) => useFlowStore.getState().updateNodeData(id, { label: newLabel })}
+            />
 
             <NodeBody className="flex flex-col gap-2" noTextWrapper>
                 <div className="flex flex-col gap-1 bg-muted/20 p-2 rounded border border-border/40">

@@ -1,5 +1,7 @@
-import { LucideIcon, Undo2, Zap } from "lucide-react";
+import { LucideIcon, Undo2, Zap, Edit2 } from "lucide-react";
 import { clsx } from "clsx";
+import { useState, useRef, useEffect } from "react";
+import { useInlineRename } from "@/hooks/use-inline-rename";
 
 interface NodeHeaderProps {
     icon?: LucideIcon;
@@ -8,6 +10,7 @@ interface NodeHeaderProps {
     badge?: string;
     allowBack?: boolean;
     skipEnabled?: boolean;
+    onLabelChange?: (newLabel: string) => void;
 }
 
 const textColorMap: Record<string, string> = {
@@ -32,20 +35,57 @@ const badgeColorMap: Record<string, string> = {
     cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
 };
 
-export function NodeHeader({ icon: Icon, label, color = "foreground", badge, allowBack, skipEnabled }: NodeHeaderProps) {
+export function NodeHeader({ icon: Icon, label, color = "foreground", badge, allowBack, skipEnabled, onLabelChange }: NodeHeaderProps) {
+    const {
+        isEditing,
+        setIsEditing,
+        tempLabel,
+        setTempLabel,
+        inputRef,
+        handleSave,
+        handleCancel
+    } = useInlineRename({
+        initialLabel: label,
+        onSave: (newLabel) => onLabelChange?.(newLabel)
+    });
+
     const textColorClass = textColorMap[color] || textColorMap.foreground;
     const badgeClass = badgeColorMap[color] || badgeColorMap.blue;
 
     return (
-        <div className="flex items-center justify-between bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md w-full">
-            <div className="flex items-center gap-2 overflow-hidden">
-                {Icon && <Icon className={clsx("w-3 h-3", textColorClass)} />}
-                <span className={clsx("text-[10px] font-mono font-bold tracking-widest uppercase truncate", textColorClass)}>
-                    {label || "UNTITLED BLOCK"}
-                </span>
+        <div className="flex items-center justify-between bg-muted/30 px-3 py-1.5 border-b border-border/50 rounded-t-md w-full group/header">
+            <div className="flex items-center gap-2 overflow-hidden flex-1">
+                {Icon && <Icon className={clsx("w-3 h-3 shrink-0", textColorClass)} />}
+                
+                {isEditing ? (
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={tempLabel}
+                        onChange={(e) => setTempLabel(e.target.value)}
+                        onBlur={handleSave}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSave();
+                            if (e.key === 'Escape') handleCancel();
+                        }}
+                        className="bg-background/50 border border-blue-500/50 rounded px-1 py-0 text-[10px] font-mono font-bold tracking-widest uppercase w-full outline-none focus:ring-1 focus:ring-blue-500/30"
+                    />
+                ) : (
+                    <div 
+                        className="flex items-center gap-1.5 cursor-text min-w-0 flex-1"
+                        onClick={() => onLabelChange && setIsEditing(true)}
+                    >
+                        <span className={clsx("text-[10px] font-mono font-bold tracking-widest uppercase truncate", textColorClass)}>
+                            {label || "UNTITLED BLOCK"}
+                        </span>
+                        {onLabelChange && (
+                            <Edit2 className="w-2.5 h-2.5 text-muted-foreground/30 opacity-0 group-hover/header:opacity-100 transition-opacity shrink-0" />
+                        )}
+                    </div>
+                )}
             </div>
             
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0 ml-2">
                 {allowBack && (
                     <div className="flex items-center px-1 rounded bg-blue-500/10 border border-blue-500/20 shadow-[0_0_8px_rgba(59,130,246,0.1)]" title="Voltar (Undo) Habilitado">
                         <Undo2 className="w-2.5 h-2.5 text-blue-500" />
