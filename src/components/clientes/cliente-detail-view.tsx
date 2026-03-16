@@ -25,7 +25,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
     const [expandedTicketId, setExpandedTicketId] = useState<string | null>(null)
     const [copiedId, setCopiedId] = useState<string | null>(null)
 
-    // Reset local state when cliente changes
     useEffect(() => {
         setName(cliente.name || "")
         setMetadata(typeof cliente.metadata === 'string' ? JSON.parse(cliente.metadata) : cliente.metadata || {})
@@ -89,7 +88,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
 
     return (
         <div className="flex flex-col h-full bg-card/50 backdrop-blur-sm border-l border-border/20 animate-in slide-in-from-right duration-300">
-            {/* Header */}
             <div className="p-6 border-b border-border/10 flex items-center justify-between bg-muted/5">
                 <div className="flex items-center gap-3">
                     <User className="w-5 h-5 text-blue-500" />
@@ -111,7 +109,7 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                         </div>
                     </div>
                 </div>
-                <button 
+                <button
                     onClick={onClose}
                     className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
                 >
@@ -119,7 +117,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                 </button>
             </div>
 
-            {/* Tabs Navigation */}
             <div className="flex items-center gap-1 border-b border-border/10 sticky top-0 bg-background/50 backdrop-blur-md z-10 px-2">
                 <button
                     onClick={() => setActiveTab('data')}
@@ -159,12 +156,9 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                 </button>
             </div>
 
-            {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                {/* Tab: Current Data */}
                 {activeTab === 'data' && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        {/* Campo Nome */}
                         <div className="space-y-3">
                             <div className="flex items-center gap-2 px-1">
                                 <Tag className="w-3 h-3 text-blue-500/60" />
@@ -179,7 +173,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                             />
                         </div>
 
-                        {/* Metadados / Inteligência */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between px-1">
                                 <div className="flex items-center gap-2">
@@ -218,7 +211,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                             </div>
                         </div>
 
-                        {/* Save Button (Sticky relative to content) */}
                         <div className="pt-4 border-t border-border/10">
                             <button
                                 onClick={handleSave}
@@ -236,7 +228,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                     </div>
                 )}
 
-                {/* Tab Content: History */}
                 {activeTab === 'history' && (
                     <div className="flex-1 flex flex-col space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {loadingTickets ? (
@@ -282,7 +273,7 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                                                 {expandedTicketId === ticket.id ? <ChevronDown className="w-3 h-3 text-muted-foreground" /> : <ChevronRight className="w-3 h-3 text-muted-foreground" />}
                                             </div>
                                         </button>
-                                        
+
                                         {expandedTicketId === ticket.id && (
                                             <div className="px-3 pb-3 pt-0 animate-in slide-in-from-top-2 duration-200">
                                                 <div className="p-3 bg-muted/10 rounded-lg border border-border/20 space-y-3">
@@ -290,7 +281,7 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                                                         <ClipboardList className="w-2.5 h-2.5" />
                                                         <span className="text-[8px] font-bold uppercase tracking-widest">Snapshot</span>
                                                     </div>
-                                                    
+
                                                     <div className="grid grid-cols-1 gap-2">
                                                         {Object.entries(ticket.content.customer?.metadata || {}).map(([key, val]: any) => (
                                                             <div key={key} className="flex flex-col border-l border-blue-500/20 pl-2">
@@ -314,7 +305,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                     </div>
                 )}
 
-                {/* Tab Content: Journey */}
                 {activeTab === 'journey' && (
                     <div className="flex-1 flex flex-col space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {loadingTickets ? (
@@ -344,7 +334,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                                         </div>
 
                                         <div className="p-4 space-y-6">
-                                            {/* Timeline Visual */}
                                             <div className="relative pl-4 space-y-6 border-l border-border/50 ml-2">
                                                 {(ticket.content.journey || []).map((event, i) => (
                                                     <div key={i} className="relative">
@@ -366,7 +355,6 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                                                 ))}
                                             </div>
 
-                                            {/* Mini JSON View */}
                                             <details className="group">
                                                 <summary className="text-[8px] font-bold uppercase tracking-widest text-orange-500 cursor-pointer hover:opacity-80 list-none flex items-center gap-1">
                                                     <ChevronRight className="w-2.5 h-2.5 group-open:rotate-90 transition-transform" />

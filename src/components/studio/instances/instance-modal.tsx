@@ -74,7 +74,6 @@ export function InstanceModal({
             description="Conecte seu WhatsApp via QR Code ou use a API Oficial da Meta."
         >
             <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Nome do Aparelho */}
                 <div className="space-y-2">
                     <Label className="text-[10px] font-mono uppercase tracking-widest opacity-70 flex items-center gap-2">
                         <Layout className="w-3 h-3" /> Nome da Instância
@@ -88,7 +87,6 @@ export function InstanceModal({
                     />
                 </div>
 
-                {/* Seletor de Provedor */}
                 <div className="space-y-3">
                     <Label className="text-[10px] font-mono uppercase tracking-widest opacity-70">
                         Escolha o Provedor
@@ -130,7 +128,6 @@ export function InstanceModal({
                     </div>
                 </div>
 
-                {/* Campos Condicionais Meta */}
                 {provider === "META_OFFICIAL" && (
                     <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10 space-y-4 animate-in fade-in slide-in-from-top-2">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

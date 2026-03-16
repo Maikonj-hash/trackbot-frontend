@@ -82,7 +82,6 @@ export default function InstancesPage() {
     return (
         <>
             <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                {/* Header Section */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center">
                         <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 flex-shrink-0" />
@@ -116,7 +115,6 @@ export default function InstancesPage() {
                     </div>
                 </div>
 
-                {/* Content Grid */}
                 <div className="w-full">
                     {isLoading && instances.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-32 gap-4">
@@ -157,7 +155,6 @@ export default function InstancesPage() {
                 </div>
             </main>
 
-            {/* Modal de Criar Aparelho Híbrido */}
             <InstanceModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
@@ -165,7 +162,6 @@ export default function InstancesPage() {
                 isLoading={isCreating}
             />
 
-            {/* Modal de Pareamento QR */}
             <QRModal
                 isOpen={pairModal.isOpen}
                 instanceId={pairModal.id}

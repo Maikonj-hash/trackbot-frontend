@@ -7,11 +7,6 @@ interface NodeBodyProps {
     className?: string;
     noTextWrapper?: boolean;
 }
-
-/**
- * Componente para centralizar o corpo dos nós (a "bolha" de conteúdo).
- * Garante que padding e estilos de quebra de texto sejam consistentes.
- */
 export function NodeBody({ children, className, noTextWrapper }: NodeBodyProps) {
     const renderContent = () => {
         if (typeof children === "string") {

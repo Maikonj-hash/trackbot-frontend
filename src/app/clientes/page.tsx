@@ -54,8 +54,7 @@ export default function ClientesPage() {
             const json = await res.json()
             setClientes(json.data)
             setMeta(json.meta)
-            
-            // Re-sync selected customer from current list if open
+
             if (selectedCliente) {
                 const updated = json.data.find((c: Cliente) => c.id === selectedCliente.id);
                 if (updated) setSelectedCliente(updated);
@@ -188,15 +187,15 @@ export default function ClientesPage() {
                         {/* Container da Tabela - Estático/Flex */}
                         <div className="flex-1 flex flex-col rounded border border-border/40 bg-muted/5 overflow-hidden shadow-inner min-h-0">
                             <div className="flex-1 overflow-auto custom-scrollbar">
-                            <ClientesTable
-                                clientes={clientes}
-                                loading={loading}
-                                selectedId={selectedCliente?.id}
-                                onEdit={(cliente: Cliente) => setSelectedCliente(cliente)}
-                                onReset={handleResetFlow}
-                                onDelete={handleDeleteCliente}
-                            />
-                        </div>
+                                <ClientesTable
+                                    clientes={clientes}
+                                    loading={loading}
+                                    selectedId={selectedCliente?.id}
+                                    onEdit={(cliente: Cliente) => setSelectedCliente(cliente)}
+                                    onReset={handleResetFlow}
+                                    onDelete={handleDeleteCliente}
+                                />
+                            </div>
 
                             {/* Paginação */}
                             <div className="flex items-center justify-between px-6 py-4 border-t border-border/40 bg-black/20">

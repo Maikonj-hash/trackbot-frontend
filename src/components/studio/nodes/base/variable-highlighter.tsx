@@ -4,14 +4,9 @@ interface VariableHighlighterProps {
     text: string;
 }
 
-/**
- * Sistema de destaque visual para variáveis dinâmicas no formato {{variavel}}.
- * Estética inspirada no Typebot e sistemas premium de automação.
- */
 export function VariableHighlighter({ text }: VariableHighlighterProps) {
     if (!text) return null;
 
-    // Regex para encontrar {{qualquer_coisa}}
     const parts = text.split(/(\{\{[^}]+\}\})/g);
 
     return (

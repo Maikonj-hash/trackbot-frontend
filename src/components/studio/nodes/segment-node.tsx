@@ -13,23 +13,21 @@ export function SegmentNode({ data, selected, id }: NodeProps<Node<TrackerNodeDa
                 lineClassName="border-blue-500"
                 handleClassName="h-3 w-3 bg-white border-2 border-blue-500 rounded-full"
             />
-            <div 
+            <div
                 className="w-full h-full rounded-3xl border-2 border-dashed transition-all relative overflow-hidden backdrop-blur-[2px] shadow-2xl group"
                 style={{
-                    backgroundColor: `${color}05`, // Ultra sutil 5%
-                    borderColor: `${color}60`,     // 60% opacity para a borda tracejada
+                    backgroundColor: `${color}05`,
+                    borderColor: `${color}60`,
                 }}
             >
-                {/* HUD Decoration - Inner Glow */}
-                <div 
+                <div
                     className="absolute inset-0 opacity-10 pointer-events-none"
-                    style={{ 
-                        background: `radial-gradient(circle at top left, ${color}, transparent 70%)` 
+                    style={{
+                        background: `radial-gradient(circle at top left, ${color}, transparent 70%)`
                     }}
                 />
 
-                {/* Header do Segmento */}
-                <div 
+                <div
                     className="absolute top-6 left-8 flex flex-col gap-1.5 select-none"
                     style={{ color: color }}
                 >
@@ -44,8 +42,7 @@ export function SegmentNode({ data, selected, id }: NodeProps<Node<TrackerNodeDa
                     </h2>
                 </div>
 
-                {/* Marcador Industrial de Canto */}
-                <div 
+                <div
                     className="absolute bottom-4 right-6 opacity-20"
                     style={{ color: color }}
                 >

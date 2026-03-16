@@ -56,7 +56,6 @@ export function ReviewNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
                 </div>
 
                 <div className="flex flex-col gap-1.5 p-2 pt-3">
-                    {/* Confirm Path */}
                     <div className="relative flex items-center justify-between p-2 rounded-sm bg-background border border-border/60 group hover:border-blue-500/30 hover:bg-blue-500/5 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
                         <span className="text-[9px] font-bold text-foreground/70 tracking-tight flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.3)]" />
@@ -72,7 +71,6 @@ export function ReviewNode({ data, selected }: NodeProps<Node<TrackerNodeData>>)
                         />
                     </div>
 
-                    {/* Edit Path */}
                     <div className="relative flex items-center justify-between p-2 rounded-sm bg-background border border-border/60 group hover:border-amber-500/30 hover:bg-amber-500/5 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
                         <span className="text-[9px] font-bold text-foreground/70 tracking-tight flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.3)]" />

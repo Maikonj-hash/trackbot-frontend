@@ -18,10 +18,10 @@ export function JumpNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
         <NodeContainer selected={selected} color="rose">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader 
-                icon={Zap} 
-                label="JUMP / SALTO" 
-                color="rose" 
+            <NodeHeader
+                icon={Zap}
+                label="JUMP / SALTO"
+                color="rose"
             />
 
             <NodeBody className="text-left py-4">
@@ -34,8 +34,6 @@ export function JumpNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) {
                     </div>
                 </div>
             </NodeBody>
-
-            {/* Jump nodes don't have source handles because they redirect execution */}
         </NodeContainer>
     );
 }

@@ -6,8 +6,7 @@ import { PropertySection, PropertyHint } from "./base-properties"
 
 export function JumpProperties({ node, updateNodeData }: PropertyPanelProps) {
     const nodes = useFlowStore(useShallow(s => s.nodes));
-    
-    // Filtra para não permitir saltar para si mesmo ou para blocos inválidos
+
     const availableTargets = nodes.filter(n => n.id !== node.id);
 
     return (

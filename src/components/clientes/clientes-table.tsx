@@ -64,8 +64,8 @@ export function ClientesTable({ clientes, loading, selectedId, onEdit, onReset, 
                         }
 
                         return (
-                            <tr 
-                                key={cliente.id} 
+                            <tr
+                                key={cliente.id}
                                 className={clsx(
                                     "group transition-colors",
                                     selectedId === cliente.id ? "bg-blue-500/10 border-l-2 border-blue-500" : "hover:bg-foreground/[0.02]"
@@ -112,7 +112,7 @@ export function ClientesTable({ clientes, loading, selectedId, onEdit, onReset, 
                                 <td className={clsx("px-6 py-4", selectedId && "hidden lg:table-cell")}>
                                     <div className="flex flex-wrap gap-1 max-w-[320px]">
                                         {Object.entries(metadata)
-                                            .filter(([key]) => key !== 'whatsapp_real') // Oculta o telefone já exibido no topo
+                                            .filter(([key]) => key !== 'whatsapp_real')
                                             .slice(0, 3)
                                             .map(([key, value]: any) => (
                                                 <div key={key} className="px-2 py-0.5 rounded bg-muted/5 border border-border/30 flex items-center gap-2">

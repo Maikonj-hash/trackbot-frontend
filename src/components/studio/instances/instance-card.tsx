@@ -93,7 +93,6 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
 
     return (
         <div className="group relative bg-card border border-border/50 rounded-lg overflow-hidden transition-all hover:border-border hover:shadow-md font-sans">
-            {/* Header / Identifier */}
             <div className="flex items-center justify-between p-4 border-b border-border/40 bg-muted/20">
                 <div className="flex items-center gap-3">
                     <div className={clsx(
@@ -107,7 +106,6 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                             <span className="text-xs font-bold uppercase tracking-widest text-foreground truncate max-w-[120px]">
                                 {instance.name}
                             </span>
-                            {/* Provider Badge */}
                             <span className={clsx(
                                 "text-[8px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-tighter",
                                 isMeta ? "bg-blue-500/10 border-blue-500/20 text-blue-500" : "bg-foreground/5 border-foreground/10 text-muted-foreground"
@@ -135,9 +133,7 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                 </div>
             </div>
 
-            {/* Details Section */}
             <div className="p-4 space-y-4">
-                {/* Number Info */}
                 <div className="flex flex-col gap-1">
                     <span className="text-[9px] font-mono text-muted-foreground uppercase opacity-60">Número Conectado</span>
                     <div className="text-xs font-medium text-foreground py-1 border-b border-border/30">
@@ -145,7 +141,6 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                     </div>
                 </div>
 
-                {/* Flow Selection */}
                 <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
                         <span className="text-[9px] font-mono text-muted-foreground uppercase opacity-60">Fluxo Associado</span>
@@ -165,7 +160,6 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                 </div>
             </div>
 
-            {/* Footer / Actions */}
             <div className="p-3 bg-muted/10 border-t border-border/40 flex items-center gap-2">
                 {!isConnected ? (
                     !isMeta ? (
@@ -190,14 +184,12 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
                 )}
             </div>
 
-            {/* Loading Overlay */}
             {isUpdating && (
                 <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px] flex items-center justify-center z-10 transition-all">
                     <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
                 </div>
             )}
 
-            {/* Confirmation Modals */}
             <ConfirmationModal
                 isOpen={confirmDelete}
                 onClose={() => setConfirmDelete(false)}
