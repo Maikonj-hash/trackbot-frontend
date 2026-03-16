@@ -17,6 +17,8 @@ const GLOBAL_VARIABLES = [
     { name: "wpp_name", description: "Gatilho: Capturar Nome", example: "Use no nó de Identificação" },
     { name: "wpp_phone", description: "Gatilho: Capturar WhatsApp", example: "Use no nó de Identificação" },
     { name: "sys.protocol", description: "Protocolo único", example: "20260311-1234" },
+    { name: "sys.payload", description: "JSON completo do evento (Ticket + Cliente + Jornada)", example: "{ \"ticket\": {...}, \"customer\": {...} }" },
+    { name: "metadata.field", description: "Acessa campos personalizados do cliente", example: "{{metadata.email}}, {{metadata.orderId}}" },
 ];
 
 export function VariablesDrawer() {
