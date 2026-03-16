@@ -119,13 +119,16 @@ export function OptionsProperties({ node, updateNodeData }: PropertyPanelProps) 
                         </div>
                     )}
 
-                    <PropertyToggle
-                        label="Habilitar Voltar (Undo)"
-                        description="Permitir que o cliente retorne ao passo anterior digitando '0'."
-                        checked={!!node.data.allowBack}
-                        onChange={(checked) => updateNodeData(node.id, { allowBack: checked })}
-                    />
                 </div>
+            </PropertySection>
+
+            <PropertySection title="Ações do Cliente">
+                <PropertyToggle
+                    label="Habilitar Voltar (Undo)"
+                    description="Permitir que o cliente retorne ao passo anterior digitando '0'."
+                    checked={!!node.data.allowBack}
+                    onChange={(checked) => updateNodeData(node.id, { allowBack: checked })}
+                />
             </PropertySection>
         </div>
     )

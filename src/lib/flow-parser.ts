@@ -35,6 +35,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     id,
                     type: "TEXT",
                     content: node.data.content || "Mensagem vazia",
+                    allowBack: node.data.allowBack,
                     nextStepId: defaultNextStep
                 };
                 break;
@@ -71,6 +72,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     listTitle: node.data.listTitle,
                     listFooter: node.data.listFooter,
                     dynamicOptionsVariable: node.data.dynamicOptionsVariable,
+                    allowBack: node.data.allowBack,
                     fallbackStepId: getNextStepId("fallback"),
                     nextStepId: null
                 };
@@ -101,6 +103,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     type: "MEDIA",
                     mediaType: node.data.mediaType || "image",
                     url: node.data.content || "https://example.com/media.png",
+                    allowBack: node.data.allowBack,
                     nextStepId: defaultNextStep
                 };
                 break;
@@ -139,6 +142,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     fields: node.data.identificationFields || [],
                     submitButtonText: node.data.submitButtonText,
                     skipIfAlreadyFilled: node.data.skipIfAlreadyFilled,
+                    allowBack: node.data.allowBack,
                     nextStepId: defaultNextStep
                 };
                 break;
@@ -199,6 +203,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
                     confirmButtonText: node.data.confirmButtonText,
                     editButtonText: node.data.editButtonText,
                     skipIfAlreadyFilled: node.data.skipIfAlreadyFilled,
+                    allowBack: node.data.allowBack,
                     nextStepId: getNextStepId("confirm"),
                     correctionStepId: getNextStepId("edit")
                 };
@@ -280,6 +285,8 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
                 if (!hasConfirm || !hasEdit) {
                     errors.push(`O bloco de Revisão "${node.data.label}" precisa ter as saídas CONFIRMAR e CORRIGIR conectadas.`);
                 }
+            } else if (node.type === "jumpBlock" || node.type === "handoverBlock") {
+                // Saltar e Transbordo não precisam de saída conectada via edge
             } else {
                 warnings.push(`O bloco "${node.data.label || node.id}" não tem saída conectada.`);
             }

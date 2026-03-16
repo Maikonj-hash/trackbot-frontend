@@ -6,20 +6,21 @@ export function IdentificationProperties({ node, updateNodeData }: PropertyPanel
     return (
         <div className="space-y-6">
             <PropertySection title="Configurações Globais">
-                <div className="space-y-4">
-                    <PropertyToggle
-                        label="Salto Inteligente (Skip)"
-                        description="Ignorar estas perguntas se os dados já estiverem preenchidos no CRM."
-                        checked={!!node.data.skipIfAlreadyFilled}
-                        onChange={(checked) => updateNodeData(node.id, { skipIfAlreadyFilled: checked })}
-                    />
-                    <PropertyToggle
-                        label="Habilitar Voltar (Undo)"
-                        description="Permitir que o cliente retorne ao passo anterior digitando '0'."
-                        checked={!!node.data.allowBack}
-                        onChange={(checked) => updateNodeData(node.id, { allowBack: checked })}
-                    />
-                </div>
+                <PropertyToggle
+                    label="Salto Inteligente (Skip)"
+                    description="Ignorar estas perguntas se os dados já estiverem preenchidos no CRM."
+                    checked={!!node.data.skipIfAlreadyFilled}
+                    onChange={(checked) => updateNodeData(node.id, { skipIfAlreadyFilled: checked })}
+                />
+            </PropertySection>
+
+            <PropertySection title="Ações do Cliente">
+                <PropertyToggle
+                    label="Habilitar Voltar (Undo)"
+                    description="Permitir que o cliente retorne ao passo anterior digitando '0'."
+                    checked={!!node.data.allowBack}
+                    onChange={(checked) => updateNodeData(node.id, { allowBack: checked })}
+                />
             </PropertySection>
 
             <PropertySection title="Mensagem de Boas-Vindas">

@@ -13,7 +13,7 @@ export function MediaNode({ data, selected }: NodeProps<Node<TrackerNodeData>>) 
         <NodeContainer selected={selected} color="pink">
             <NodeHandle type="target" position={Position.Top} />
 
-            <NodeHeader icon={ImageIcon} label={`SEND ${typeLabel}`} color="pink" />
+            <NodeHeader icon={ImageIcon} label={`SEND ${typeLabel}`} color="pink" allowBack={data.allowBack} />
 
             <NodeBody className="space-y-3" noTextWrapper>
                 <div className="aspect-video w-full rounded border border-border/40 bg-muted/20 flex items-center justify-center overflow-hidden">

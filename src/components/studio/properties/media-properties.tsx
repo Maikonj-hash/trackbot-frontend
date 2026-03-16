@@ -1,5 +1,5 @@
 import { PropertyPanelProps } from "./types"
-import { PropertySection, PropertyInput } from "./base-properties"
+import { PropertySection, PropertyInput, PropertyToggle } from "./base-properties"
 
 export function MediaProperties({ node, updateNodeData }: PropertyPanelProps) {
     return (
@@ -28,6 +28,15 @@ export function MediaProperties({ node, updateNodeData }: PropertyPanelProps) {
                         URL pública do arquivo (CDN/S3)
                     </p>
                 </div>
+            </PropertySection>
+
+            <PropertySection title="Ações do Cliente">
+                <PropertyToggle
+                    label="Habilitar Voltar (Undo)"
+                    description="Permitir que o cliente retorne ao passo anterior digitando '0'."
+                    checked={!!node.data.allowBack}
+                    onChange={(checked) => updateNodeData(node.id, { allowBack: checked })}
+                />
             </PropertySection>
         </div>
     )

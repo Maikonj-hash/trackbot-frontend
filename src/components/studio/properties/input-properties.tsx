@@ -75,7 +75,7 @@ export function InputProperties({ node, updateNodeData }: PropertyPanelProps) {
                 </div>
             </PropertySection>
 
-            <PropertySection title="Ações">
+            <PropertySection title="Ações do Cliente">
                 <PropertyToggle
                     label="Habilitar Voltar (Undo)"
                     description="Permitir que o cliente retorne ao passo anterior digitando '0'."

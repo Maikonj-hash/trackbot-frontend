@@ -126,6 +126,7 @@ function StudioCanvas() {
                 label, 
                 type: type.replace("Block", ""), 
                 content: "",
+                allowBack: false,
                 ...(expectedType ? { expectedType: expectedType as any } : {})
             },
         };
