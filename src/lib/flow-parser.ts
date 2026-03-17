@@ -178,6 +178,19 @@ const BLOCK_PARSERS: Record<string, (node: Node<TrackerNodeData>, ctx: ParserCon
         nextStepId: ctx.getNextStepId("confirm"),
         correctionStepId: ctx.getNextStepId("edit")
     }),
+
+    trackDeskBlock: (node, ctx) => ({
+        id: ctx.id,
+        type: "TRACK_DESK",
+        method: node.data.webhookMethod || "POST",
+        url: node.data.content || "http://localhost:3001/api/webhook/whatsapp/chamado",
+        timeout: node.data.timeout || 10000,
+        headers: node.data.headers,
+        bodyPayload: node.data.bodyPayload,
+        successStepId: ctx.getNextStepId("success"),
+        failureStepId: ctx.getNextStepId("failure"),
+        nextStepId: ctx.defaultNextStep
+    }),
 };
 
 /**

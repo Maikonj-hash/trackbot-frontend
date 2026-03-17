@@ -13,6 +13,7 @@ import {
     ClipboardCheck, 
     LogOut,
     PlayCircle,
+    Ticket,
     LucideIcon
 } from "lucide-react";
 
@@ -154,6 +155,36 @@ export const NODE_REGISTRY: Record<string, NodeDefinition> = {
         category: "AVANÇADO",
         description: "Transfere o atendimento para um humano.",
         initialData: { label: "Transbordo Humano", content: "Departamento Financeiro" }
+    },
+    trackDeskBlock: {
+        type: "trackDeskBlock",
+        label: "Track-Desk",
+        icon: Ticket,
+        color: "blue",
+        category: "AVANÇADO",
+        description: "Cria chamados automaticamente no Track-Desk.",
+        initialData: { 
+            type: "TRACK_DESK",
+            webhookMethod: "POST", 
+            content: "{{sys.desk_url}}", 
+            label: "Ticket Track-Desk",
+            bodyPayload: JSON.stringify({
+              cliente: "{{contact.name}}",
+              telefone: "{{contact.phone}}",
+              tipoProblema: "{{assunto}}",
+              descricao: "{{descricao}}",
+              severidade: "MEDIA",
+              protocolo: "{{sys.protocol}}",
+              projetoId: "",
+              municipioId: "",
+              nucleoId: "",
+              estado: "",
+              cidade: ""
+            }, null, 2),
+            headers: {
+              "x-api-key": "test123"
+            }
+        }
     },
     segmentBlock: {
         type: "segmentBlock",

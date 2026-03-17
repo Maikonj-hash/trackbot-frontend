@@ -84,6 +84,7 @@ const CATEGORIES: CategoryDefinition[] = [
         blocks: [
             NODE_REGISTRY.webhookBlock,
             NODE_REGISTRY.handoverBlock,
+            NODE_REGISTRY.trackDeskBlock,
         ]
     },
     {

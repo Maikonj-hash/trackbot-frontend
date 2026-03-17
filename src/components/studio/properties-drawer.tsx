@@ -16,6 +16,7 @@ import { EndProperties } from "./properties/end-properties";
 import { ReviewProperties } from "./properties/review-properties";
 import { JumpProperties } from "./properties/jump-properties";
 import { SegmentProperties } from "./properties/segment-properties";
+import { TrackDeskProperties } from "./properties/track-desk-properties";
 
 export function PropertiesDrawer() {
     const { selectedNode, setSelectedNode, updateNodeData, deleteNode } = useFlowStore();
@@ -56,6 +57,8 @@ export function PropertiesDrawer() {
                 return <EndProperties {...props} />;
             case "segmentBlock":
                 return <SegmentProperties {...props} />;
+            case "trackDeskBlock":
+                return <TrackDeskProperties {...props} />;
             default:
                 return (
                     <p className="text-sm text-muted-foreground italic text-center py-8">

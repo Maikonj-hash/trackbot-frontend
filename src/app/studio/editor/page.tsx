@@ -39,6 +39,7 @@ import { JumpNode } from "@/components/studio/nodes/jump-node";
 import { SegmentNode } from "@/components/studio/nodes/segment-node";
 import { ContextMenu } from "@/components/studio/context-menu";
 import { ShortcutGuide } from "@/components/studio/shortcut-guide";
+import { TrackDeskNode } from "@/components/studio/nodes/track-desk-node";
 import { NODE_REGISTRY } from "@/lib/node-registry";
 
 const customNodeTypes = {
@@ -56,6 +57,7 @@ const customNodeTypes = {
     reviewBlock: ReviewNode,
     jumpBlock: JumpNode,
     segmentBlock: SegmentNode,
+    trackDeskBlock: TrackDeskNode,
     endBlock: EndNode,
     startBlock: StartNode,
 };
