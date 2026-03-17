@@ -1,9 +1,5 @@
 import { Node, Edge } from "@xyflow/react";
 import { TrackerNodeData } from "@/store/flow-store";
-
-/**
- * Contexto compartilhado para os parsers de blocos individuais.
- */
 interface ParserContext {
     id: string;
     edges: Edge[];
@@ -11,10 +7,6 @@ interface ParserContext {
     getNextStepId: (sourceHandle?: string) => string | null;
 }
 
-/**
- * Mapeamento de funções de parsing para cada tipo de bloco.
- * Facilita a manutenção e adição de novos tipos sem poluir a função principal.
- */
 const BLOCK_PARSERS: Record<string, (node: Node<TrackerNodeData>, ctx: ParserContext) => any> = {
     messageBlock: (node, ctx) => ({
         id: ctx.id,
@@ -183,19 +175,17 @@ const BLOCK_PARSERS: Record<string, (node: Node<TrackerNodeData>, ctx: ParserCon
         id: ctx.id,
         type: "TRACK_DESK",
         method: node.data.webhookMethod || "POST",
-        url: node.data.content || "http://localhost:3001/api/webhook/whatsapp/chamado",
+        url: node.data.content || "{{sys.desk_url}}",
         timeout: node.data.timeout || 10000,
         headers: node.data.headers,
         bodyPayload: node.data.bodyPayload,
-        successStepId: ctx.getNextStepId("success"),
-        failureStepId: ctx.getNextStepId("failure"),
+        errorFallbackMessage: node.data.errorFallbackMessage,
+        successStepId: ctx.getNextStepId("success") || ctx.defaultNextStep,
+        failureStepId: node.data.failureStepId || ctx.getNextStepId("failure"),
         nextStepId: ctx.defaultNextStep
     }),
 };
 
-/**
- * Função principal para converter o fluxo do React Flow para o formato do Backend.
- */
 export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: Edge[], flowName: string = "Meu Novo Fluxo") {
     const steps: Record<string, any> = {};
 
@@ -210,12 +200,17 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
         if (!node.type || node.type === "startBlock") continue;
 
         const getNextStepId = (sourceHandle?: string) => {
-            const edge = edges.find(e => {
-                if (e.source !== node.id) return false;
-                if (sourceHandle) return e.sourceHandle === sourceHandle;
-                return !e.sourceHandle || e.sourceHandle === 'next';
-            });
-            return edge?.target || null;
+            const edgesFromNode = edges.filter(e => e.source === node.id);
+
+            if (sourceHandle) {
+                const specificEdge = edgesFromNode.find(e => e.sourceHandle === sourceHandle);
+                if (specificEdge) return specificEdge.target;
+            }
+
+            if (edgesFromNode.length === 1) return edgesFromNode[0].target;
+
+            const nextEdge = edgesFromNode.find(e => !e.sourceHandle || e.sourceHandle === 'next' || e.sourceHandle === 'default');
+            return nextEdge?.target || null;
         };
 
         const context: ParserContext = {
@@ -230,7 +225,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
             const step = parser(node, context);
             steps[node.id] = {
                 ...step,
-                label: node.data.label || node.type // Garante label para o backend
+                label: node.data.label || node.type
             };
         }
     }
@@ -242,10 +237,6 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
         steps
     };
 }
-
-/**
- * Validação do fluxo para garantir integridade antes de publicar.
- */
 export function validateFlow(nodes: Node[], edges: Edge[]) {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -260,12 +251,10 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
     nodes.forEach(node => {
         if (node.id === "start-1" || node.type === "startBlock" || node.type === "segmentBlock") return;
 
-        // Avisar sobre blocos isolados
         if (!edges.some(e => e.target === node.id)) {
             warnings.push(`O bloco "${node.data.label || node.id}" está isolado e nunca será alcançado.`);
         }
 
-        // Validar saídas obrigatórias
         if (node.type === "endBlock" || node.type === "handoverBlock" || node.type === "segmentBlock" || node.type === "jumpBlock") return;
 
         const hasOutput = edges.some(e => e.source === node.id);
@@ -274,7 +263,6 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
         }
     });
 
-    // Validar variáveis e configurações específicas
     validateNodeConfigurations(nodes, errors);
 
     return {
@@ -283,10 +271,6 @@ export function validateFlow(nodes: Node[], edges: Edge[]) {
         warnings
     };
 }
-
-/**
- * Helpers Internos para Validação
- */
 
 function handleMissingOutput(node: Node, edges: Edge[], errors: string[], warnings: string[]) {
     switch (node.type) {
@@ -326,19 +310,14 @@ function handleMissingOutput(node: Node, edges: Edge[], errors: string[], warnin
 function validateNodeConfigurations(nodes: Node[], errors: string[]) {
     const varRegex = /^[a-zA-Z0-9_.]+$/;
     nodes.forEach(node => {
-        // Variáveis
         const vn = (node.data as any).variableName;
         if (vn && !varRegex.test(vn)) {
             errors.push(`A variável "${vn}" no bloco "${node.data.label}" tem caracteres inválidos.`);
         }
-
-        // Webhook URL
         if (node.type === "webhookBlock") {
             const url = String(node.data.content || "");
             if (!url.startsWith("http")) errors.push(`O Webhook "${node.data.label}" precisa de uma URL válida.`);
         }
-
-        // Jump Target
         if (node.type === "jumpBlock" && !node.data.targetStepId) {
             errors.push(`O bloco de Salto "${node.data.label}" precisa de um destino.`);
         }

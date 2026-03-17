@@ -1,9 +1,14 @@
 import { PropertyPanelProps } from "./types"
-import { Ticket, ShieldCheck, Database, Settings, HelpCircle, Key } from "lucide-react"
-import { PropertySection, PropertyInput, NodeLabelProperty } from "./base-properties"
+import { Ticket, ShieldCheck, HelpCircle, Key } from "lucide-react"
+import { PropertySection, PropertyInput, NodeLabelProperty, PropertyHint } from "./base-properties"
+import { useFlowStore, TrackerNodeData } from "@/store/flow-store";
+import { useShallow } from 'zustand/react/shallow';
+import { NODE_REGISTRY } from "@/lib/node-registry";
 import { useEffect, useState } from "react"
+import { Node } from "@xyflow/react"
 
 export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps) {
+    const nodes = useFlowStore(useShallow(s => s.nodes));
     const [payload, setPayload] = useState<Record<string, any>>({});
     const [apiKey, setApiKey] = useState("");
 
@@ -20,6 +25,20 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
             console.error("Erro ao carregar dados do Track-Desk", e);
         }
     }, [node.data.bodyPayload, node.data.headers]);
+
+    const availableTargets = (nodes as Node<TrackerNodeData>[])
+        .filter(n => n.id !== node.id)
+        .map(n => {
+            const type = n.type || 'unknown';
+            const definition = NODE_REGISTRY[type];
+            const typeLabel = definition?.label || type || "BLOCO";
+            const customName = n.data?.label || "";
+            return {
+                id: n.id,
+                displayLabel: `[${typeLabel.toUpperCase()}] ${customName}`.trim()
+            };
+        })
+        .sort((a, b) => a.displayLabel.localeCompare(b.displayLabel));
 
     const updatePayload = (key: string, value: any) => {
         const newPayload = { ...payload, [key]: value };
@@ -134,6 +153,45 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                                 placeholder="Ex: Curitiba"
                                 className={`font-mono text-[9px] ${payload.cidade ? 'border-blue-500/30' : ''}`}
                             />
+                        </div>
+                    </div>
+                </div>
+            </PropertySection>
+
+            <PropertySection 
+                title="Tratamento de Exceção"
+                badge={ (node.data.failureStepId || node.data.errorFallbackMessage) ? "Configurado" : undefined }
+            >
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Mensagem de Fallback (Erro)</span>
+                        <PropertyInput
+                            value={node.data.errorFallbackMessage as string || ""}
+                            onChange={(e) => updateNodeData(node.id, { errorFallbackMessage: e.target.value })}
+                            placeholder="Ex: Tivemos um problema técnico. Tente novamente em instantes."
+                            className="font-mono text-[10px] text-red-400"
+                        />
+                        <PropertyHint>Mensagem enviada imediatamente se a API falhar.</PropertyHint>
+                    </div>
+
+                    <div className="space-y-2 pt-2 border-t border-border/20">
+                        <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Redirecionar para nó</span>
+                        <div className="relative group">
+                            <select
+                                value={node.data.failureStepId as string || ""}
+                                onChange={(e) => updateNodeData(node.id, { failureStepId: e.target.value })}
+                                className="w-full bg-background/50 border border-border/60 hover:border-red-500/50 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-red-500/30 outline-none transition-all appearance-none cursor-pointer font-medium"
+                            >
+                                <option value="">Nenhum (Finalizar atendimento)</option>
+                                {availableTargets.map((target) => (
+                                    <option key={target.id} value={target.id}>
+                                        {target.displayLabel}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity">
+                                <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                            </div>
                         </div>
                     </div>
                 </div>

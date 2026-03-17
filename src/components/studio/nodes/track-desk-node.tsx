@@ -19,41 +19,40 @@ export function TrackDeskNode({ id, data, selected }: NodeProps<Node<TrackerNode
             />
 
             <NodeBody className="space-y-2" noTextWrapper>
-                <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1.5">
-                        <span className="text-[8px] font-bold text-blue-500 uppercase tracking-tighter bg-blue-500/10 px-1 rounded border border-blue-500/20">
-                            AUTO-TICKET
-                        </span>
-                        <span className="text-[10px] font-medium text-foreground/70 truncate">
-                            Criar Chamado
-                        </span>
+                <div className="flex flex-col gap-1.5 p-1">
+                    <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5 truncate">
+                            <span className="text-[8px] font-bold text-blue-500 bg-blue-500/10 px-1 rounded border border-blue-500/20">
+                                TICKET
+                            </span>
+                            <span className="text-[10px] font-medium text-foreground/80 truncate max-w-[100px]">
+                                {(() => {
+                                    try {
+                                        const p = typeof data.bodyPayload === 'string' ? JSON.parse(data.bodyPayload) : data.bodyPayload || {};
+                                        return p.tipoProblema || "Sem Assunto";
+                                    } catch(e) { return "Erro no Payload" }
+                                })()}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="px-1">
+                        <p className="text-[9px] text-muted-foreground/60 line-clamp-2 leading-tight italic">
+                            {(() => {
+                                try {
+                                    const p = typeof data.bodyPayload === 'string' ? JSON.parse(data.bodyPayload) : data.bodyPayload || {};
+                                    return p.descricao || "Nenhuma descrição...";
+                                } catch(e) { return "" }
+                            })()}
+                        </p>
                     </div>
                 </div>
             </NodeBody>
 
-            <div className="grid grid-cols-2 border-t border-border/50 bg-muted/5 rounded-b-md h-8">
-                <div className="flex items-center justify-center border-r border-border/50 relative group hover:bg-emerald-500/5 transition-colors">
-                    <span className="text-[9px] font-bold text-emerald-600 tracking-tighter uppercase opacity-70 group-hover:opacity-100">CRIADO</span>
-                    <NodeHandle
-                        type="source"
-                        id="success"
-                        position={Position.Bottom}
-                        color="emerald"
-                        style={{ bottom: "-4px" }}
-                    />
-                </div>
-
-                <div className="flex items-center justify-center relative group hover:bg-red-500/5 transition-colors">
-                    <span className="text-[9px] font-bold text-red-600 tracking-tighter uppercase opacity-70 group-hover:opacity-100">FALHA</span>
-                    <NodeHandle
-                        type="source"
-                        id="failure"
-                        position={Position.Bottom}
-                        color="red"
-                        style={{ bottom: "-4px" }}
-                    />
-                </div>
-            </div>
+            <NodeHandle
+                type="source"
+                position={Position.Bottom}
+                color="blue"
+            />
         </NodeContainer>
     );
 }

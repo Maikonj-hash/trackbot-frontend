@@ -82,6 +82,8 @@ export type TrackerNodeData = {
     endResetType?: 'IMMEDIATE' | 'TIMEOUT';
     endTimeoutValue?: number;
     targetStepId?: string;
+    failureStepId?: string;
+    errorFallbackMessage?: string;
 };
 
 type FlowState = {
@@ -136,7 +138,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     copyNodes: (nodeIds: string[]) => {
         const nodes = get().nodes.filter(n => nodeIds.includes(n.id) && n.id !== 'start-1');
         const edges = get().edges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target));
-        
+
         if (nodes.length > 0) {
             set({ clipboard: { nodes, edges } });
         }
@@ -146,11 +148,9 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         const { clipboard, nodes: existingNodes, edges: existingEdges } = get();
         if (!clipboard || clipboard.nodes.length === 0) return;
 
-        // 1. Calcular o bounding box dos nodes no clipboard para o offset
         const minX = Math.min(...clipboard.nodes.map(n => n.position.x));
         const minY = Math.min(...clipboard.nodes.map(n => n.position.y));
 
-        // 2. Mapear IDs antigos para novos IDs
         const idMap: Record<string, string> = {};
         const newNodes = clipboard.nodes.map(node => {
             const newId = `${node.type}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
@@ -167,7 +167,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
             };
         });
 
-        // 3. Mapear arestas com os novos IDs
         const newEdges = clipboard.edges.map(edge => ({
             ...edge,
             id: `edge_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
@@ -187,7 +186,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     },
     setVariablesDrawerOpen: (open: boolean) => {
         set({ isVariablesDrawerOpen: open });
-        if (open) set({ selectedNode: null }); // Fecha o editor de blocos ao abrir variáveis
+        if (open) set({ selectedNode: null });
     },
 
     onNodesChange: (changes: NodeChange<Node<TrackerNodeData>>[]) => {
@@ -258,7 +257,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         const { nodes: existingNodes, edges: existingEdges } = get();
         const nodesToDuplicate = existingNodes.filter(n => nodeIds.includes(n.id) && n.id !== 'start-1');
         const edgesToDuplicate = existingEdges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target));
-        
+
         if (nodesToDuplicate.length === 0) return;
 
         const idMap: Record<string, string> = {};
@@ -348,7 +347,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         nodes.forEach((node) => {
             const data = node.data;
 
-            // 1. Variáveis de Atribuição Explícita (Escrita)
             if (data.variableName) variables.add(data.variableName);
             if (data.identificationFields) {
                 data.identificationFields.forEach(f => {
@@ -367,13 +365,10 @@ export const useFlowStore = create<FlowState>((set, get) => ({
                     if (m.variableName) variables.add(m.variableName);
                 });
             }
-
-            // 2. Variáveis de Controle (Leitura/Uso)
             if (data.conditionVariable) variables.add(data.conditionVariable);
             if (data.switchVariable) variables.add(data.switchVariable);
             if (data.dynamicOptionsVariable) variables.add(data.dynamicOptionsVariable);
 
-            // 3. Varredura Exaustiva de Menções {{var}} em qualquer campo
             scanDeep(data);
         });
 
