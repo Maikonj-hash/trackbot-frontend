@@ -8,10 +8,17 @@ interface BaseProps {
     className?: string;
 }
 
-export function PropertySection({ children, className, title }: BaseProps & { title?: string }) {
+export function PropertySection({ children, className, title, badge }: BaseProps & { title?: string; badge?: string }) {
     return (
         <div className={clsx("space-y-3 pt-4 border-t border-border/40 first:pt-0 first:border-0", className)}>
-            {title && <PropertyLabel>{title}</PropertyLabel>}
+            <div className="flex items-center justify-between gap-2 px-1">
+                {title && <PropertyLabel>{title}</PropertyLabel>}
+                {badge && (
+                    <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 font-mono">
+                        {badge}
+                    </span>
+                )}
+            </div>
             {children}
         </div>
     );

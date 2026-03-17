@@ -80,7 +80,10 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                 </div>
             </PropertySection>
 
-            <PropertySection title="Direcionamento Avançado">
+            <PropertySection 
+                title="Direcionamento Avançado" 
+                badge={ (payload.projetoId || payload.municipioId || payload.nucleoId || payload.estado || payload.cidade) ? "Ativo" : undefined }
+            >
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-2">
@@ -89,7 +92,7 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                                 value={payload.projetoId || ""}
                                 onChange={(e) => updatePayload("projetoId", e.target.value)}
                                 placeholder="ID ou {{var}}"
-                                className="font-mono text-[9px]"
+                                className={`font-mono text-[9px] ${payload.projetoId ? 'border-blue-500/30' : ''}`}
                             />
                         </div>
                         <div className="space-y-2">
@@ -98,7 +101,7 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                                 value={payload.municipioId || ""}
                                 onChange={(e) => updatePayload("municipioId", e.target.value)}
                                 placeholder="ID ou {{var}}"
-                                className="font-mono text-[9px]"
+                                className={`font-mono text-[9px] ${payload.municipioId ? 'border-blue-500/30' : ''}`}
                             />
                         </div>
                     </div>
@@ -109,7 +112,7 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                             value={payload.nucleoId || ""}
                             onChange={(e) => updatePayload("nucleoId", e.target.value)}
                             placeholder="ID Regional ou {{var}}"
-                            className="font-mono text-[9px]"
+                            className={`font-mono text-[9px] ${payload.nucleoId ? 'border-blue-500/30' : ''}`}
                         />
                     </div>
 
@@ -120,7 +123,7 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                                 value={payload.estado || ""}
                                 onChange={(e) => updatePayload("estado", e.target.value)}
                                 placeholder="Ex: Paraná"
-                                className="font-mono text-[9px]"
+                                className={`font-mono text-[9px] ${payload.estado ? 'border-blue-500/30' : ''}`}
                             />
                         </div>
                         <div className="space-y-2">
@@ -129,7 +132,7 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                                 value={payload.cidade || ""}
                                 onChange={(e) => updatePayload("cidade", e.target.value)}
                                 placeholder="Ex: Curitiba"
-                                className="font-mono text-[9px]"
+                                className={`font-mono text-[9px] ${payload.cidade ? 'border-blue-500/30' : ''}`}
                             />
                         </div>
                     </div>
