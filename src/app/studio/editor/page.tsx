@@ -128,7 +128,7 @@ function StudioCanvas() {
             id: `${type}_${Date.now()}`,
             type: registryNode?.type || type,
             position,
-            data: { 
+            data: {
                 ...(registryNode?.initialData || {}),
                 label: labelFromSidebar || registryNode?.label || "Novo Bloco",
                 ...(specificType ? { expectedType: specificType as any } : {})
@@ -148,20 +148,17 @@ function StudioCanvas() {
     const handleContextMenu = useCallback((event: React.MouseEvent, node?: Node) => {
         event.preventDefault();
         if (node) setSelectedNode(node.id);
-        
+
         setContextMenu({
             x: event.clientX,
             y: event.clientY,
         });
     }, [setSelectedNode]);
 
-    // Atalhos de Teclado
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
             const modifier = isMac ? e.metaKey : e.ctrlKey;
-
-            // Bloquear atalhos se o usuário estiver digitando em um input
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
                 return;
             }
@@ -189,9 +186,9 @@ function StudioCanvas() {
                     const centerX = (window.innerWidth / 2 - x) / zoom;
                     const centerY = (window.innerHeight / 2 - y) / zoom;
 
-                    useFlowStore.getState().pasteNodes({ 
-                        x: centerX - 100, // Offset leve para visualização
-                        y: centerY - 100 
+                    useFlowStore.getState().pasteNodes({
+                        x: centerX - 100,
+                        y: centerY - 100
                     });
                 }
             }
@@ -205,12 +202,9 @@ function StudioCanvas() {
         <div className="flex flex-col w-full h-screen font-sans overflow-hidden bg-background">
             <StudioTopbar />
 
-            {/* Corpo Inferior onde fica o Studio  */}
             <div className="flex flex-1 relative overflow-hidden">
-                {/* PAINEL LATERAL ESQUERDO (Blocos) */}
                 <SidebarNodes />
 
-                {/* Container Principal do Editor (Canvas) */}
                 <div className="flex-1 h-full w-full border-t border-b border-border/50 overflow-hidden relative"
                     onDragOver={onDragOver}
                     onDrop={onDrop}
@@ -258,7 +252,7 @@ function StudioCanvas() {
                         <MiniMap
                             zoomable
                             pannable
-                        nodeColor={(n) => {
+                            nodeColor={(n) => {
                                 if (n.type === "segmentBlock") return (n.data as any).color || "#3b82f6";
                                 if (n.type === "messageBlock") return "#2563eb";
                                 return "#3b82f6";
@@ -268,9 +262,8 @@ function StudioCanvas() {
                         />
                     </ReactFlow>
 
-                    {/* Componentes de Refinamento Industrial v2 */}
                     {contextMenu && (
-                        <ContextMenu 
+                        <ContextMenu
                             x={contextMenu.x}
                             y={contextMenu.y}
                             onClose={() => setContextMenu(null)}
@@ -286,9 +279,9 @@ function StudioCanvas() {
                                 const { clipboard } = useFlowStore.getState();
                                 if (clipboard) {
                                     const { x, y, zoom } = getViewport();
-                                    useFlowStore.getState().pasteNodes({ 
-                                        x: (window.innerWidth / 2 - x) / zoom - 100, 
-                                        y: (window.innerHeight / 2 - y) / zoom - 100 
+                                    useFlowStore.getState().pasteNodes({
+                                        x: (window.innerWidth / 2 - x) / zoom - 100,
+                                        y: (window.innerHeight / 2 - y) / zoom - 100
                                     });
                                 }
                             }}
@@ -303,13 +296,9 @@ function StudioCanvas() {
                     <ShortcutGuide />
                 </div>
 
-                {/* PAINEL LATERAL DIREITO (Propriedades) */}
                 {selectedNode && <PropertiesDrawer />}
 
-                {/* PAINEL LATERAL DIREITO (Variáveis) */}
                 <VariablesDrawer />
-
-                {/* SIMULADOR (Overlay Absoluto à Direita) */}
                 <SimulatorDrawer />
             </div>
         </div>
