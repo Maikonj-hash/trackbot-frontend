@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, MessageSquareShare, Loader2, Calendar } from "lucide-react";
+import { Plus, Trash2, MessageSquareShare, Loader2, Calendar, Bot } from "lucide-react";
 import { API_URL } from "@/lib/constants";
 import { Flow } from "@/types/models";
 
@@ -62,6 +62,28 @@ export default function FlowsPage() {
             console.error("Erro ao criar fluxo:", error);
         } finally {
             setIsCreating(false);
+        }
+    };
+
+    const handleDuplicate = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        try {
+            const res = await fetch(`${API_URL}/flows/${id}/duplicate`, { method: "POST" });
+            if (res.ok) fetchFlows();
+        } catch (error) {
+            console.error("Erro ao duplicar:", error);
+        }
+    };
+
+    const handleToggleActive = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        try {
+            const res = await fetch(`${API_URL}/flows/${id}/toggle`, { method: "PATCH" });
+            if (res.ok) {
+                setFlows(flows.map(f => f.id === id ? { ...f, isActive: !f.isActive } : f));
+            }
+        } catch (error) {
+            console.error("Erro ao alternar status:", error);
         }
     };
 
@@ -126,32 +148,56 @@ export default function FlowsPage() {
                         <div
                             key={flow.id}
                             onClick={() => router.push(`/studio/editor?id=${flow.id}`)}
-                            className="group flex flex-col justify-between bg-card text-card-foreground border border-border/50 rounded-xl shadow-sm hover:shadow-md hover:border-blue-600/50 hover:ring-1 hover:ring-blue-600/20 transition-all cursor-pointer overflow-hidden p-5 min-h-[160px]"
+                            className={`group flex flex-col justify-between bg-card text-card-foreground border rounded-xl shadow-sm hover:shadow-md hover:border-blue-600/50 hover:ring-1 hover:ring-blue-600/20 transition-all cursor-pointer overflow-hidden p-5 min-h-[180px] ${!flow.isActive ? 'opacity-70 border-dashed bg-card/50' : 'border-border/50'}`}
                         >
-                            <div>
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="w-10 h-10 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600">
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-start">
+                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${flow.isActive ? 'bg-blue-600/10 text-blue-600' : 'bg-muted text-muted-foreground'}`}>
                                         <MessageSquareShare className="w-5 h-5" />
                                     </div>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDeleteModal({ isOpen: true, id: flow.id, name: flow.name });
-                                        }}
-                                        className="text-muted-foreground hover:text-red-500 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-background rounded-md shadow-sm border border-border/50"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
+                                    <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={(e) => handleDuplicate(e, flow.id)}
+                                            title="Duplicar Fluxo"
+                                            className="text-muted-foreground hover:text-blue-600 p-1.5 bg-background rounded-md shadow-sm border border-border/50 transition-colors"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                        </button>
+                                        <button
+                                            onClick={(e) => handleToggleActive(e, flow.id)}
+                                            title={flow.isActive ? "Desativar" : "Ativar"}
+                                            className={`p-1.5 bg-background rounded-md shadow-sm border border-border/50 transition-colors ${flow.isActive ? 'text-emerald-500 hover:text-muted-foreground' : 'text-muted-foreground hover:text-emerald-500'}`}
+                                        >
+                                            <Bot className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setDeleteModal({ isOpen: true, id: flow.id, name: flow.name });
+                                            }}
+                                            title="Excluir"
+                                            className="text-muted-foreground hover:text-red-500 p-1.5 bg-background rounded-md shadow-sm border border-border/50 transition-colors"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <h3 className="font-semibold text-base line-clamp-1">{flow.name}</h3>
-                                <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                                    {flow.description || "Sem descrição."}
-                                </p>
+                                <div>
+                                    <h3 className="font-semibold text-base line-clamp-1">{flow.name}</h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                                        {flow.description || "Sem descrição."}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50 text-xs text-muted-foreground">
-                                <Calendar className="w-3.5 h-3.5" />
-                                <span>Atualizado em {new Date(flow.updatedAt).toLocaleDateString('pt-BR')}</span>
+                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
+                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase font-mono tracking-wider">
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    <span>{new Date(flow.updatedAt).toLocaleDateString('pt-BR')}</span>
+                                </div>
+                                <div className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-tighter border ${flow.isActive ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-muted text-muted-foreground border-border/50'}`}>
+                                    {flow.isActive ? 'Ativo' : 'Off'}
+                                </div>
                             </div>
                         </div>
                     ))}
