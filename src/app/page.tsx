@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, MessageSquare, Phone, Info, LayoutDashboard, History, Loader2 } from "lucide-react";
-import { API_URL } from "@/lib/constants";
+import { api } from "@/lib/api-client";
 import { DashboardMetrics } from "@/types/models";
 
 export default function DashboardPage() {
@@ -17,7 +17,7 @@ export default function DashboardPage() {
   const fetchMetrics = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch(`${API_URL}/metrics/dashboard`);
+      const res = await api.get("/metrics/dashboard");
       if (res.ok) {
         const json = await res.json();
         setMetrics(json.data);

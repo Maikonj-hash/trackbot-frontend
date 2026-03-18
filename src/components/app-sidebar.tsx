@@ -3,7 +3,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bot, LayoutDashboard, MessageSquareText, Workflow, Phone, Settings } from "lucide-react"
+import { Bot, LayoutDashboard, MessageSquareText, Workflow, Phone, Settings, LogOut } from "lucide-react"
+import { api } from "@/lib/api-client"
 import {
     Sidebar,
     SidebarContent,
@@ -94,6 +95,16 @@ export function AppSidebar() {
                         <SidebarMenuButton tooltip="Configurações">
                             <Settings />
                             <span>Configurações</span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton 
+                            tooltip="Sair do Sistema" 
+                            onClick={() => api.logout()}
+                            className="text-red-500 hover:text-red-600 hover:bg-red-500/5 group"
+                        >
+                            <LogOut className="group-hover:translate-x-0.5 transition-transform" />
+                            <span>Sair da Conta</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

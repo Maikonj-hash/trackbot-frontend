@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Save, User, Brain, Tag, Trash2, History, ClipboardList, ChevronRight, ChevronDown, Activity, FileJson, LogIn, MousePointer2, Copy, Check, X } from "lucide-react"
-import { API_URL } from "@/lib/constants"
+import { api } from "@/lib/api-client"
 import { Cliente, Ticket } from "@/types/models"
 import { clsx } from "clsx"
 
@@ -36,7 +36,7 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
         setLoadingTickets(true)
         setTicketError(null)
         try {
-            const res = await fetch(`${API_URL}/users/${cliente.id}/tickets`)
+            const res = await api.get(`/users/${cliente.id}/tickets`)
             if (res.ok) {
                 const data = await res.json()
                 setTickets(data)
@@ -60,11 +60,7 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
     const handleSave = async () => {
         setSaving(true)
         try {
-            const res = await fetch(`${API_URL}/users/${cliente.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, metadata })
-            })
+            const res = await api.patch(`/users/${cliente.id}`, { name, metadata })
 
             if (res.ok) {
                 onUpdate()

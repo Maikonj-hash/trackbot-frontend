@@ -12,7 +12,7 @@ import {
 import { useFlowStore } from "@/store/flow-store";
 import { useSimulator } from "@/hooks/use-simulator";
 import { parseReactFlowToBackend, validateFlow } from "@/lib/flow-parser";
-import { API_URL } from "@/lib/constants";
+import { api } from "@/lib/api-client";
 import { clsx } from "clsx";
 import { useShallow } from 'zustand/react/shallow';
 
@@ -85,17 +85,15 @@ export const StudioTopbar = memo(function StudioTopbar() {
             const { nodes, edges, flowName, flowId } = state;
             const backendPayload = parseReactFlowToBackend(nodes, edges, flowName);
             const isUpdate = !!flowId;
-            const url = isUpdate ? `${API_URL}/flows/${flowId}` : `${API_URL}/flows`;
+            const payload = {
+                name: flowName,
+                description: "Gerado pelo TrackBot Studio Web",
+                jsonContent: { nodes, edges, backendFlow: backendPayload }
+            };
 
-            const response = await fetch(url, {
-                method: isUpdate ? "PUT" : "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: flowName,
-                    description: "Gerado pelo TrackBot Studio Web",
-                    jsonContent: { nodes, edges, backendFlow: backendPayload }
-                })
-            });
+            const response = isUpdate 
+                ? await api.put(`/flows/${flowId}`, payload)
+                : await api.post(`/flows`, payload);
 
             if (!response.ok) throw new Error("Falha ao salvar no banco");
             const data = await response.json();
@@ -128,9 +126,7 @@ export const StudioTopbar = memo(function StudioTopbar() {
             try {
                 setIsPublishing(true);
                 await handleSave();
-                const response = await fetch(`${API_URL}/flows/${state.flowId}/publish`, {
-                    method: "POST",
-                });
+                const response = await api.post(`/flows/${state.flowId}/publish`);
                 if (!response.ok) throw new Error("Falha ao publicar fluxo");
                 showAlert("Sucesso!", "Fluxo publicado com sucesso! O bot já está na nova versão.", "info");
             } catch (error) {

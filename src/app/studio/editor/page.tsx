@@ -30,7 +30,7 @@ import { StartNode } from "@/components/studio/nodes/start-node";
 import { PropertiesDrawer } from "@/components/studio/properties-drawer";
 import { SidebarNodes } from "@/components/studio/sidebar-nodes";
 import { StudioTopbar } from "@/components/studio/studio-topbar";
-import { API_URL } from "@/lib/constants";
+import { api } from "@/lib/api-client";
 import { SwitchNode } from "@/components/studio/nodes/switch-node";
 import { ReviewNode } from "@/components/studio/nodes/review-node";
 import { SimulatorDrawer } from "@/components/studio/simulator/simulator-drawer";
@@ -84,7 +84,7 @@ function StudioCanvas() {
     useEffect(() => {
         if (!flowId) return;
 
-        fetch(`${API_URL}/flows/${flowId}`)
+        api.get(`/flows/${flowId}`)
             .then(res => res.json())
             .then(data => {
                 setFlowMetadata(data.id, data.name, data.description || "");

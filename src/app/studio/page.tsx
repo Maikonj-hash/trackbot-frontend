@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, MessageSquareShare, Loader2, Calendar, Bot } from "lucide-react";
-import { API_URL } from "@/lib/constants";
+import { api } from "@/lib/api-client";
 import { Flow } from "@/types/models";
 
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
@@ -26,7 +26,7 @@ export default function FlowsPage() {
     const fetchFlows = async () => {
         try {
             setIsLoading(true);
-            const res = await fetch(`${API_URL}/flows`);
+            const res = await api.get("/flows");
             if (res.ok) {
                 const data = await res.json();
                 setFlows(data);
@@ -45,14 +45,10 @@ export default function FlowsPage() {
     const handleCreateNew = async (name: string) => {
         try {
             setIsCreating(true);
-            const res = await fetch(`${API_URL}/flows`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name,
-                    description: "Criado pelo Flow Studio",
-                    jsonContent: { nodes: [], edges: [] }
-                }),
+            const res = await api.post("/flows", {
+                name,
+                description: "Criado pelo Flow Studio",
+                jsonContent: { nodes: [], edges: [] }
             });
             if (res.ok) {
                 const newFlow = await res.json();
@@ -68,7 +64,7 @@ export default function FlowsPage() {
     const handleDuplicate = async (e: React.MouseEvent, id: string) => {
         e.stopPropagation();
         try {
-            const res = await fetch(`${API_URL}/flows/${id}/duplicate`, { method: "POST" });
+            const res = await api.post(`/flows/${id}/duplicate`);
             if (res.ok) fetchFlows();
         } catch (error) {
             console.error("Erro ao duplicar:", error);
@@ -78,7 +74,7 @@ export default function FlowsPage() {
     const handleToggleActive = async (e: React.MouseEvent, id: string) => {
         e.stopPropagation();
         try {
-            const res = await fetch(`${API_URL}/flows/${id}/toggle`, { method: "PATCH" });
+            const res = await api.patch(`/flows/${id}/toggle`);
             if (res.ok) {
                 setFlows(flows.map(f => f.id === id ? { ...f, isActive: !f.isActive } : f));
             }
@@ -89,9 +85,7 @@ export default function FlowsPage() {
 
     const handleDelete = async () => {
         try {
-            const res = await fetch(`${API_URL}/flows/${deleteModal.id}`, {
-                method: "DELETE"
-            });
+            const res = await api.delete(`/flows/${deleteModal.id}`);
             if (res.ok) {
                 setFlows(flows.filter(f => f.id !== deleteModal.id));
             }

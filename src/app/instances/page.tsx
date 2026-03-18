@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Smartphone, RefreshCw, Loader2, Info } from "lucide-react";
-import { API_URL } from "@/lib/constants";
+import { api } from "@/lib/api-client";
 import { InstanceCard } from "@/components/studio/instances/instance-card";
 import { QRModal } from "@/components/studio/instances/qr-modal";
 import { InstanceModal } from "@/components/studio/instances/instance-modal";
@@ -28,8 +28,8 @@ export default function InstancesPage() {
 
         try {
             const [instRes, flowRes] = await Promise.all([
-                fetch(`${API_URL}/instances`),
-                fetch(`${API_URL}/flows`)
+                api.get("/instances"),
+                api.get("/flows")
             ]);
 
             if (instRes.ok && flowRes.ok) {
@@ -58,11 +58,7 @@ export default function InstancesPage() {
     const handleCreateInstance = async (payload: Partial<Instance>) => {
         try {
             setIsCreating(true);
-            const res = await fetch(`${API_URL}/instances`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+            const res = await api.post("/instances", payload);
 
             if (res.ok) {
                 const newInst = await res.json();

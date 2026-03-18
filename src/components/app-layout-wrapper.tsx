@@ -8,8 +8,9 @@ import { Providers } from "@/app/providers";
 export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isStudioEditor = pathname?.startsWith("/studio/editor");
+    const isLoginPage = pathname === "/login";
 
-    if (isStudioEditor) {
+    if (isStudioEditor || isLoginPage) {
         return (
             <main className="relative flex flex-col flex-1 min-w-0 overflow-hidden h-screen w-full bg-background">
                 <Providers>{children}</Providers>

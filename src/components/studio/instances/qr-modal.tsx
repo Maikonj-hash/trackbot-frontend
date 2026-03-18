@@ -16,6 +16,8 @@ interface QRModalProps {
     onClose: () => void;
 }
 
+import { api } from "@/lib/api-client";
+
 export function QRModal({ instanceId, instanceName, isOpen, onClose }: QRModalProps) {
     const [qrCode, setQrCode] = useState<string | null>(null);
     const [status, setStatus] = useState<string>("INITIALIZING");
@@ -40,7 +42,7 @@ export function QRModal({ instanceId, instanceName, isOpen, onClose }: QRModalPr
         if (connectionRequested.current !== instanceId) {
             console.log(`[QR_MODAL] Solicitando conexão para ${instanceId}`);
             connectionRequested.current = instanceId;
-            fetch(`${API_URL}/instances/${instanceId}/connect`, { method: "POST" })
+            api.post(`/instances/${instanceId}/connect`)
                 .catch(err => {
                     console.error("Erro ao solicitar novo QR:", err);
                     connectionRequested.current = null;

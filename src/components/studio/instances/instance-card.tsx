@@ -13,7 +13,7 @@ import {
     Loader2
 } from "lucide-react";
 import { clsx } from "clsx";
-import { API_URL } from "@/lib/constants";
+import { api } from "@/lib/api-client";
 
 interface Instance {
     id: string;
@@ -47,7 +47,7 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
     const handleDisconnect = async () => {
         try {
             setIsUpdating(true);
-            await fetch(`${API_URL}/instances/${instance.id}/disconnect`, { method: "DELETE" });
+            await api.delete(`/instances/${instance.id}/disconnect`);
             onRefresh();
         } catch (error) {
             console.error(error);
@@ -59,7 +59,7 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
     const handleDelete = async () => {
         try {
             setIsUpdating(true);
-            await fetch(`${API_URL}/instances/${instance.id}`, { method: "DELETE" });
+            await api.delete(`/instances/${instance.id}`);
             onRefresh();
         } catch (error) {
             console.error(error);
@@ -71,11 +71,7 @@ export function InstanceCard({ instance, flows, onPair, onRefresh }: InstanceCar
     const handleAssociateFlow = async (flowId: string | null) => {
         try {
             setIsUpdating(true);
-            await fetch(`${API_URL}/instances/${instance.id}/flow`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ flowId })
-            });
+            await api.post(`/instances/${instance.id}/flow`, { flowId });
             onRefresh();
         } catch (error) {
             console.error(error);

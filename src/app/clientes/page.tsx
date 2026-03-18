@@ -6,7 +6,7 @@ import { clsx } from "clsx"
 import { ClientesTable } from "@/components/clientes/clientes-table"
 import { ClienteDetailView } from "@/components/clientes/cliente-detail-view"
 import { ConfirmationModal } from "@/components/ui/confirmation-modal"
-import { API_URL } from "@/lib/constants"
+import { api } from "@/lib/api-client"
 import { Cliente, Instance, PaginationMeta } from "@/types/models"
 
 export default function ClientesPage() {
@@ -37,7 +37,7 @@ export default function ClientesPage() {
 
     const fetchInstances = async () => {
         try {
-            const res = await fetch(`${API_URL}/instances`)
+            const res = await api.get("/instances")
             const json = await res.json()
             setInstances(json)
         } catch (err) {
@@ -48,9 +48,9 @@ export default function ClientesPage() {
     const fetchClientes = async () => {
         setLoading(true)
         try {
-            const baseUrl = `${API_URL}/users?page=${page}&limit=10&search=${search}`
+            const baseUrl = `/users?page=${page}&limit=10&search=${search}`
             const url = instanceId ? `${baseUrl}&instanceId=${instanceId}` : baseUrl
-            const res = await fetch(url)
+            const res = await api.get(url)
             const json = await res.json()
             setClientes(json.data)
             setMeta(json.meta)
@@ -76,7 +76,7 @@ export default function ClientesPage() {
             onConfirm: async () => {
                 setConfirmModal(prev => ({ ...prev, isLoading: true }));
                 try {
-                    const res = await fetch(`${API_URL}/users/${cliente.id}/reset`, { method: "POST" });
+                    const res = await api.post(`/users/${cliente.id}/reset`);
                     if (!res.ok) throw new Error("Erro ao resetar");
                     fetchClientes();
                 } catch (err) {
@@ -98,7 +98,7 @@ export default function ClientesPage() {
             onConfirm: async () => {
                 setConfirmModal(prev => ({ ...prev, isLoading: true }));
                 try {
-                    const res = await fetch(`${API_URL}/users/${cliente.id}`, { method: "DELETE" });
+                    const res = await api.delete(`/users/${cliente.id}`);
                     if (!res.ok) throw new Error("Erro ao deletar");
                     if (selectedCliente?.id === cliente.id) setSelectedCliente(null);
                     fetchClientes();
