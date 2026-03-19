@@ -184,7 +184,7 @@ export function ClienteDetailView({ cliente, onClose, onUpdate }: ClienteDetailV
                                             <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest font-mono">[{key}]</span>
                                             <input
                                                 type="text"
-                                                value={value}
+                                                value={value ?? ""}
                                                 onChange={(e) => updateMetaValue(key, e.target.value)}
                                                 className="bg-transparent text-sm font-mono focus:outline-none w-full border-b border-transparent focus:border-foreground/20 transition-all py-0.5"
                                             />
