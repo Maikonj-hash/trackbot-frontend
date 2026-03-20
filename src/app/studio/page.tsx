@@ -155,7 +155,7 @@ export default function FlowsPage() {
                                             title="Duplicar Fluxo"
                                             className="text-muted-foreground hover:text-blue-600 p-1.5 bg-background rounded-md shadow-sm border border-border/50 transition-colors"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
                                         </button>
                                         <button
                                             onClick={(e) => handleToggleActive(e, flow.id)}
@@ -198,7 +198,6 @@ export default function FlowsPage() {
                 </div>
             )}
 
-            {/* Modais de Gerenciamento */}
             <InputModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}

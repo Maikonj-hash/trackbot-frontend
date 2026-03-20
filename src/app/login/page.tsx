@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+import Cookies from "../../../node_modules/@types/js-cookie";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background font-sans">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(37,99,235,0.05),transparent_50%)]" />
-      
+
       <div className="w-full max-w-md p-4 relative z-10">
         <div className="flex flex-col items-center mb-8 gap-2">
           <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20">
@@ -65,10 +65,10 @@ export default function LoginPage() {
                 <Label htmlFor="email" className="text-xs uppercase font-mono tracking-tight opacity-70">E-mail</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground opacity-50" />
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="admin@trackland.com.br" 
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="admin@trackland.com.br"
                     className="pl-10 bg-background/50 border-border/40 focus:border-blue-600 transition-colors"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -80,9 +80,9 @@ export default function LoginPage() {
                 <Label htmlFor="password" className="text-xs uppercase font-mono tracking-tight opacity-70">Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground opacity-50" />
-                  <Input 
-                    id="password" 
-                    type="password" 
+                  <Input
+                    id="password"
+                    type="password"
                     className="pl-10 bg-background/50 border-border/40 focus:border-blue-600 transition-colors"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -92,8 +92,8 @@ export default function LoginPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-11 shadow-lg shadow-blue-600/20"
                 disabled={isLoading}
               >

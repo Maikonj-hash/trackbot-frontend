@@ -121,13 +121,11 @@ export default function ClientesPage() {
 
     return (
         <div className="flex h-screen overflow-hidden bg-background">
-            {/* Left Panel: Master (List) */}
             <main className={clsx(
                 "flex-1 flex flex-col min-w-0 transition-all duration-300",
                 selectedCliente ? "max-w-[50%]" : "max-w-full"
             )}>
                 <div className="flex-1 flex flex-col p-8 overflow-hidden">
-                    {/* Header da Página */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-border/10 flex-shrink-0">
                         <div className="flex items-center">
                             <div className="w-1.5 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4 flex-shrink-0" />
@@ -150,7 +148,6 @@ export default function ClientesPage() {
                     </div>
 
                     <div className="flex-1 flex flex-col gap-6 min-h-0">
-                        {/* Filtros e Busca */}
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="md:col-span-2 relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
@@ -184,7 +181,6 @@ export default function ClientesPage() {
                             </div>
                         </div>
 
-                        {/* Container da Tabela - Estático/Flex */}
                         <div className="flex-1 flex flex-col rounded border border-border/40 bg-muted/5 overflow-hidden shadow-inner min-h-0">
                             <div className="flex-1 overflow-auto custom-scrollbar">
                                 <ClientesTable
@@ -197,7 +193,6 @@ export default function ClientesPage() {
                                 />
                             </div>
 
-                            {/* Paginação */}
                             <div className="flex items-center justify-between px-6 py-4 border-t border-border/40 bg-black/20">
                                 <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
                                     PAGE_{meta.page.toString().padStart(2, '0')}
@@ -224,7 +219,6 @@ export default function ClientesPage() {
                 </div>
             </main>
 
-            {/* Right Panel: Detail (View/Edit) */}
             {selectedCliente && (
                 <aside className="w-[50%] flex flex-col border-l border-border/20 shadow-[-10px_0_30px_rgba(0,0,0,0.2)] z-20 overflow-hidden relative">
                     <ClienteDetailView
