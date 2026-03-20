@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.gitignore
+.dockerignore
+README.md
+LICENSE
+npm-debug.log
+docker-compose.yml
+Dockerfile
