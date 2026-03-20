@@ -136,8 +136,8 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     clipboard: null,
 
     copyNodes: (nodeIds: string[]) => {
-        const nodes = get().nodes.filter(n => nodeIds.includes(n.id) && n.id !== 'start-1');
-        const edges = get().edges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target));
+        const nodes = get().nodes.filter((n: any) => nodeIds.includes(n.id) && n.id !== 'start-1');
+        const edges = get().edges.filter((e: any) => nodeIds.includes(e.source) && nodeIds.includes(e.target));
 
         if (nodes.length > 0) {
             set({ clipboard: { nodes, edges } });
@@ -190,7 +190,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     },
 
     onNodesChange: (changes: NodeChange<Node<TrackerNodeData>>[]) => {
-        const safeChanges = changes.filter(c => !(c.type === 'remove' && c.id === 'start-1'));
+        const safeChanges = changes.filter((c: any) => !(c.type === 'remove' && c.id === 'start-1'));
         set({
             nodes: applyNodeChanges(safeChanges, get().nodes),
             isDirty: changes.length > 0,
@@ -208,17 +208,17 @@ export const useFlowStore = create<FlowState>((set, get) => ({
             isDirty: true,
         });
     },
-    setSelectedNode: (nodeId: string | null) => {
+    setSelectedNode: (nodeId: any) => {
         if (!nodeId) {
             set({ selectedNode: null });
             return;
         }
-        const node = get().nodes.find((n) => n.id === nodeId);
+        const node = get().nodes.find((n: any) => n.id === nodeId);
         set({ selectedNode: node || null });
     },
-    updateNodeData: (nodeId: string, data: Partial<TrackerNodeData>) => {
+    updateNodeData: (nodeId: any, data: any) => {
         set({
-            nodes: get().nodes.map((node) => {
+            nodes: get().nodes.map((node: any) => {
                 if (node.id === nodeId) {
                     const sanitizedData = { ...data };
                     if (sanitizedData.delayMs !== undefined) {
@@ -238,8 +238,8 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     deleteNode: (nodeId: string) => {
         if (nodeId === "start-1") return;
         set({
-            nodes: get().nodes.filter((node) => node.id !== nodeId),
-            edges: get().edges.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
+            nodes: get().nodes.filter((node: any) => node.id !== nodeId),
+            edges: get().edges.filter((edge: any) => edge.source !== nodeId && edge.target !== nodeId),
             selectedNode: get().selectedNode?.id === nodeId ? null : get().selectedNode,
             isDirty: true,
         });
@@ -255,8 +255,8 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     },
     duplicateNodes: (nodeIds: string[]) => {
         const { nodes: existingNodes, edges: existingEdges } = get();
-        const nodesToDuplicate = existingNodes.filter(n => nodeIds.includes(n.id) && n.id !== 'start-1');
-        const edgesToDuplicate = existingEdges.filter(e => nodeIds.includes(e.source) && nodeIds.includes(e.target));
+        const nodesToDuplicate = existingNodes.filter((n: any) => nodeIds.includes(n.id) && n.id !== 'start-1');
+        const edgesToDuplicate = existingEdges.filter((e: any) => nodeIds.includes(e.source) && nodeIds.includes(e.target));
 
         if (nodesToDuplicate.length === 0) return;
 
@@ -349,19 +349,19 @@ export const useFlowStore = create<FlowState>((set, get) => ({
 
             if (data.variableName) variables.add(data.variableName);
             if (data.identificationFields) {
-                data.identificationFields.forEach(f => {
+                data.identificationFields.forEach((f: any) => {
                     if (f.saveToVariable) variables.add(f.saveToVariable);
                 });
             }
             if (data.fields) {
-                data.fields.forEach(f => {
+                data.fields.forEach((f: any) => {
                     if (f.variableName) variables.add(f.variableName);
                 });
             }
             if (data.saveStatusToVariable) variables.add(data.saveStatusToVariable);
             if (data.saveResponseToVariable) variables.add(data.saveResponseToVariable);
             if (data.responseMapping) {
-                data.responseMapping.forEach(m => {
+                data.responseMapping.forEach((m: any) => {
                     if (m.variableName) variables.add(m.variableName);
                 });
             }

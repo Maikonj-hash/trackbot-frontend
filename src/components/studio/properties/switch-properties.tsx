@@ -12,14 +12,14 @@ export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
     };
 
     const handleUpdateBranchValue = (index: number, newValue: string) => {
-        const updatedBranches = branches.map((branch, i) =>
+        const updatedBranches = branches.map((branch: any, i: number) =>
             i === index ? { ...branch, value: newValue } : branch
         );
         updateNodeData(node.id, { switchBranches: updatedBranches });
     };
 
     const handleRemoveBranch = (idToRemove: string) => {
-        const updatedBranches = branches.filter(branch => branch.id !== idToRemove);
+        const updatedBranches = branches.filter((branch: any) => branch.id !== idToRemove);
         updateNodeData(node.id, { switchBranches: updatedBranches });
     };
 
@@ -55,7 +55,7 @@ export function SwitchProperties({ node, updateNodeData }: PropertyPanelProps) {
                     </div>
 
                     <div className="space-y-3">
-                        {branches.map((branch, index: number) => (
+                        {branches.map((branch: any, index: number) => (
                             <div key={branch.id} className="flex gap-2 group relative items-center bg-muted/10 p-2 rounded-xl border border-border/40 hover:border-purple-500/30 transition-all">
                                 <div className="flex-1 space-y-1">
                                     <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Se valor for igual a:</span>

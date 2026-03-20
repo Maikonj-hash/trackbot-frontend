@@ -41,7 +41,7 @@ export function ReviewNode({ id, data, selected }: NodeProps<Node<TrackerNodeDat
 
                 <div className="flex flex-col gap-1 p-2 bg-muted/20 border-y border-border/40">
                     {fields.length > 0 ? (
-                        fields.map((field, idx) => (
+                        fields.map((field: any, idx: number) => (
                             <div key={idx} className="flex flex-col gap-0.5 p-1.5 rounded-sm border border-border/40 bg-background/80 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors">
                                 <span className="text-[8px] font-bold text-muted-foreground/60 uppercase tracking-tighter">{field.label}</span>
                                 <div className="text-[10px] font-mono font-medium text-foreground/70 truncate">

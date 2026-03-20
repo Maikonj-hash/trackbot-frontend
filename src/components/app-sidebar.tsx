@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Bot, LayoutDashboard, MessageSquareText, Workflow, Phone, Settings, LogOut } from "lucide-react"
@@ -45,12 +44,10 @@ export function AppSidebar() {
             <SidebarHeader className="border-b border-border/10 py-5">
                 <div className="flex flex-col items-center justify-center gap-3 px-2">
                     <div className="flex h-16 w-full max-w-[180px] items-center justify-center relative rounded-md group-data-[collapsible=icon]:h-10 group-data-[collapsible=icon]:w-10 transition-all">
-                        <Image
+                        <img
                             src={state === "collapsed" ? "/logo2.png" : "/logo1.png"}
                             alt="TrackBot Logo"
-                            fill
-                            className="object-contain"
-                            priority
+                            className="w-full h-full object-contain"
                         />
                     </div>
                 </div>

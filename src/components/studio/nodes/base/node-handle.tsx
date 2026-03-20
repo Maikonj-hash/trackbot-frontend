@@ -1,7 +1,7 @@
 import { Handle, HandleProps, Position } from "@xyflow/react";
 import { clsx } from "clsx";
 
-interface NodeHandleProps extends HandleProps {
+interface NodeHandleProps extends Record<string, any> {
     color?: string;
 }
 

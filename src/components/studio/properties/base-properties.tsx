@@ -121,7 +121,7 @@ export function PropertySelect({ label, value, onChange, options }: SelectProps)
                     "font-medium appearance-none"
                 )}
             >
-                {options.map((opt) => (
+                {options.map((opt: any) => (
                     <option key={opt.value} value={opt.value} className="bg-background text-foreground">
                         {opt.label}
                     </option>

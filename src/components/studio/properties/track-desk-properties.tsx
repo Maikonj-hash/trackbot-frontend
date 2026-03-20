@@ -183,7 +183,7 @@ export function TrackDeskProperties({ node, updateNodeData }: PropertyPanelProps
                                 className="w-full bg-background/50 border border-border/60 hover:border-red-500/50 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-red-500/30 outline-none transition-all appearance-none cursor-pointer font-medium"
                             >
                                 <option value="">Nenhum (Finalizar atendimento)</option>
-                                {availableTargets.map((target) => (
+                                {availableTargets.map((target: any) => (
                                     <option key={target.id} value={target.id}>
                                         {target.displayLabel}
                                     </option>

@@ -162,7 +162,7 @@ export const useSimulator = create<SimulatorState>((set, get) => ({
         } else if (node?.type === "optionsBlock") {
             const options = node.data.options || [];
 
-            let index = options.findIndex(opt => opt.toLowerCase() === text.trim().toLowerCase());
+            let index = options.findIndex((opt: any) => opt.toLowerCase() === text.trim().toLowerCase());
 
             if (index === -1) {
                 const numericIndex = parseInt(text.trim()) - 1;

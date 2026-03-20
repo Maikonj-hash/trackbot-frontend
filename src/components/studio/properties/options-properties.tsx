@@ -33,7 +33,7 @@ export function OptionsProperties({ node, updateNodeData }: PropertyPanelProps) 
                     </div>
 
                     <div className="space-y-2">
-                        {(node.data.options || ["Sim", "Não"]).map((opt, index) => (
+                        {(node.data.options || ["Sim", "Não"]).map((opt: any, index: number) => (
                             <div key={index} className="space-y-1">
                                 <div className="flex items-center gap-2">
                                     <PropertyInput

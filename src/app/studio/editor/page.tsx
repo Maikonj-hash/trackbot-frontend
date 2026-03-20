@@ -12,6 +12,7 @@ import {
     Panel,
     ReactFlowProvider,
     useReactFlow,
+    Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useFlowStore } from "@/store/flow-store";
@@ -145,7 +146,7 @@ function StudioCanvas() {
         setSelectedNode(newNode.id);
     };
 
-    const handleContextMenu = useCallback((event: React.MouseEvent, node?: Node) => {
+    const handleContextMenu = useCallback((event: React.MouseEvent, node?: any) => {
         event.preventDefault();
         if (node) setSelectedNode(node.id);
 
@@ -165,14 +166,14 @@ function StudioCanvas() {
 
             if (modifier && e.key === 'd') {
                 e.preventDefault();
-                const selectedIds = nodes.filter(n => n.selected).map(n => n.id);
+                const selectedIds = nodes.filter((n: any) => n.selected).map((n: any) => n.id);
                 if (selectedIds.length > 0) {
                     useFlowStore.getState().duplicateNodes(selectedIds);
                 }
             }
 
             if (modifier && e.key === 'c') {
-                const selectedIds = nodes.filter(n => n.selected).map(n => n.id);
+                const selectedIds = nodes.filter((n: any) => n.selected).map((n: any) => n.id);
                 if (selectedIds.length > 0) {
                     useFlowStore.getState().copyNodes(selectedIds);
                 }
@@ -216,15 +217,15 @@ function StudioCanvas() {
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
-                        onNodeClick={(_, node) => setSelectedNode(node.id)}
+                        onNodeClick={(_: any, node: any) => setSelectedNode(node.id)}
                         onPaneClick={() => {
                             setSelectedNode(null);
                             setContextMenu(null);
                         }}
-                        onNodeContextMenu={(e, node) => handleContextMenu(e as any, node as any)}
-                        onPaneContextMenu={(e) => handleContextMenu(e as any)}
+                        onNodeContextMenu={(e: any, node: any) => handleContextMenu(e, node)}
+                        onPaneContextMenu={(e: any) => handleContextMenu(e)}
                         deleteKeyCode={["Backspace", "Delete"]}
-                        isValidConnection={(connection) => {
+                        isValidConnection={(connection: any) => {
                             if (connection.source === connection.target) return false;
                             if (connection.target === 'start-1') return false;
                             return true;
@@ -252,7 +253,7 @@ function StudioCanvas() {
                         <MiniMap
                             zoomable
                             pannable
-                            nodeColor={(n) => {
+                            nodeColor={(n: any) => {
                                 if (n.type === "segmentBlock") return (n.data as any).color || "#3b82f6";
                                 if (n.type === "messageBlock") return "#2563eb";
                                 return "#3b82f6";

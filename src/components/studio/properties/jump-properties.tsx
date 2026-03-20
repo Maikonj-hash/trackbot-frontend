@@ -35,7 +35,7 @@ export function JumpProperties({ node, updateNodeData }: PropertyPanelProps) {
                 </p>
             </div>
 
-            <PropertySection title="Destino do Salto">
+            <PropertySection title="Destino do Pulo (Jump)">
                 <div className="space-y-3">
                     <div className="relative group">
                         <select
@@ -44,7 +44,7 @@ export function JumpProperties({ node, updateNodeData }: PropertyPanelProps) {
                             className="w-full bg-background/50 border border-border/60 hover:border-rose-500/50 rounded-lg px-3 py-2.5 text-xs focus:ring-1 focus:ring-rose-500/30 outline-none transition-all appearance-none cursor-pointer font-medium"
                         >
                             <option value="">Selecione um bloco...</option>
-                             {availableTargets.map((target) => (
+                             {availableTargets.map((target: any) => (
                                 <option key={target.id} value={target.id}>
                                     {target.displayLabel}
                                 </option>

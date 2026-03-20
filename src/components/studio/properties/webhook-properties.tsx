@@ -63,7 +63,7 @@ export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) 
                     </div>
 
                     <div className="space-y-2">
-                        {Object.entries(node.data.headers || {}).map(([key, value], index) => (
+                        {Object.entries(node.data.headers || {}).map(([key, value]: [string, any], index: number) => (
                             <div key={index} className="flex gap-2 group relative bg-muted/5 p-1 rounded-lg border border-border/20">
                                 <PropertyInput
                                     placeholder="Key"
@@ -152,7 +152,7 @@ export function WebhookProperties({ node, updateNodeData }: PropertyPanelProps) 
                         </div>
 
                         <div className="space-y-2">
-                            {(node.data.responseMapping || []).map((mapping, index: number) => (
+                            {(node.data.responseMapping || []).map((mapping: any, index: number) => (
                                 <div key={index} className="space-y-1 p-2 bg-muted/10 rounded-xl border border-border/40 relative group">
                                     <button
                                         onClick={() => {

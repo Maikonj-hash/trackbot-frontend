@@ -21,7 +21,7 @@ export function SegmentProperties({ node, updateNodeData }: PropertyPanelProps) 
                     <div className="space-y-2">
                         <span className="text-[9px] font-bold uppercase text-muted-foreground/40 font-mono px-1">Cor Temática</span>
                         <div className="grid grid-cols-6 gap-2 pt-1 px-1">
-                            {colors.map((c) => (
+                            {colors.map((c: any) => (
                                 <button
                                     key={c.value}
                                     onClick={() => updateNodeData(node.id, { color: c.value })}

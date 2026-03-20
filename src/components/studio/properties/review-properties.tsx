@@ -72,7 +72,7 @@ export function ReviewProperties({ node, updateNodeData }: PropertyPanelProps) {
                 </div>
 
                 <div className="space-y-3">
-                    {fields.map((field, index) => (
+                    {fields.map((field: any, index: number) => (
                         <div key={index} className="p-3 bg-muted/20 rounded-md border border-border space-y-2 relative group shadow-sm">
                             <button
                                 onClick={() => removeField(index)}

@@ -1,4 +1,4 @@
-import Cookies from '../../node_modules/@types/js-cookie';
+import Cookies from 'js-cookie';
 import { API_URL } from './constants';
 
 export const AUTH_TOKEN_KEY = 'trackbot_auth_token';

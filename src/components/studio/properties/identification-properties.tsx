@@ -54,7 +54,7 @@ export function IdentificationProperties({ node, updateNodeData }: PropertyPanel
                 </div>
 
                 <div className="space-y-3">
-                    {(node.data.identificationFields || []).map((field, index: number) => (
+                    {(node.data.identificationFields || []).map((field: any, index: number) => (
                         <div key={index} className="p-3 bg-muted/20 rounded-md border border-border space-y-2 relative group shadow-sm">
                             <button
                                 onClick={() => {

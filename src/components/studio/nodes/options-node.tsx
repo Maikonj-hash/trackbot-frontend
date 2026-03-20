@@ -29,7 +29,7 @@ export function OptionsNode({ id, data, selected }: NodeProps<Node<TrackerNodeDa
             </NodeBody>
 
             <div className="flex flex-col gap-1.5 p-3 bg-card pb-4 relative max-h-[300px] overflow-y-auto custom-scrollbar">
-                {menuOptions.map((opt, index) => (
+                {menuOptions.map((opt: any, index: number) => (
                     <div key={`${index}-${opt}`} className="relative w-full">
                         <div className="text-[11px] font-medium text-foreground py-1.5 px-3 bg-muted/20 border border-border/40 rounded-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] flex items-center gap-2 group hover:border-blue-500/30 hover:bg-muted/40 transition-colors">
                             <span className="text-[9px] font-mono text-muted-foreground/50 pr-2 border-r border-border/50 flex-shrink-0">

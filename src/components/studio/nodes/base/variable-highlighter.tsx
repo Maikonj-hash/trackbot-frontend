@@ -11,7 +11,7 @@ export function VariableHighlighter({ text }: VariableHighlighterProps) {
 
     return (
         <>
-            {parts.map((part, i) => {
+            {parts.map((part: any, i: number) => {
                 const isVariable = part.startsWith("{{") && part.endsWith("}}");
 
                 if (isVariable) {

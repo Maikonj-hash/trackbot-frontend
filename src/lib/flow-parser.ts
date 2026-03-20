@@ -31,7 +31,7 @@ const BLOCK_PARSERS: Record<string, (node: Node<TrackerNodeData>, ctx: ParserCon
     optionsBlock: (node, ctx) => {
         const optionsMap: Record<string, string> = {};
         const options = node.data.options || ["Sim", "Não"];
-        options.forEach((opt, idx) => {
+        options.forEach((opt: any, idx: number) => {
             const target = ctx.edges.find(e => e.source === ctx.id && e.sourceHandle === `option_${idx}`)?.target;
             if (target) optionsMap[opt] = target;
         });
@@ -126,7 +126,7 @@ const BLOCK_PARSERS: Record<string, (node: Node<TrackerNodeData>, ctx: ParserCon
         const mappedBranches: Array<{ value: string; targetStepId: string }> = [];
         const switchBranches = node.data.switchBranches || [];
 
-        switchBranches.forEach((branch) => {
+        switchBranches.forEach((branch: any) => {
             const target = ctx.edges.find(e => e.source === ctx.id && e.sourceHandle === branch.id)?.target;
             if (target) {
                 mappedBranches.push({ value: branch.value, targetStepId: target });
@@ -200,7 +200,7 @@ export function parseReactFlowToBackend(nodes: Node<TrackerNodeData>[], edges: E
         if (!node.type || node.type === "startBlock") continue;
 
         const getNextStepId = (sourceHandle?: string) => {
-            const edgesFromNode = edges.filter(e => e.source === node.id);
+            const edgesFromNode = edges.filter((e: any) => e.source === node.id);
 
             if (sourceHandle) {
                 const specificEdge = edgesFromNode.find(e => e.sourceHandle === sourceHandle);

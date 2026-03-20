@@ -33,7 +33,7 @@ export function CustomerIdentificationNode({ id, data, selected }: NodeProps<Nod
 
                 {fields.length > 0 ? (
                     <div className="space-y-1.5 custom-scrollbar">
-                        {fields.map((field, idx) => (
+                        {fields.map((field: any, idx: number) => (
                             <div key={idx} className="flex flex-col gap-0.5 p-1.5 rounded-md border border-border/40 bg-muted/20 group hover:border-blue-500/30 transition-colors">
                                 <div className="flex flex-col gap-1 text-left">
                                     <div className="flex items-center gap-1.5">
